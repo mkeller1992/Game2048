@@ -1,4 +1,4 @@
-package ch.bfh.game2048;
+package ch.bfh.game2048.view;
 
 public class MainUIController {
 	
