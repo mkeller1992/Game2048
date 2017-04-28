@@ -1,6 +1,9 @@
 package ch.bfh.game2048.engine;
 
+import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
+import ch.bfh.game2048.model.GameStatistics;
+import ch.bfh.game2048.model.Player;
 import ch.bfh.game2048.model.Tile;
 import junit.framework.TestCase;
 
@@ -9,7 +12,7 @@ public class EngineTest extends TestCase {
 	GameEngine game;
 	
 	private void init(int boardSize){		
-		game = new GameEngine(boardSize, null);
+		game = new GameEngine(boardSize, new GameStatistics(new Player()));
 		board = new Tile[boardSize][boardSize];
 		
 		
@@ -19,6 +22,7 @@ public class EngineTest extends TestCase {
 			}
 		}
 		game.setBoard(board);
+				
 	}
 	
 	public void testRightUp(){						
@@ -36,7 +40,7 @@ public class EngineTest extends TestCase {
 		game.print();
 		game.move(Direction.RIGHT);
 		game.move(Direction.UP);		
-game.print();
+		game.print();
 		/*
 		0   0   0   8   
 		0   0   0   0   
@@ -45,6 +49,9 @@ game.print();
 		 */
 
 		assertEquals(board[0][3].getValue(), 8);
+		assertEquals(game.getStats().getHighestValue(), 8);
+		assertEquals(game.getStats().getScore(), 12);
+		
 	}
 	
 	
@@ -72,6 +79,7 @@ game.print();
 
 		assertEquals(board[0][0].getValue(), 4);
 		assertEquals(board[0][1].getValue(), 4);
+		assertEquals(game.getStats().getScore(), 8);
 	}
 	
 	
@@ -91,7 +99,7 @@ game.print();
 		game.move(Direction.RIGHT);		
 
 		/*
-		0   0   0   8   
+		0   0   4   4   
 		0   0   0   0   
 		0   0   0   0   
 		0   0   0   0   
@@ -99,6 +107,7 @@ game.print();
 
 		assertEquals(board[0][2].getValue(), 4);
 		assertEquals(board[0][3].getValue(), 4);
+		assertEquals(game.getStats().getScore(), 8);
 	}
 	
 	
@@ -121,21 +130,22 @@ game.print();
 		/*
 		0   0   0   0   
 		0   0   0   0   
-		4   0   0   0   
-		8   4   0   0   
+		8   0   0   0   
+		4   4   0   0   
 		 */
 
 		assertEquals(board[2][0].getValue(), 8);
 		assertEquals(board[3][0].getValue(), 4);
 		assertEquals(board[3][1].getValue(), 4);
+		assertEquals(game.getStats().getScore(), 12);
 	}
 	
 	
 	public void testEqualAdjacentTilesAfterMerge(){						
 		init(4);				
 		/*
-		4   4   0   0   
-		4   0   0   0   
+		2   4   0   0   
+		2   0   0   0   
 		2   0   0   0   
 		2   0   0   0    
 		 */
@@ -157,6 +167,7 @@ game.print();
 		assertEquals(board[2][0].getValue(), 4);
 		assertEquals(board[3][0].getValue(), 4);
 		assertEquals(board[3][1].getValue(), 4);
+		assertEquals(game.getStats().getScore(), 8);
 	}
 	
 	

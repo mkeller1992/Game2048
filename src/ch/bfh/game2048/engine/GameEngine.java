@@ -18,14 +18,16 @@ public class GameEngine {
 		initGameBoard();
 
 	}
+	
+	
+
+	public GameStatistics getStats() {
+		return stats;
+	}
 
 	protected void setBoard(Tile[][] board){
 		this.board = board;
 	}
-	protected Tile[][] getBoard(){
-		return board;
-	}
-	
 	private void initGameBoard() {
 
 		for (int i = 0; i < boardSize; i++) {
@@ -34,11 +36,11 @@ public class GameEngine {
 			}
 		}
 		
-		spawnRandomNumber();
-		spawnRandomNumber();
+		spawnRandomTile();
+		spawnRandomTile();
 	}
 
-	private void spawnRandomNumber() {
+	private void spawnRandomTile() {
 		boolean done = false;
 
 		while (!done) {
@@ -62,68 +64,58 @@ public class GameEngine {
 	 * @return boolean true if something was moved
 	 */
 	public boolean move(Direction dir) {
-		resetMergedInfo();
+		boolean moved = false;
 		
-		switch (dir) {
-		case RIGHT:
-			moveHorizontal(-1, boardSize - 1, dir);
-			break;
-		case LEFT:
-			moveHorizontal(1, 0, dir);			
-			break;
-		case UP:
-			moveVertical(1, 0, dir);
-			break;
-		case DOWN:
-			moveVertical(-1, boardSize - 1, dir);			
-			break;
-		}
-
-		return false;
-	}
-
-	private boolean moveHorizontal(int step, int start, Direction dir) {
-		System.out.println("moving horizontal: step +" + step);
-		boolean validMove = false;
-		// loop through rows/columns
-		for (int i = 0; i < boardSize; i++) {
-			// loop through Tiles
-			for (int j = start; j < boardSize && j >= 0; j += step) {			
+		resetMergedInfo();
 				
-				if (board[i][j].getValue() != 0) {
-					int moveBy = moveTile(i, j, dir);					
-					boolean merged = mergeTile(i, j + (moveBy*dir.getColStep()), dir);
-					
-					if(moveBy > 0 || merged){
-						validMove = true;	
-					}					
-				}
-			}
+		moveBoard(dir);
+
+		if(moved){
+			stats.incrementMoves();
+			spawnRandomTile();			
 		}
-		return validMove;
+		return moved;
 	}
 
-	private boolean moveVertical(int step, int start, Direction dir) {
-		System.out.println("moving Vertical: step +" + step);
+	
+	private boolean moveBoard(Direction dir) {
 		boolean validMove = false;
+
+		
+		int start =0;
+		int step = -1 * ((dir.getColStep() != 0) ? dir.getColStep() : dir.getRowStep());
+		if(step < 0){
+			start = boardSize -1;		
+		}
 		
 		// loop through rows/columns
 		for (int i = 0; i < boardSize; i++) {
 			// loop through Tiles
 			for (int j = start; j < boardSize && j >= 0; j += step) {
 
-				if (board[j][i].getValue() != 0) {
-					int moveBy = moveTile(j, i, dir);					
-					boolean merged = mergeTile(j + (moveBy*dir.getRowStep()), i, dir);
-					
-					if(moveBy > 0 || merged){
-						validMove = true;	
+				int row;
+				int col;
+				if(dir.equals(Direction.LEFT) || dir.equals(Direction.RIGHT)){
+					row = i;
+					col = j;
+				} else {
+					row = j;
+					col = i;
+				}
+				
+				if (board[row][col].getValue() != 0) {
+					int moveBy = moveTile(row, col, dir);
+					boolean merged = mergeTile(row + (moveBy * dir.getRowStep()), col + (moveBy * dir.getColStep()), dir);
+
+					if (moveBy > 0 || merged) {
+						validMove = true;
 					}
 				}
 			}
 		}
 		return validMove;
 	}
+	
 
 	/**
 	 * Moves the given Tile in the given Direction, until it is next to the
@@ -135,57 +127,19 @@ public class GameEngine {
 	 * @return
 	 */
 	private int moveTile(int row, int col, Direction dir) {
+		if (col + dir.getColStep() < boardSize && col + dir.getColStep() >= 0 
+				&& row + dir.getRowStep() < boardSize && row + dir.getRowStep() >= 0)
+		{
+			
+			if (board[row + dir.getRowStep()][col + dir.getColStep()].getValue() == 0) {
+				Tile tmp = board[row + dir.getRowStep()][col  + dir.getColStep()];
+				board[row + dir.getRowStep()][col  + dir.getColStep()] = board[row][col];
+				board[row][col] = tmp;
 
-		int step = 0;
-
-		switch (dir) {
-		case RIGHT:
-			step = 1;
-			return moveTileHorizontal(row, col, step);
-		case LEFT:
-			step = -1;
-			return moveTileHorizontal(row, col, step);
-		case DOWN:
-			step = 1;
-			return moveTileVertical(row, col, step);
-		case UP:
-			step = -1;
-			return moveTileVertical(row, col, step);
-		default:
-			return 0;
-		// throw new Exception?
-
+				return 1 + moveTile(row + dir.getRowStep() , col + dir.getColStep(), dir);
+			}
+			
 		}
-
-	}
-
-	private int moveTileHorizontal(int row, int col, int step) {
-		if (col + step == boardSize || col + step < 0)
-			return 0;
-
-		if (board[row][col + step].getValue() == 0) {
-			Tile tmp = board[row][col + step];
-			board[row][col + step] = board[row][col];
-			board[row][col] = tmp;
-
-			return 1 + moveTileHorizontal(row, col + step, step);
-		}
-
-		return 0;
-	}
-
-	private int moveTileVertical(int row, int col, int step) {
-		if (row + step == boardSize || row + step < 0)
-			return 0;
-
-		if (board[row + step][col].getValue() == 0) {
-			Tile tmp = board[row + step][col];
-			board[row + step][col] = board[row][col];
-			board[row][col] = tmp;
-
-			return 1 + moveTileVertical(row + step, col, step);
-		}
-
 		return 0;
 	}
 
@@ -200,9 +154,17 @@ public class GameEngine {
 			}
 
 			if (tile1.getValue() == tile2.getValue()) {
+				
+				int mergedValue = 2 * tile2.getValue();
+				
 				board[row][col] = new Tile();
-				board[row + dir.getRowStep()][col + dir.getColStep()].setValue(2 * tile2.getValue());				
+				board[row + dir.getRowStep()][col + dir.getColStep()].setValue(mergedValue);				
 				board[row + dir.getRowStep()][col + dir.getColStep()].setMerged(true);
+				
+				stats.addScore(mergedValue);
+				if (mergedValue > stats.getHighestValue()){
+					stats.setHighestValue(mergedValue);
+				}
 				return true;
 			}
 		}
