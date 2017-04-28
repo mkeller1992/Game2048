@@ -30,12 +30,12 @@ public class Main extends Application {
 		game.print();
 		System.out.println();
 
-		game.move(Direction.UP);
+		game.move(Direction.DOWN);
 
 		game.print();
 		System.out.println();
 
-		game.move(Direction.DOWN);
+		game.move(Direction.LEFT);
 
 		game.print();
 
