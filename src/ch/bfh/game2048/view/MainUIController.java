@@ -93,7 +93,7 @@ public class MainUIController {
 				setStyle(label);
 				
 				if (tileArray[i][j].isMerged()) {
-					fadeIn(label, 300, 0.5, 1.0, 3);						
+//					fadeIn(label, 300, 0.5, 1.0, 3);						
 				} else if (tileArray[i][j].isSpawned()) {
 					fadeIn(label, 1000, 0.0, 1.0, 1);
 				}
@@ -107,11 +107,11 @@ public class MainUIController {
 
 	private void fadeIn(Label label, int durationMillis, double from, double to, int nbOfcycles) {
 
-//		FadeTransition fadeTransition = new FadeTransition(Duration.millis(durationMillis), label);
-//		fadeTransition.setFromValue(from);
-//		fadeTransition.setToValue(to);
-//		fadeTransition.setCycleCount(nbOfcycles);
-//		fadeTransition.play();
+		FadeTransition fadeTransition = new FadeTransition(Duration.millis(durationMillis), label);
+		fadeTransition.setFromValue(from);
+		fadeTransition.setToValue(to);
+		fadeTransition.setCycleCount(nbOfcycles);
+		fadeTransition.play();
 
 	}
 

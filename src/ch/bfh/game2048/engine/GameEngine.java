@@ -47,8 +47,8 @@ public class GameEngine {
 		boolean done = false;
 
 		while (!done) {
-			int row = (int) (Math.random() * (boardSize - 1));
-			int col = (int) (Math.random() * (boardSize - 1));
+			int row = (int) (Math.random() * (boardSize));
+			int col = (int) (Math.random() * (boardSize));
 
 			if (board[row][col].getValue() == 0) {
 				board[row][col].setValue(getRandomValue());
