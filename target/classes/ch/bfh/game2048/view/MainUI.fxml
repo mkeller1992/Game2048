@@ -1,7 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	
-<?import javafx.scene.layout.BorderPane?>
-	
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.bfh.game2048.MainUIController">
-	<!-- TODO Add Nodes -->
-</BorderPane>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.GridPane?>
+<?import java.util.ArrayList?>
+
+<GridPane fx:id="gameBoard" prefHeight="500.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.bfh.game2048.view.MainUIController">
+	<rowConstraints>
+		<RowConstraints minHeight="10.0" prefHeight="150.0" />
+		<RowConstraints minHeight="10.0" prefHeight="150.0" />
+		<RowConstraints minHeight="10.0" prefHeight="150.0" />
+		<RowConstraints minHeight="10.0" prefHeight="150.0" />
+		<RowConstraints minHeight="10.0" prefHeight="150.0" />
+	</rowConstraints>
+	<columnConstraints>
+		<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
+		<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
+		<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
+		<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
+	</columnConstraints>
+	<children>
+		<Label fx:id="label00" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" />
+		<Label fx:id="label01" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" />
+		<Label fx:id="label02" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" />
+		<Label fx:id="label03" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" />
+		<Label fx:id="label10" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.rowIndex="1" />
+		<Label fx:id="label11" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+		<Label fx:id="label12" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+		<Label fx:id="label13" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+		<Label fx:id="label20" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.rowIndex="2" />
+		<Label fx:id="label21" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+		<Label fx:id="label22" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+		<Label fx:id="label23" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+		<Label fx:id="label30" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.rowIndex="3" />
+		<Label fx:id="label31" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+		<Label fx:id="label32" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+		<Label fx:id="label33" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+
+		<fx:define>
+			<ArrayList fx:id="row0">
+				<fx:reference source="label00" />
+				<fx:reference source="label01" />
+				<fx:reference source="label02" />
+				<fx:reference source="label03" />
+			</ArrayList>
+			<ArrayList fx:id="row1">
+				<fx:reference source="label10" />
+				<fx:reference source="label11" />
+				<fx:reference source="label12" />
+				<fx:reference source="label13" />
+			</ArrayList>
+			<ArrayList fx:id="row2">
+				<fx:reference source="label20" />
+				<fx:reference source="label21" />
+				<fx:reference source="label22" />
+				<fx:reference source="label23" />
+			</ArrayList>
+			<ArrayList fx:id="row3">
+				<fx:reference source="label30" />
+				<fx:reference source="label31" />
+				<fx:reference source="label32" />
+				<fx:reference source="label33" />
+			</ArrayList>
+			<ArrayList fx:id="labelList">
+				<fx:reference source="row0" />
+				<fx:reference source="row1" />
+				<fx:reference source="row2" />
+				<fx:reference source="row3" />
+			</ArrayList>
+		</fx:define>
+
+
+
+		<Button fx:id="startButton" mnemonicParsing="false" onAction="#startGame" text="Start" GridPane.rowIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+		<Label fx:id="labelScore" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" layoutX="385.0" layoutY="310.0" prefHeight="150.0" prefWidth="150.0" text="Score:"
+			GridPane.columnIndex="1" GridPane.rowIndex="4">
+			<font>
+				<Font name="System Bold" size="33.0" />
+			</font>
+		</Label>
+		<Label fx:id="labelScoreNumber" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" layoutX="135.0" layoutY="410.0" prefHeight="150.0" prefWidth="150.0" text="0"
+			GridPane.columnIndex="2" GridPane.rowIndex="4">
+			<font>
+				<Font name="System Bold" size="28.0" />
+			</font>
+		</Label>
+	</children>
+	<opaqueInsets>
+		<Insets />
+	</opaqueInsets>
+</GridPane>

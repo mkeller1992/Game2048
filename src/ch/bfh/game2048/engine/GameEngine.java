@@ -10,8 +10,8 @@ public class GameEngine {
 	GameStatistics stats;
 
 	/**
-	 * Constructor of the GameEngine, Initializes the board with the given
-	 * size. All the statistics are recorded in the given GameStatistics-Object.
+	 * Constructor of the GameEngine, Initializes the board with the given size.
+	 * All the statistics are recorded in the given GameStatistics-Object.
 	 * 
 	 * @param boardSize
 	 *            size of the board
@@ -52,6 +52,7 @@ public class GameEngine {
 
 			if (board[row][col].getValue() == 0) {
 				board[row][col].setValue(getRandomValue());
+				board[row][col].setSpawned(true);
 				done = true;
 			}
 		}
@@ -68,10 +69,10 @@ public class GameEngine {
 	 */
 	public boolean move(Direction dir) {
 		boolean moved = false;
-
+				
 		resetMergedInfo();
 
-		moveBoard(dir);
+		moved = moveBoard(dir);
 
 		if (moved) {
 			stats.incrementMoves();
@@ -142,7 +143,7 @@ public class GameEngine {
 	 * @param row
 	 * @param col
 	 * @param dir
-	 * @return movedBy 		number of steps the tile was moved
+	 * @return movedBy number of steps the tile was moved
 	 */
 	private int moveTile(int row, int col, Direction dir) {
 		if (col + dir.getColStep() < boardSize && col + dir.getColStep() >= 0 && row + dir.getRowStep() < boardSize
@@ -215,18 +216,21 @@ public class GameEngine {
 			for (int row = 0; row < boardSize; row++) {
 				for (int col = 0; col < boardSize; col++) {
 
-					for(Direction dir : Direction.values()){
-					if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize && col + dir.getColStep() >= 0
-							&& col + dir.getColStep() < boardSize) {
+					for (Direction dir : Direction.values()) {
+						if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize
+								&& col + dir.getColStep() >= 0 && col + dir.getColStep() < boardSize) {
+							Tile tile1 = board[row][col];
+							Tile tile2 = board[row + dir.getRowStep()][col + dir.getColStep()];
+							if (tile1.getValue() == tile2.getValue()) {
+								return true;
+							}
 
-						
-						
+						}
+
 					}
-					
 				}
 			}
 		}
-
 		return false;
 	}
 
@@ -267,6 +271,10 @@ public class GameEngine {
 	 */
 	protected void setBoard(Tile[][] board) {
 		this.board = board;
+	}
+	
+	public Tile[][] getBoard(){
+		return board;
 	}
 
 }
