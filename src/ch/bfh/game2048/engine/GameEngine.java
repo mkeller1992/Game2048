@@ -215,7 +215,6 @@ public class GameEngine {
 		if (boardFull) {
 			for (int row = 0; row < boardSize; row++) {
 				for (int col = 0; col < boardSize; col++) {
-
 					for (Direction dir : Direction.values()) {
 						if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize
 								&& col + dir.getColStep() >= 0 && col + dir.getColStep() < boardSize) {
@@ -224,9 +223,7 @@ public class GameEngine {
 							if (tile1.getValue() == tile2.getValue()) {
 								return true;
 							}
-
 						}
-
 					}
 				}
 			}

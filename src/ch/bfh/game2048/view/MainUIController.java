@@ -115,69 +115,11 @@ public class MainUIController {
 
 	}
 
-	private void setStyle(Label label) {
-	
+	private void setStyle(Label label) {			
+		int value = Integer.parseInt(label.getText());
 
-		String fontColor = "";
-		String backgroundColor = "";
-
-		switch (label.getText()) {
-		case "0":
-			label.setText("");
-			fontColor = "255, 255, 255";
-			backgroundColor = "204,192,180";
-		case "2":
-			fontColor = "119,110,101";
-			backgroundColor = "238,228,218";
-			break;
-		case "4":
-			fontColor = "119,110,101";
-			backgroundColor = "237,224,200";
-			break;
-		case "8":
-			fontColor = "249,246,242";
-			backgroundColor = "242,177,121";
-			break;
-		case "16":
-			fontColor = "249,246,242";
-			backgroundColor = "245,149,99";
-			break;
-		case "32":
-			fontColor = "249,246,242";
-			backgroundColor = "246,124,95";
-			break;
-		case "64":
-			fontColor = "249,246,242";
-			backgroundColor = "246,94,59";
-			break;
-		case "128":
-			fontColor = "249,246,242";
-			backgroundColor = "237,207,114";
-			break;
-		case "256":
-			fontColor = "249,246,242";
-			backgroundColor = "237,204,97";
-			break;
-		case "512":
-			fontColor = "249,246,242";
-			backgroundColor = "237,200,80";
-			break;
-		case "1024":
-			fontColor = "249,246,242";
-			backgroundColor = "237,197,63";
-			break;
-		case "2048":
-			fontColor = "249,246,242";
-			backgroundColor = "237,197,63";
-			break;
-		default:
-			fontColor = "249,246,242";
-			backgroundColor = "237,197,63";
-			break;
-		}
-
-		label.setStyle("-fx-font-size: 24pt ;-fx-font-weight: bold; -fx-text-fill: rgb(" + fontColor
+		label.setStyle("-fx-font-size: 24pt ;-fx-font-weight: bold; -fx-text-fill: rgb(" + UITheme.valueOf(value).getFontColor()
 				+ ") ; -fx-border-color: rgb(187, 173, 160); -fx-border-width: 5; -fx-background-color: rgb("
-				+ backgroundColor + ");");
+				+ UITheme.valueOf(value).getBackgroundcolor() + ");");
 	}
 }
