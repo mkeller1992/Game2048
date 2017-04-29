@@ -35,6 +35,7 @@ public enum UITheme {
 		this.value = value;
 		this.fontColor = fontColor;
 		this.backgroundColor = backgroundColor;
+
 	}
 	
     public static UITheme valueOf(int value) {

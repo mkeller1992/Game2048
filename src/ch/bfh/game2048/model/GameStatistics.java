@@ -1,9 +1,13 @@
 package ch.bfh.game2048.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Observable;
 
-public class GameStatistics extends Observable {
+
+public class GameStatistics extends Observable implements Serializable{
+	private static final long serialVersionUID = -591812298242721335L;
+
 	Player player;
 	int score;
 	int amountOfMoves;
