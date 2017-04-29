@@ -1,8 +1,10 @@
 package ch.bfh.game2048.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class GameStatistics {
+public class GameStatistics implements Serializable{
+	private static final long serialVersionUID = -591812298242721335L;
 	Player player;
 	int score;
 	int amountOfMoves;

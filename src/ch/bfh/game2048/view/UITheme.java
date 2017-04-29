@@ -28,9 +28,9 @@ public enum UITheme {
 	            map.put(theme.value, theme);
 	        }
 	    }
-	private UITheme(int value, String fontColoer, String backgroundcolor) {
+	private UITheme(int value, String fontColor, String backgroundcolor) {
 		this.value = value;
-		this.fontColor = fontColoer;
+		this.fontColor = fontColor;
 		this.backgroundcolor = backgroundcolor;
 	}
 	
