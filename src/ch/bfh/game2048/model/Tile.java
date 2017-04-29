@@ -13,7 +13,7 @@ public class Tile {
 
 	
 	
-	public int getValue() {
+	public int getValue() {		
 		return value;
 	}
 	public void setValue(int value) {

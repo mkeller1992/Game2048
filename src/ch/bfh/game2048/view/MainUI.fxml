@@ -89,6 +89,7 @@
 			</columnConstraints>
 			<children>
 				<Button fx:id="startButton" mnemonicParsing="false" onAction="#startGame" text="Start" />
+				<Button fx:id="highScoreButton" mnemonicParsing="false" onAction="#showHighScore" text="Highscore" />
 				<Label fx:id="labelScore" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="100.0" text="Score:" GridPane.columnIndex="1">
 					<font>
 						<Font name="System Bold" size="33.0" />

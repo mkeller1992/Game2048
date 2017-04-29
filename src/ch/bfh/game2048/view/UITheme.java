@@ -14,28 +14,31 @@ public enum UITheme {
 	V128(128, "249,246,242", "237,207,114"),
 	V256(256, "249,246,242", "237,204,97"),
 	V512(512, "249,246,242", "237,200,80"),
-	V1024(1024, "249,246,242", "237,197,63"),
-	V2048(2048, "249,246,242", "249,246,242");
+	V1024(1024, "249,246,242", "237,197,63"),	
+	V2048(2048, "249,246,242", "237,197,63"),
+	DEFAULT(-1, "249,246,242", "247,217,83");
+	
 
 	private int value;
 	private String fontColor;
-	private String backgroundcolor;
+	private String backgroundColor;
 	
 	private static Map<Integer, UITheme> map = new HashMap<Integer, UITheme>();
 
-	    static {
-	        for (UITheme theme : UITheme.values()) {
-	            map.put(theme.value, theme);
-	        }
-	    }
-	private UITheme(int value, String fontColoer, String backgroundcolor) {
+	static {
+		for (UITheme theme : UITheme.values()) {
+			map.put(theme.value, theme);
+		}
+	}
+	    
+	private UITheme(int value, String fontColor, String backgroundColor) {
 		this.value = value;
-		this.fontColor = fontColoer;
-		this.backgroundcolor = backgroundcolor;
+		this.fontColor = fontColor;
+		this.backgroundColor = backgroundColor;
 	}
 	
     public static UITheme valueOf(int value) {
-        return map.get(value);
+        return (map.get(value) == null ? DEFAULT : map.get(value));
     }
 
 	public String getFontColor() {
@@ -47,11 +50,11 @@ public enum UITheme {
 	}
 
 	public String getBackgroundcolor() {
-		return backgroundcolor;
+		return backgroundColor;
 	}
 
 	public void setBackgroundcolor(String backgroundcolor) {
-		this.backgroundcolor = backgroundcolor;
+		this.backgroundColor = backgroundcolor;
 	}
 
     

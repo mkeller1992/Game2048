@@ -1,8 +1,9 @@
 package ch.bfh.game2048.model;
 
 import java.util.Date;
+import java.util.Observable;
 
-public class GameStatistics {
+public class GameStatistics extends Observable {
 	Player player;
 	int score;
 	int amountOfMoves;
@@ -10,17 +11,30 @@ public class GameStatistics {
 	Date date;
 	long startMil;
 	long endMil;
+	boolean gameOver;
 	
 	public GameStatistics(Player player){
 		
 		this.player = player;
-		score = 0;
-		amountOfMoves = 0;
+		this.score = 0;
+		this.amountOfMoves = 0;
 		this.highestValue =0;
 		this.startMil = 0;
 		this.endMil = 0;
+		this.gameOver = false;
 	}
 	
+	
+	public String getPlayerNickname(){
+		return player.getNickName();
+	}
+	
+	private long getDuration() {
+		long tDelta = endMil - startMil;
+		long elapsedSeconds = tDelta / 1000;
+
+		return elapsedSeconds;
+	}
 	
 	public int getScore() {
 		return score;
@@ -39,6 +53,8 @@ public class GameStatistics {
 	}
 	public void setHighestValue(int highestValue) {
 		this.highestValue = highestValue;
+		setChanged();
+		notifyObservers();
 	}
 	public Date getDate() {
 		return date;
@@ -64,6 +80,12 @@ public class GameStatistics {
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
-	
-	
+	public boolean isGameOver() {
+		return gameOver;
+	}
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
+		setChanged();
+		notifyObservers();
+	}
 }

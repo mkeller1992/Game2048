@@ -77,7 +77,9 @@ public class GameEngine {
 		if (moved) {
 			stats.incrementMoves();
 			spawnRandomTile();
-		}
+			stats.setGameOver(isGameOver());
+		}		
+		
 		return moved;
 	}
 
@@ -221,14 +223,14 @@ public class GameEngine {
 							Tile tile1 = board[row][col];
 							Tile tile2 = board[row + dir.getRowStep()][col + dir.getColStep()];
 							if (tile1.getValue() == tile2.getValue()) {
-								return true;
+								return false;
 							}
 						}
 					}
 				}
 			}
 		}
-		return false;
+		return boardFull;
 	}
 
 	/**

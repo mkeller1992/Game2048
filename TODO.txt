@@ -1,0 +1,9 @@
+
+GUI:
+ - Add NumberOfMoves
+ - Add TimeElapsed
+ - Add Highscore
+
+Engine:
+
+KI:

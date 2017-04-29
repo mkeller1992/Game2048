@@ -1,10 +1,14 @@
 package ch.bfh.game2048.view;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
+import ch.bfh.game2048.model.Highscore;
 import ch.bfh.game2048.model.Player;
 import ch.bfh.game2048.model.Tile;
 import javafx.animation.FadeTransition;
@@ -19,7 +23,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
-public class MainUIController {
+public class MainUIController implements Observer {
 
 	@FXML
 	private GridPane gameBoard;
@@ -40,15 +44,27 @@ public class MainUIController {
 
 	@FXML
 	public void initialize() {
-		game = new GameEngine(4, new GameStatistics(new Player()));
+		GameStatistics stats = new GameStatistics(new Player());
+		stats.addObserver(this);
+		game = new GameEngine(4, stats);
 		fromIntToLabel(game.getBoard());
-		installEventHandler(startButton);		
+		installEventHandler(startButton);
+		
 	}
 
 	@FXML
 	void startGame(ActionEvent event) {		
 		game = new GameEngine(4, new GameStatistics(new Player()));
 		fromIntToLabel(game.getBoard());
+	}
+	
+	@FXML
+	void showHighScore(ActionEvent event){
+		Highscore score = new Highscore();
+		score.setHighscore(new ArrayList<GameStatistics>());
+		
+		HighScoreDialog highScore = new HighScoreDialog("Highscore", score.getHighscore());
+		highScore.show();
 	}
 
 	private void installEventHandler(final Node keyNode) {
@@ -88,7 +104,7 @@ public class MainUIController {
 
 		int i=0; int j=0;
 		for(List<Label> row : labelList){
-			for(Label label : row){				
+			for(Label label : row){							
 				label.setText(""+tileArray[i][j].getValue());
 				setStyle(label);
 				
@@ -117,9 +133,23 @@ public class MainUIController {
 
 	private void setStyle(Label label) {			
 		int value = Integer.parseInt(label.getText());
-
+		
+		if(value==0)
+			label.setText("");
+	
+		
 		label.setStyle("-fx-font-size: 24pt ;-fx-font-weight: bold; -fx-text-fill: rgb(" + UITheme.valueOf(value).getFontColor()
 				+ ") ; -fx-border-color: rgb(187, 173, 160); -fx-border-width: 5; -fx-background-color: rgb("
 				+ UITheme.valueOf(value).getBackgroundcolor() + ");");
+	}
+
+	public void update(Observable o, Object arg) {
+		GameStatistics stats = (GameStatistics)o;
+		
+		if(stats.isGameOver()){
+			System.out.println("verloren!!!");
+		}
+		
+		System.out.println(stats.getHighestValue());
 	}
 }
