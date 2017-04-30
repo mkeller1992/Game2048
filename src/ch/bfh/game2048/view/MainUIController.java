@@ -62,7 +62,7 @@ public class MainUIController implements Observer {
 	public void initialize() throws FileNotFoundException, JAXBException {
 
 		scoreHandler = new ScoreHandler();
-		highscoreList = scoreHandler.readScores(HIGHSCORE_FILE);
+		highscoreList = scoreHandler.readScores();
 
 		installEventHandler(startButton);
 
@@ -204,8 +204,8 @@ public class MainUIController implements Observer {
 							highscoreList.getHighscore().add(stats);
 							showHighscoreList();
 							try {
-								scoreHandler.writeScores(highscoreList, HIGHSCORE_FILE);
-							} catch (FileNotFoundException | JAXBException e) {
+								scoreHandler.writeScores(highscoreList);
+							} catch ( JAXBException e) {
 								e.printStackTrace();
 							}
 						}

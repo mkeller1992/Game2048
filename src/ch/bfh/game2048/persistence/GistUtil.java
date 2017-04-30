@@ -21,7 +21,7 @@ public class GistUtil {
 	GistService gistService;
 
 	public GistUtil() {
-		client = new GitHubClient().setOAuth2Token("25aa8e8c0cf6d90481332dbd593d3cf926a6a87d");
+		client = new GitHubClient().setOAuth2Token("ad62dfa8170ad633b427f9bb6802af3772bcfbc6");
 		gistService = new GistService(client);
 	}
 
@@ -65,7 +65,7 @@ public class GistUtil {
 		return null;
 	}
 
-	private String readHighScore() {
+	public String readHighScore() {
 		try {
 
 			Gist g = gistService.getGist("cc5c464caba2742d2194c971b5330251");
@@ -81,7 +81,7 @@ public class GistUtil {
 		return null;
 	}
 
-	private void setHighScore(String content) {
+	public void setHighScore(String content) {
 
 		try {
 
