@@ -1,9 +1,9 @@
 package ch.bfh.game2048.model;
 
 public class Tile {
-	int value;
-	boolean merged;
-	boolean spawned;
+	private int value;
+	private boolean merged;
+	private boolean spawned;
 	
 	public Tile() {
 		value = 0;

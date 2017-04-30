@@ -1,4 +1,4 @@
-package ch.bfh.game2048.view;
+package ch.bfh.game2048.persistence;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

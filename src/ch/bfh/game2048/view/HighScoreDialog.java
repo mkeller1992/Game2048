@@ -1,7 +1,6 @@
 package ch.bfh.game2048.view;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 import ch.bfh.game2048.model.GameStatistics;
 import javafx.collections.FXCollections;
@@ -16,33 +15,33 @@ public class HighScoreDialog extends Dialog<Boolean> {
 
 
 	@SuppressWarnings("rawtypes")
-	public HighScoreDialog(String title, ArrayList<GameStatistics> highScores) {	
+	public HighScoreDialog(String title, List<GameStatistics> highScores) {	
 		
 		
 		this.setTitle(title);
 		this.setHeaderText(null);
 
-		this.getDialogPane().setPrefSize(745, 500);
+		this.getDialogPane().setPrefSize(770, 500);
 
 		TableView table = new TableView<>();
 
-//		TableColumn tblRank = new TableColumn("#");
-		TableColumn tblName = new TableColumn("Name");
+		TableColumn tblRank = new TableColumn("#");
+		TableColumn tblName = new TableColumn("Nickname");
 		TableColumn tblScore = new TableColumn("Score");
 		TableColumn tblHighestTile = new TableColumn("Max. Tile");
-		TableColumn tblDuration = new TableColumn("Dur. (Sec)");
+		TableColumn tblDuration = new TableColumn("Duration");
 		TableColumn tblNumbOfMoves = new TableColumn("# of Moves");
 		TableColumn tblDate = new TableColumn("Date / Time");
 
-//		tblRank.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("rank"));
+		tblRank.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("rankAsString"));
 		tblName.setCellValueFactory(new PropertyValueFactory<GameStatistics, String>("playerNickname"));
 		tblScore.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("score"));
 		tblHighestTile.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("highestValue"));
-		tblDuration.setCellValueFactory(new PropertyValueFactory<GameStatistics, Long>("duration"));
+		tblDuration.setCellValueFactory(new PropertyValueFactory<GameStatistics, Long>("formattedDuration"));
 		tblNumbOfMoves.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("amountOfMoves"));
-		tblDate.setCellValueFactory(new PropertyValueFactory<GameStatistics, Date>("date"));
+		tblDate.setCellValueFactory(new PropertyValueFactory<GameStatistics, String>("formattedDate"));
 
-		table.getColumns().addAll(/*tblRank,*/ tblName, tblScore, tblHighestTile, tblDuration, tblNumbOfMoves, tblDate);
+		table.getColumns().addAll(tblRank, tblName, tblScore, tblHighestTile, tblDuration, tblNumbOfMoves, tblDate);
 
 		tblName.setPrefWidth(150);		
 		tblScore.setPrefWidth(90);		

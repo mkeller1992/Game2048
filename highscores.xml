@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<HighscoreList>
+    <Highscores>
+        <PlayerScore>
+            <player>
+                <Nickname>Matthias Keller</Nickname>
+            </player>
+            <Points>1560</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>158</NumberOfMoves>
+            <StartMillis>1493557510863</StartMillis>
+            <EndMillis>1493557520538</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Matthi</Nickname>
+            </player>
+            <Points>284</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>52</NumberOfMoves>
+            <StartMillis>1493559521280</StartMillis>
+            <EndMillis>1493559598399</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>DD</Nickname>
+            </player>
+            <Points>516</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>84</NumberOfMoves>
+            <StartMillis>1493559941874</StartMillis>
+            <EndMillis>1493559963601</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>lkjlkjl</Nickname>
+            </player>
+            <Points>844</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>101</NumberOfMoves>
+            <StartMillis>1493561959951</StartMillis>
+            <EndMillis>1493561967399</EndMillis>
+        </PlayerScore>
+    </Highscores>
+</HighscoreList>

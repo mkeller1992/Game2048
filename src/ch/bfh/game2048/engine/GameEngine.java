@@ -1,5 +1,7 @@
 package ch.bfh.game2048.engine;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
 import ch.bfh.game2048.model.Tile;
@@ -203,6 +205,7 @@ public class GameEngine {
 		}
 		return false;
 	}
+	
 
 	private boolean isGameOver() {
 		boolean boardFull = true;
