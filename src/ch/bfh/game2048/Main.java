@@ -1,11 +1,6 @@
 package ch.bfh.game2048;
 
-import java.util.ArrayList;
-import java.util.Date;
 
-import ch.bfh.game2048.model.GameStatistics;
-import ch.bfh.game2048.model.Player;
-import ch.bfh.game2048.view.GistUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,7 +12,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("view/MainUI.fxml"));
-			Scene scene = new Scene(root, 400, 450);
+			Scene scene = new Scene(root, 420, 520);
 			scene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -45,6 +40,7 @@ public class Main extends Application {
 //
 //		System.exit(0);
 		
+
 		
 	
 //		ArrayList<GameStatistics> score = new ArrayList<GameStatistics>();
