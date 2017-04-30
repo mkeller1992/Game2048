@@ -5,10 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StringBufferInputStream;
-import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.List;
 
+import org.apache.commons.io.input.BOMInputStream;
 import org.eclipse.egit.github.core.Gist;
 import org.eclipse.egit.github.core.GistFile;
 import org.eclipse.egit.github.core.client.GitHubClient;
@@ -17,30 +17,43 @@ import org.eclipse.egit.github.core.service.GistService;
 import ch.bfh.game2048.model.GameStatistics;
 
 public class GistUtil {
+	GitHubClient client;
+	GistService gistService;
 
-	public void setHighScore(List<GameStatistics> list) {
+	public GistUtil() {
+		client = new GitHubClient().setOAuth2Token("25aa8e8c0cf6d90481332dbd593d3cf926a6a87d");
+		gistService = new GistService(client);
+	}
+
+	public String setHighScore(List<GameStatistics> list) {
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 
 			oos.writeObject(list);
 
-			String content = bos.toString("UTF-8");
+			oos.flush();
+			oos.close();
+			bos.flush();
+
+			String content = Base64.getEncoder().encodeToString(bos.toByteArray());
+
 			setHighScore(content);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public List<GameStatistics> getHighScore() {
 		try {
-			String content = readHighScore();
+			 String content = readHighScore();
 
-			ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes("UTF-8"));
-			ObjectInputStream ois;
-			ois = new ObjectInputStream(bis);
-			
+			ByteArrayInputStream bis = new ByteArrayInputStream(Base64.getDecoder().decode(content.getBytes()));
+			BOMInputStream bomis = new BOMInputStream(bis);
+			ObjectInputStream ois = new ObjectInputStream(bomis);
+
 			return (List<GameStatistics>) ois.readObject();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -53,10 +66,6 @@ public class GistUtil {
 	}
 
 	private String readHighScore() {
-
-		GitHubClient client = new GitHubClient().setOAuth2Token("76725398b1da39e06604a3d6e49497a414a6661b");
-		GistService gistService = new GistService(client);
-
 		try {
 
 			Gist g = gistService.getGist("cc5c464caba2742d2194c971b5330251");
@@ -73,9 +82,6 @@ public class GistUtil {
 	}
 
 	private void setHighScore(String content) {
-
-		GitHubClient client = new GitHubClient().setOAuth2Token("76725398b1da39e06604a3d6e49497a414a6661b");
-		GistService gistService = new GistService(client);
 
 		try {
 

@@ -41,6 +41,9 @@ public class MainUIController implements Observer {
 	private List<List<Label>> labelList;
 
 	GameEngine game;
+	
+	GistUtil gistUtil = new GistUtil();
+	
 
 	@FXML
 	public void initialize() {
@@ -60,10 +63,10 @@ public class MainUIController implements Observer {
 	
 	@FXML
 	void showHighScore(ActionEvent event){
-		Highscore score = new Highscore();
-		score.setHighscore(new ArrayList<GameStatistics>());
-		
-		HighScoreDialog highScore = new HighScoreDialog("Highscore", score.getHighscore());
+				
+		List<GameStatistics> score = gistUtil.getHighScore();
+	
+		HighScoreDialog highScore = new HighScoreDialog("Highscore", score);
 		highScore.show();
 	}
 

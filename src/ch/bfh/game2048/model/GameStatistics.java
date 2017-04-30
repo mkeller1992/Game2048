@@ -28,7 +28,21 @@ public class GameStatistics extends Observable implements Serializable{
 		this.gameOver = false;
 	}
 	
-	
+
+	public GameStatistics(Player player, int score, int amountOfMoves, int highestValue, Date date, long startMil, long endMil, boolean gameOver) {
+		super();
+		this.player = player;
+		this.score = score;
+		this.amountOfMoves = amountOfMoves;
+		this.highestValue = highestValue;
+		this.date = date;
+		this.startMil = startMil;
+		this.endMil = endMil;
+		this.gameOver = gameOver;
+	}
+
+
+
 	public String getPlayerNickname(){
 		return player.getNickName();
 	}

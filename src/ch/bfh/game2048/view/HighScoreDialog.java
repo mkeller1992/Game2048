@@ -1,7 +1,7 @@
 package ch.bfh.game2048.view;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import ch.bfh.game2048.model.GameStatistics;
 import javafx.collections.FXCollections;
@@ -16,7 +16,7 @@ public class HighScoreDialog extends Dialog<Boolean> {
 
 
 	@SuppressWarnings("rawtypes")
-	public HighScoreDialog(String title, ArrayList<GameStatistics> highScores) {	
+	public HighScoreDialog(String title, List<GameStatistics> highScores) {	
 		
 		
 		this.setTitle(title);

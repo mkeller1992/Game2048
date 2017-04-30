@@ -1,6 +1,10 @@
 package ch.bfh.game2048.model;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
+	private static final long serialVersionUID = -8873582266184927461L;
+	
 	String nickName;
 	String firstName;
 	String lastName;

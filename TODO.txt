@@ -5,5 +5,6 @@ GUI:
  - Add Highscore
 
 Engine:
+ - Zug rückgängig machen
 
 KI:

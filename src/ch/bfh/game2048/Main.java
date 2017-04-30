@@ -1,13 +1,11 @@
 package ch.bfh.game2048;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
 
-import org.eclipse.egit.github.core.Gist;
-import org.eclipse.egit.github.core.GistFile;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.service.GistService;
-
+import ch.bfh.game2048.model.GameStatistics;
+import ch.bfh.game2048.model.Player;
+import ch.bfh.game2048.view.GistUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -29,7 +27,7 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
-//		launch(args);
+		launch(args);
 
 //		GameEngine game = new GameEngine(4, null);
 //
@@ -47,32 +45,29 @@ public class Main extends Application {
 //
 //		System.exit(0);
 		
-		GitHubClient client = new GitHubClient().setOAuth2Token("76725398b1da39e06604a3d6e49497a414a6661b");
-		GistService gistService = new GistService(client);
-		try {						
-			List<Gist> gists = gistService.getGists("Longomir");
-			for(Gist gist : gists){
-				System.out.println(gist.getId());		
-			}
-			
-			Gist g = gistService.getGist("cc5c464caba2742d2194c971b5330251");
-			GistFile f = g.getFiles().get("Highscore");
-			
-			f.setContent("HAHAHAHAHAHAHHAHA");
-			
-			g.getFiles().put("Highscore", f);
-			gistService.updateGist(g);
-			System.out.println(g.getUpdatedAt());
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	
+//		ArrayList<GameStatistics> score = new ArrayList<GameStatistics>();
+//		
+//		
+//		for(int i = 1; i<10 ;i++){
+//			Player p = new Player();
+//			p.setNickName("spieler"+i);
+//			GameStatistics	stat = new GameStatistics(p, 50*i, 3*i, 2*i, new Date(), System.currentTimeMillis(), System.currentTimeMillis()+5000*i, true);
+//			
+//					
+//			score.add(stat);
+//		}
+//		
+//
+//		GistUtil g = new GistUtil();
+//		
+//		String content = g.setHighScore(score);
+//		
+//		for(GameStatistics s : g.getHighScore(content)){
+//			System.out.println(s.getPlayerNickname());
+//		}
+//		g.setHighScore("test?");
 		
-		
-		
-//		"https://gist.github.com/Longomir/cc5c464caba2742d2194c971b5330251.js?FILENAME=highscore"
-
 	}
 }
