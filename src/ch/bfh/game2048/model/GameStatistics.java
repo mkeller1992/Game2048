@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-@XmlType(propOrder = { "player", "score", "highestValue", "amountOfMoves", /*"date",*/ "startMil" ,"endMil" /*,"durationMil"*/ })
+@XmlType(propOrder = { "player", "score", "highestValue", "amountOfMoves", "startMil" ,"endMil" })
 public class GameStatistics extends Observable {
 	private Player player;
 
@@ -24,9 +24,7 @@ public class GameStatistics extends Observable {
 
 	private long startMil;
 	private long endMil;
-	// private Date date;
 	private int rank;
-//	long durationMil;
 	private boolean gameOver;
 
 	// Need to be moved to "general properties" later:
@@ -46,8 +44,6 @@ public class GameStatistics extends Observable {
 		this.highestValue = 0;
 		this.startMil = System.currentTimeMillis();
 		this.endMil = 0;
-		// this.date = new Date();
-//		this.durationMil = 0;
 		this.gameOver = false;
 	}
 
@@ -55,13 +51,6 @@ public class GameStatistics extends Observable {
 	public String getPlayerNickname(){
 		return player.getNickName();
 	}
-
-	// public long getDuration() {
-	// long tDelta = endMil - startMil;
-	// long elapsedSeconds = tDelta / 1000;
-	//
-	// return elapsedSeconds;
-	// }
 
 	@XmlTransient
 	public int getRank() {
@@ -107,14 +96,8 @@ public class GameStatistics extends Observable {
 		notifyObservers();
 	}
 
-//	public Date getDate() {
-//		return date;
-//	}
-
 	public String getFormattedDate() {
 		return dateFormat.format(startMil);
-
-		// return df.format(date);
 	}
 
 	@XmlElement(name = "StartMillis")
@@ -154,19 +137,9 @@ public class GameStatistics extends Observable {
 		setChanged();
 		notifyObservers();
 	}
-
-//	@XmlElement(name = "Duration")
-//	public long getDurationMil() {
-//		return durationMil;
-//	}
 	
 	public String getFormattedDuration() {
 		return DurationFormatUtils.formatDuration(getEndMil()-getStartMil(), timeFormat);
 	}
-
-//	public void setDurationMil(long duration) {
-//		this.durationMil = duration;
-//	}
-	
 	
 }
