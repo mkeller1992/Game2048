@@ -9,16 +9,9 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
-	private static Stage stage;
-
-	public static Stage getStage() {
-		return stage;
-	}
-	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			stage = primaryStage;
 			BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("view/MainUI.fxml"));
 			Scene scene = new Scene(root, 420, 520);
 			scene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());

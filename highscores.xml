@@ -71,5 +71,15 @@
             <StartMillis>1494766184284</StartMillis>
             <EndMillis>1494768006330</EndMillis>
         </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>nhkjn</Nickname>
+            </player>
+            <Points>360</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>45</NumberOfMoves>
+            <StartMillis>1494779419720</StartMillis>
+            <EndMillis>1494779430895</EndMillis>
+        </PlayerScore>
     </Highscores>
 </HighscoreList>

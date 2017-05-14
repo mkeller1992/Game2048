@@ -12,74 +12,8 @@
 
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500" prefWidth="400" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.bfh.game2048.view.MainUIController">
-	<center>
-		<GridPane fx:id="gameBoard" prefHeight="400" prefWidth="400" minHeight="400" minWidth="400" maxHeight="400" maxWidth="400" onKeyPressed="#handleKeyPressed">
-			<rowConstraints>
-				<RowConstraints minHeight="10.0" prefHeight="150.0" />
-				<RowConstraints minHeight="10.0" prefHeight="150.0" />
-				<RowConstraints minHeight="10.0" prefHeight="150.0" />
-				<RowConstraints minHeight="10.0" prefHeight="150.0" />
-			</rowConstraints>
-			<columnConstraints>
-				<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
-				<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
-				<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
-				<ColumnConstraints minWidth="10.0" prefWidth="150.0" />
-			</columnConstraints>
-			<children>
-				<Label fx:id="label00" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" />
-				<Label fx:id="label01" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" />
-				<Label fx:id="label02" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" />
-				<Label fx:id="label03" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" />
-				<Label fx:id="label10" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.rowIndex="1" />
-				<Label fx:id="label11" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-				<Label fx:id="label12" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-				<Label fx:id="label13" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-				<Label fx:id="label20" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.rowIndex="2" />
-				<Label fx:id="label21" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-				<Label fx:id="label22" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-				<Label fx:id="label23" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-				<Label fx:id="label30" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.rowIndex="3" />
-				<Label fx:id="label31" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-				<Label fx:id="label32" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-				<Label fx:id="label33" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="150.0" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500" prefWidth="400" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.bfh.game2048.view.MainUIController">
 
-				<fx:define>
-					<ArrayList fx:id="row0">
-						<fx:reference source="label00" />
-						<fx:reference source="label01" />
-						<fx:reference source="label02" />
-						<fx:reference source="label03" />
-					</ArrayList>
-					<ArrayList fx:id="row1">
-						<fx:reference source="label10" />
-						<fx:reference source="label11" />
-						<fx:reference source="label12" />
-						<fx:reference source="label13" />
-					</ArrayList>
-					<ArrayList fx:id="row2">
-						<fx:reference source="label20" />
-						<fx:reference source="label21" />
-						<fx:reference source="label22" />
-						<fx:reference source="label23" />
-					</ArrayList>
-					<ArrayList fx:id="row3">
-						<fx:reference source="label30" />
-						<fx:reference source="label31" />
-						<fx:reference source="label32" />
-						<fx:reference source="label33" />
-					</ArrayList>
-					<ArrayList fx:id="labelList">
-						<fx:reference source="row0" />
-						<fx:reference source="row1" />
-						<fx:reference source="row2" />
-						<fx:reference source="row3" />
-					</ArrayList>
-				</fx:define>
-			</children>
-		</GridPane>
-	</center>
 	<top>
 		<GridPane prefWidth="400" prefHeight="100" maxWidth="400" BorderPane.alignment="CENTER">
 			<columnConstraints>
@@ -117,5 +51,11 @@
 			</children>
 		</GridPane>
 	</top>
+
+
+	<center>
+		<GridPane fx:id="gameBoard">
+		</GridPane>
+	</center>
 
 </BorderPane>

@@ -1,7 +1,6 @@
 package ch.bfh.game2048.view;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,7 +8,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import ch.bfh.game2048.Main;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
@@ -24,18 +22,21 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MainUIController implements Observer {
+
+	@FXML
+	private BorderPane rootPane;
 
 	@FXML
 	private GridPane gameBoard;
@@ -52,71 +53,77 @@ public class MainUIController implements Observer {
 	@FXML
 	private Label labelTimerTime;
 
-	@FXML
-	private List<List<Label>> labelList;
+	private Label[][] labelList;
 
 	GameEngine game;
 
-	ScoreHandler scoreHandler;
-	Timer timer;
-	Highscore highscoreList;
-	Config conf;
+	private ScoreHandler scoreHandler;
+	private Timer timer;
+	private Highscore highscoreList;
+	private Config conf;
+	
+	private int sizeOfBoard = 4;
+	private int boardWidth = 400;
+	private int boardHeight = 400;
 
-	Stage stage;
-
-	// Needs to be moved to general Properties later:
-	// final static String HIGHSCORE_FILE = "highscores.xml";
-	// final static String VICTORY_ALERT_TITLE = "Victory :)";
-	// final static String VICTORY_ALERT_TEXT = "Congratulations you won!\nWould
-	// you like to continue?";
-	// final static int WINNING_NUMBER = 2048;
-
-	@FXML
-	private void handleKeyPressed(KeyEvent ke) {
-		System.out.println("Was here");
-		System.out.println("Key Pressed: " + ke.getCode());
-	}
 
 	@FXML
 	public void initialize() throws FileNotFoundException, JAXBException {
 
+		setBoardMeasures(3,400,400);
+		initializeBoard();
+
 		conf = Config.getInstance();
 		scoreHandler = new ScoreHandler();
 		highscoreList = scoreHandler.readScores(conf.getPropertyAsString("highscoreFileName"));
-		game = new GameEngine(4);
+		game = new GameEngine(sizeOfBoard);
 		fromIntToLabel(game.getBoard());
 		installEventHandler(startButton);
 
+	}
+	
+	public void setBoardMeasures(int numbOfTilesPerRow, int boardWidth, int boardHeight){
+		this.sizeOfBoard = numbOfTilesPerRow;
+		this.boardWidth = boardWidth;
+		this.boardHeight = boardHeight;
+	}
+
+	private void initializeBoard() {
+
+		gameBoard.setPrefSize(boardWidth, boardHeight);
+		gameBoard.setMinSize(boardWidth, boardHeight);
+		gameBoard.setMaxSize(boardWidth, boardHeight);
+
+		labelList = new Label[sizeOfBoard][sizeOfBoard];
+
+		for (int i = 0; i < sizeOfBoard; i++) {
+			for (int j = 0; j < sizeOfBoard; j++) {
+
+				Label label = new Label();
+				label.setPrefSize((boardWidth * 1.0) / sizeOfBoard, (boardHeight * 1.0) / sizeOfBoard);
+				label.setAlignment(Pos.CENTER);
+				GridPane.setConstraints(label, j, i);
+				gameBoard.getChildren().add(label);
+
+				labelList[i][j] = label;
+			}
+		}
 	}
 
 	@FXML
 	void startGame(ActionEvent event) {
 
+		if(timer!=null){
+		timer.stop();
+		}
 		GameStatistics stats = new GameStatistics(new Player());
-		game = new GameEngine(4, stats);
+		game = new GameEngine(sizeOfBoard, stats);
 		stats.addObserver(this);
 		timer = new Timer();
 		timer.addObserver(this);
 		fromIntToLabel(game.getBoard());
 		labelScoreNumber.setText("0");
 
-		// activateKeyListener();
-
-	}
-
-	public void activateKeyListener() {
-
-		Main.getStage().getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				System.out.println(event.getCode());
-
-				if (event.getCode() == KeyCode.UP) {
-					System.out.println("was here");
-					game.move(Direction.UP);
-				}
-			}
-		});
 	}
 
 	@FXML
@@ -162,7 +169,6 @@ public class MainUIController implements Observer {
 				}
 				keyEvent.consume();
 			}
-
 		};
 
 		keyNode.setOnKeyPressed(keyEventHandler);
@@ -172,11 +178,11 @@ public class MainUIController implements Observer {
 
 		int i = 0;
 		int j = 0;
-		for (List<Label> row : labelList) {
+		for (Label[] row : labelList) {
 			for (Label label : row) {
 				// label.setText("" + tileArray[i][j].getValue());
 
-				setStyle(label, tileArray[i][j].getValue());
+				setStyleOfTile(label, tileArray[i][j].getValue());
 
 				if (tileArray[i][j].isMerged()) {
 					// fadeIn(label, 300, 0.5, 1.0, 3);
@@ -201,8 +207,8 @@ public class MainUIController implements Observer {
 
 	}
 
-	private void setStyle(Label label, int tileValue) {
-		
+	private void setStyleOfTile(Label label, int tileValue) {
+
 		if (tileValue == 0) {
 			label.setGraphic(new Text(""));
 		} else {
@@ -212,8 +218,9 @@ public class MainUIController implements Observer {
 			tileText.setFill(UITheme.valueOf(tileValue).getFontColor());
 		}
 
-		label.setStyle("-fx-font-weight: bold; -fx-border-color: rgb(187, 173, 160); -fx-border-width: 5; -fx-background-color: rgb("
-				+ UITheme.valueOf(tileValue).getBackgroundcolor() + ");");
+		label.setStyle(
+				"-fx-font-weight: bold; -fx-border-color: rgb(187, 173, 160); -fx-border-width: 5; -fx-background-color: rgb("
+						+ UITheme.valueOf(tileValue).getBackgroundcolor() + ");");
 	}
 
 	private void scaleText(Text text, int tileValue, Label label) {
@@ -225,8 +232,7 @@ public class MainUIController implements Observer {
 
 		if (10000 < tileValue) {
 			multiplicator = 0.9;
-		}
-		if (1000 < tileValue) {
+		} else if (1000 < tileValue) {
 			multiplicator = 0.8;
 		} else if (100 < tileValue) {
 			multiplicator = 0.7;

@@ -46,6 +46,5 @@ public class Timer extends Observable implements Runnable {
 	
 	public void stop(){
 		timerThread.interrupt();
-		
 	}
 }
