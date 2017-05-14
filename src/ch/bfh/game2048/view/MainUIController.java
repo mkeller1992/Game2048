@@ -61,16 +61,17 @@ public class MainUIController implements Observer {
 	private Timer timer;
 	private Highscore highscoreList;
 	private Config conf;
-	
+
 	private int sizeOfBoard = 4;
 	private int boardWidth = 400;
 	private int boardHeight = 400;
 
+	private boolean isRunning = false;
 
 	@FXML
 	public void initialize() throws FileNotFoundException, JAXBException {
 
-		setBoardMeasures(3,400,400);
+		setBoardMeasures(3, 400, 400);
 		initializeBoard();
 
 		conf = Config.getInstance();
@@ -81,8 +82,8 @@ public class MainUIController implements Observer {
 		installEventHandler(startButton);
 
 	}
-	
-	public void setBoardMeasures(int numbOfTilesPerRow, int boardWidth, int boardHeight){
+
+	public void setBoardMeasures(int numbOfTilesPerRow, int boardWidth, int boardHeight) {
 		this.sizeOfBoard = numbOfTilesPerRow;
 		this.boardWidth = boardWidth;
 		this.boardHeight = boardHeight;
@@ -113,17 +114,32 @@ public class MainUIController implements Observer {
 	@FXML
 	void startGame(ActionEvent event) {
 
-		if(timer!=null){
-		timer.stop();
+		// If a game is currently ongoing or paused --> Switch between pause and resume
+		if (game.getStats() != null && game.getStats().isGameOver() == false) {
+			if (isRunning) {
+				timer.stop();
+				startButton.setText(conf.getPropertyAsString("resume.button"));
+				isRunning = false;
+			} else {
+				timer.start();
+				startButton.setText(conf.getPropertyAsString("pause.button"));
+				isRunning = true;
+			}
 		}
-		GameStatistics stats = new GameStatistics(new Player());
-		game = new GameEngine(sizeOfBoard, stats);
-		stats.addObserver(this);
-		timer = new Timer();
-		timer.addObserver(this);
-		fromIntToLabel(game.getBoard());
-		labelScoreNumber.setText("0");
 
+		// If no game is ongoing --> Initialize new game:
+		if (game.getStats() == null || game.getStats().isGameOver()) {
+
+			GameStatistics stats = new GameStatistics(new Player());
+			game = new GameEngine(sizeOfBoard, stats);
+			stats.addObserver(this);
+			timer = new Timer();
+			timer.addObserver(this);
+			fromIntToLabel(game.getBoard());
+			labelScoreNumber.setText("0");
+			isRunning = true;
+			startButton.setText(conf.getPropertyAsString("pause.button"));
+		}
 	}
 
 	@FXML
@@ -146,7 +162,7 @@ public class MainUIController implements Observer {
 		final EventHandler<KeyEvent> keyEventHandler = new EventHandler<KeyEvent>() {
 			public void handle(final KeyEvent keyEvent) {
 
-				if (game.getStats() != null && !game.getStats().isGameOver()) {
+				if (isRunning) {
 					System.out.println(keyEvent.getCode());
 					boolean moved = false;
 					if (keyEvent.getCode() == KeyCode.UP) {
@@ -296,6 +312,8 @@ public class MainUIController implements Observer {
 	private void processGameOver(GameStatistics stats) {
 
 		timer.stop();
+		isRunning = false;
+		startButton.setText(conf.getPropertyAsString("restart.button"));
 		GameOverDialog dialog = new GameOverDialog(conf.getPropertyAsString("gameOverDialog.title"), stats.getScore());
 		if (dialog.showAndWait().isPresent()) {
 			stats.getPlayer().setNickName(dialog.getPlayerName());

@@ -13,11 +13,15 @@ public class Timer extends Observable implements Runnable {
 
 		this.millisElapsed = 0;
 		lastMillis = System.currentTimeMillis();
-		timerThread = new Thread(this);
-		timerThread.setDaemon(true);
-		timerThread.start();		
+		start();
 	}
 
+	public void start(){
+		lastMillis = System.currentTimeMillis();
+		timerThread = new Thread(this);
+		timerThread.setDaemon(true);
+		timerThread.start();
+	}
 		
 	public long getMillisElapsed() {
 		return millisElapsed;
@@ -46,5 +50,6 @@ public class Timer extends Observable implements Runnable {
 	
 	public void stop(){
 		timerThread.interrupt();
+		
 	}
 }

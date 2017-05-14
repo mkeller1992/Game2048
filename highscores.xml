@@ -81,5 +81,55 @@
             <StartMillis>1494779419720</StartMillis>
             <EndMillis>1494779430895</EndMillis>
         </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>jkj</Nickname>
+            </player>
+            <Points>216</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>36</NumberOfMoves>
+            <StartMillis>1494779780820</StartMillis>
+            <EndMillis>1494779787668</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Matt</Nickname>
+            </player>
+            <Points>316</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>36</NumberOfMoves>
+            <StartMillis>1494782464106</StartMillis>
+            <EndMillis>1494782501937</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Test</Nickname>
+            </player>
+            <Points>220</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>37</NumberOfMoves>
+            <StartMillis>1494782513409</StartMillis>
+            <EndMillis>1494782531488</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>jj</Nickname>
+            </player>
+            <Points>140</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>24</NumberOfMoves>
+            <StartMillis>1494782803214</StartMillis>
+            <EndMillis>1494782828413</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Test</Nickname>
+            </player>
+            <Points>224</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>38</NumberOfMoves>
+            <StartMillis>1494783625654</StartMillis>
+            <EndMillis>1494783648149</EndMillis>
+        </PlayerScore>
     </Highscores>
 </HighscoreList>
