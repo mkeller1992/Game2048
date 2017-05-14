@@ -32,9 +32,10 @@ public class Timer extends Observable implements Runnable {
 	public void run() {
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(100);
 				increaseMillis();
 			} catch (InterruptedException e) {
+				increaseMillis();
 				Thread.currentThread().interrupt();
 			}
 		}

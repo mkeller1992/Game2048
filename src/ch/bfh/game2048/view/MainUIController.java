@@ -21,7 +21,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -30,7 +29,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class MainUIController implements Observer {
@@ -53,7 +51,7 @@ public class MainUIController implements Observer {
 	@FXML
 	private Label labelTimerTime;
 
-	private Label[][] labelList;
+	private SuperLabel[][] labelList;
 
 	GameEngine game;
 
@@ -95,12 +93,12 @@ public class MainUIController implements Observer {
 		gameBoard.setMinSize(boardWidth, boardHeight);
 		gameBoard.setMaxSize(boardWidth, boardHeight);
 
-		labelList = new Label[sizeOfBoard][sizeOfBoard];
+		labelList = new SuperLabel[sizeOfBoard][sizeOfBoard];
 
 		for (int i = 0; i < sizeOfBoard; i++) {
 			for (int j = 0; j < sizeOfBoard; j++) {
 
-				Label label = new Label();
+				SuperLabel label = new SuperLabel(0);
 				label.setPrefSize((boardWidth * 1.0) / sizeOfBoard, (boardHeight * 1.0) / sizeOfBoard);
 				label.setAlignment(Pos.CENTER);
 				GridPane.setConstraints(label, j, i);
@@ -118,10 +116,12 @@ public class MainUIController implements Observer {
 		if (game.getStats() != null && game.getStats().isGameOver() == false) {
 			if (isRunning) {
 				timer.stop();
+				game.getStats().pauseTime();
 				startButton.setText(conf.getPropertyAsString("resume.button"));
 				isRunning = false;
 			} else {
 				timer.start();
+				game.getStats().resumeTime();
 				startButton.setText(conf.getPropertyAsString("pause.button"));
 				isRunning = true;
 			}
@@ -137,8 +137,8 @@ public class MainUIController implements Observer {
 			timer.addObserver(this);
 			fromIntToLabel(game.getBoard());
 			labelScoreNumber.setText("0");
-			isRunning = true;
 			startButton.setText(conf.getPropertyAsString("pause.button"));
+			isRunning = true;
 		}
 	}
 
@@ -194,18 +194,16 @@ public class MainUIController implements Observer {
 
 		int i = 0;
 		int j = 0;
-		for (Label[] row : labelList) {
-			for (Label label : row) {
-				// label.setText("" + tileArray[i][j].getValue());
+		for (SuperLabel[] row : labelList) {
+			for (SuperLabel label : row) {
 
-				setStyleOfTile(label, tileArray[i][j].getValue());
+				label.setTileNumber(tileArray[i][j].getValue());
 
 				if (tileArray[i][j].isMerged()) {
 					// fadeIn(label, 300, 0.5, 1.0, 3);
 				} else if (tileArray[i][j].isSpawned()) {
 					fadeIn(label, 1000, 0.0, 1.0, 1);
 				}
-
 				j++;
 			}
 			j = 0;
@@ -220,49 +218,6 @@ public class MainUIController implements Observer {
 		fadeTransition.setToValue(to);
 		fadeTransition.setCycleCount(nbOfcycles);
 		fadeTransition.play();
-
-	}
-
-	private void setStyleOfTile(Label label, int tileValue) {
-
-		if (tileValue == 0) {
-			label.setGraphic(new Text(""));
-		} else {
-			Text tileText = new Text("" + tileValue);
-			label.setGraphic(tileText);
-			scaleText(tileText, tileValue, label);
-			tileText.setFill(UITheme.valueOf(tileValue).getFontColor());
-		}
-
-		label.setStyle(
-				"-fx-font-weight: bold; -fx-border-color: rgb(187, 173, 160); -fx-border-width: 5; -fx-background-color: rgb("
-						+ UITheme.valueOf(tileValue).getBackgroundcolor() + ");");
-	}
-
-	private void scaleText(Text text, int tileValue, Label label) {
-
-		Bounds boundsOfText = text.getBoundsInLocal();
-		Bounds boundsOfLabel = label.getBoundsInLocal();
-
-		double multiplicator = 0;
-
-		if (10000 < tileValue) {
-			multiplicator = 0.9;
-		} else if (1000 < tileValue) {
-			multiplicator = 0.8;
-		} else if (100 < tileValue) {
-			multiplicator = 0.7;
-		} else {
-			multiplicator = 0.6;
-		}
-
-		double scaleX = multiplicator * (boundsOfLabel.getWidth()) / boundsOfText.getWidth();
-		double scaleY = multiplicator * (boundsOfLabel.getHeight()) / boundsOfText.getHeight();
-
-		double finalScale = Math.min(scaleX, scaleY);
-
-		text.setScaleX(finalScale);
-		text.setScaleY(finalScale);
 
 	}
 

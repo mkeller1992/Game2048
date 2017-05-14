@@ -131,5 +131,65 @@
             <StartMillis>1494783625654</StartMillis>
             <EndMillis>1494783648149</EndMillis>
         </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Mat</Nickname>
+            </player>
+            <Points>280</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>43</NumberOfMoves>
+            <StartMillis>1494798163188</StartMillis>
+            <EndMillis>1494798172659</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Keller Matthias</Nickname>
+            </player>
+            <Points>52</Points>
+            <HighestTile>8</HighestTile>
+            <NumberOfMoves>16</NumberOfMoves>
+            <StartMillis>1494799459191</StartMillis>
+            <EndMillis>1494799469279</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>hhjkj</Nickname>
+            </player>
+            <Points>84</Points>
+            <HighestTile>16</HighestTile>
+            <NumberOfMoves>21</NumberOfMoves>
+            <StartMillis>1494799540063</StartMillis>
+            <EndMillis>1494799552350</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Test test test</Nickname>
+            </player>
+            <Points>360</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>45</NumberOfMoves>
+            <StartMillis>1494799615749</StartMillis>
+            <EndMillis>1494799676090</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Test2</Nickname>
+            </player>
+            <Points>220</Points>
+            <HighestTile>32</HighestTile>
+            <NumberOfMoves>37</NumberOfMoves>
+            <StartMillis>1494799749885</StartMillis>
+            <EndMillis>1494799769523</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>488</Nickname>
+            </player>
+            <Points>488</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>57</NumberOfMoves>
+            <StartMillis>1494799956314</StartMillis>
+            <EndMillis>1494799982917</EndMillis>
+        </PlayerScore>
     </Highscores>
 </HighscoreList>

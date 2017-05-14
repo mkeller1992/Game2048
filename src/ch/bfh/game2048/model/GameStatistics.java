@@ -26,6 +26,7 @@ public class GameStatistics extends Observable {
 
 	private long startMil;
 	private long endMil;
+	private long pauseTimeMil;
 	private int rank;
 	private boolean gameOver;
 	private boolean gameContinue;
@@ -46,6 +47,7 @@ public class GameStatistics extends Observable {
 		this.highestValue = 0;
 		this.startMil = System.currentTimeMillis();
 		this.endMil = 0;
+		this.pauseTimeMil = 0;
 		this.gameOver = false;
 		this.gameContinue = false;
 		
@@ -141,7 +143,7 @@ public class GameStatistics extends Observable {
 
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
-		setEndMil(System.currentTimeMillis());
+		setEndMil(System.currentTimeMillis()-pauseTimeMil);
 		setChanged();
 		notifyObservers();
 	}
@@ -153,6 +155,15 @@ public class GameStatistics extends Observable {
 	@XmlTransient
 	public boolean isGameContinue() {
 		return gameContinue;
+	}
+	
+	public void pauseTime(){
+		setEndMil(System.currentTimeMillis());
+	}
+	
+	public void resumeTime(){
+		this.pauseTimeMil += System.currentTimeMillis()-endMil;
+		
 	}
 	
 }
