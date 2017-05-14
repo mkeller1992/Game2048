@@ -1,5 +1,8 @@
 package ch.bfh.game2048.view;
 
+import java.text.MessageFormat;
+
+import ch.bfh.game2048.persistence.Config;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.geometry.Insets;
@@ -15,13 +18,16 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 
 	TextField nameField;
 	Node okButton;
+	Config conf;
 
 	public GameOverDialog(String title, int finalScore) {
+		
+		conf = Config.getInstance();
 		this.setTitle(title);
-		this.setHeaderText("The Game is over. Your reached " + finalScore+" Pts.");
+		this.setHeaderText(MessageFormat.format(conf.getPropertyAsString("gameOverText1.dialog"), new Object[] {finalScore}));
 
 		// Set the button types.
-		ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+		ButtonType loginButtonType = new ButtonType(conf.getPropertyAsString("ok.button"), ButtonData.OK_DONE);
 		this.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
 
 		// Create the pane, the labels and the fields.
@@ -31,9 +37,9 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 		grid.setPadding(new Insets(20, 50, 10, 10));
 
 		nameField = new TextField();
-		nameField.setPromptText("Max Mustermann");
+		nameField.setPromptText(conf.getPropertyAsString("promptTextName.dialog"));
 
-		grid.add(new Label("Please enter your nickname: "), 0, 0);
+		grid.add(new Label(conf.getPropertyAsString("gameOverText2.dialog")), 0, 0);
 		grid.add(nameField, 1, 0);
 
 		// Enable/Disable OK button depending on whether a Channel Name / URL

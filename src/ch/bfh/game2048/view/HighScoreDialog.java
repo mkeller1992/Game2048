@@ -4,6 +4,7 @@ package ch.bfh.game2048.view;
 import java.util.List;
 
 import ch.bfh.game2048.model.GameStatistics;
+import ch.bfh.game2048.persistence.Config;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -14,10 +15,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 public class HighScoreDialog extends Dialog<Boolean> {
 
+	Config conf;
 
 	@SuppressWarnings("rawtypes")
 	public HighScoreDialog(String title, List<GameStatistics> highScores) {	
 		
+		conf = Config.getInstance();
 		
 		this.setTitle(title);
 		this.setHeaderText(null);
@@ -26,13 +29,13 @@ public class HighScoreDialog extends Dialog<Boolean> {
 
 		TableView table = new TableView<>();
 
-		TableColumn tblRank = new TableColumn("#");
-		TableColumn tblName = new TableColumn("Nickname");
-		TableColumn tblScore = new TableColumn("Score");
-		TableColumn tblHighestTile = new TableColumn("Max. Tile");
-		TableColumn tblDuration = new TableColumn("Duration");
-		TableColumn tblNumbOfMoves = new TableColumn("# of Moves");
-		TableColumn tblDate = new TableColumn("Date / Time");
+		TableColumn tblRank = new TableColumn(conf.getPropertyAsString("colTitleRank.dialog"));
+		TableColumn tblName = new TableColumn(conf.getPropertyAsString("colTitleName.dialog"));
+		TableColumn tblScore = new TableColumn(conf.getPropertyAsString("colTitleScore.dialog"));
+		TableColumn tblHighestTile = new TableColumn(conf.getPropertyAsString("colTitleMaxTile.dialog"));
+		TableColumn tblDuration = new TableColumn(conf.getPropertyAsString("colTitleDuration.dialog"));
+		TableColumn tblNumbOfMoves = new TableColumn(conf.getPropertyAsString("colTitleNumbOfMoves.dialog"));
+		TableColumn tblDate = new TableColumn(conf.getPropertyAsString("colTitleDateTime.dialog"));
 
 		tblRank.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("rankAsString"));
 		tblName.setCellValueFactory(new PropertyValueFactory<GameStatistics, String>("playerNickname"));
@@ -61,9 +64,6 @@ public class HighScoreDialog extends Dialog<Boolean> {
 		
 		table.setItems(FXCollections.observableArrayList(highScores));
 		table.setEditable(true);
-
-		// tblName.setCellFactory(TextFieldTableCell.forTableColumn());
-		// tblScore.setCellFactory(TextFieldTableCell.forTableColumn());
 
 		this.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
 		this.getDialogPane().setContent(table);

@@ -9,24 +9,30 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import ch.bfh.game2048.Main;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
 import ch.bfh.game2048.model.Highscore;
 import ch.bfh.game2048.model.Player;
 import ch.bfh.game2048.model.Tile;
+import ch.bfh.game2048.persistence.Config;
 import ch.bfh.game2048.persistence.ScoreHandler;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MainUIController implements Observer {
@@ -54,16 +60,31 @@ public class MainUIController implements Observer {
 	ScoreHandler scoreHandler;
 	Timer timer;
 	Highscore highscoreList;
+	Config conf;
+
+	Stage stage;
 
 	// Needs to be moved to general Properties later:
-	final static String HIGHSCORE_FILE = "highscores.xml";
+	// final static String HIGHSCORE_FILE = "highscores.xml";
+	// final static String VICTORY_ALERT_TITLE = "Victory :)";
+	// final static String VICTORY_ALERT_TEXT = "Congratulations you won!\nWould
+	// you like to continue?";
+	// final static int WINNING_NUMBER = 2048;
+
+	@FXML
+	private void handleKeyPressed(KeyEvent ke) {
+		System.out.println("Was here");
+		System.out.println("Key Pressed: " + ke.getCode());
+	}
 
 	@FXML
 	public void initialize() throws FileNotFoundException, JAXBException {
 
+		conf = Config.getInstance();
 		scoreHandler = new ScoreHandler();
-		highscoreList = scoreHandler.readScores();
-
+		highscoreList = scoreHandler.readScores(conf.getPropertyAsString("highscoreFileName"));
+		game = new GameEngine(4);
+		fromIntToLabel(game.getBoard());
 		installEventHandler(startButton);
 
 	}
@@ -79,6 +100,23 @@ public class MainUIController implements Observer {
 		fromIntToLabel(game.getBoard());
 		labelScoreNumber.setText("0");
 
+		// activateKeyListener();
+
+	}
+
+	public void activateKeyListener() {
+
+		Main.getStage().getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				System.out.println(event.getCode());
+
+				if (event.getCode() == KeyCode.UP) {
+					System.out.println("was here");
+					game.move(Direction.UP);
+				}
+			}
+		});
 	}
 
 	@FXML
@@ -101,7 +139,7 @@ public class MainUIController implements Observer {
 		final EventHandler<KeyEvent> keyEventHandler = new EventHandler<KeyEvent>() {
 			public void handle(final KeyEvent keyEvent) {
 
-				if (game != null && !game.getStats().isGameOver()) {
+				if (game.getStats() != null && !game.getStats().isGameOver()) {
 					System.out.println(keyEvent.getCode());
 					boolean moved = false;
 					if (keyEvent.getCode() == KeyCode.UP) {
@@ -136,8 +174,9 @@ public class MainUIController implements Observer {
 		int j = 0;
 		for (List<Label> row : labelList) {
 			for (Label label : row) {
-				label.setText("" + tileArray[i][j].getValue());
-				setStyle(label);
+				// label.setText("" + tileArray[i][j].getValue());
+
+				setStyle(label, tileArray[i][j].getValue());
 
 				if (tileArray[i][j].isMerged()) {
 					// fadeIn(label, 300, 0.5, 1.0, 3);
@@ -162,16 +201,47 @@ public class MainUIController implements Observer {
 
 	}
 
-	private void setStyle(Label label) {
-		int value = Integer.parseInt(label.getText());
+	private void setStyle(Label label, int tileValue) {
+		
+		if (tileValue == 0) {
+			label.setGraphic(new Text(""));
+		} else {
+			Text tileText = new Text("" + tileValue);
+			label.setGraphic(tileText);
+			scaleText(tileText, tileValue, label);
+			tileText.setFill(UITheme.valueOf(tileValue).getFontColor());
+		}
 
-		if (value == 0)
-			label.setText("");
+		label.setStyle("-fx-font-weight: bold; -fx-border-color: rgb(187, 173, 160); -fx-border-width: 5; -fx-background-color: rgb("
+				+ UITheme.valueOf(tileValue).getBackgroundcolor() + ");");
+	}
 
-		label.setStyle("-fx-font-size: 24pt ;-fx-font-weight: bold; -fx-text-fill: rgb("
-				+ UITheme.valueOf(value).getFontColor()
-				+ ") ; -fx-border-color: rgb(187, 173, 160); -fx-border-width: 5; -fx-background-color: rgb("
-				+ UITheme.valueOf(value).getBackgroundcolor() + ");");
+	private void scaleText(Text text, int tileValue, Label label) {
+
+		Bounds boundsOfText = text.getBoundsInLocal();
+		Bounds boundsOfLabel = label.getBoundsInLocal();
+
+		double multiplicator = 0;
+
+		if (10000 < tileValue) {
+			multiplicator = 0.9;
+		}
+		if (1000 < tileValue) {
+			multiplicator = 0.8;
+		} else if (100 < tileValue) {
+			multiplicator = 0.7;
+		} else {
+			multiplicator = 0.6;
+		}
+
+		double scaleX = multiplicator * (boundsOfLabel.getWidth()) / boundsOfText.getWidth();
+		double scaleY = multiplicator * (boundsOfLabel.getHeight()) / boundsOfText.getHeight();
+
+		double finalScale = Math.min(scaleX, scaleY);
+
+		text.setScaleX(finalScale);
+		text.setScaleY(finalScale);
+
 	}
 
 	public void update(Observable o, Object arg) {
@@ -182,7 +252,8 @@ public class MainUIController implements Observer {
 				@Override
 				public void run() {
 					long millis = ((Timer) o).getMillisElapsed();
-					labelTimerTime.setText(DurationFormatUtils.formatDuration(millis, "HH:mm:ss"));
+					labelTimerTime.setText(
+							DurationFormatUtils.formatDuration(millis, conf.getPropertyAsString("timerTimeFormat")));
 				}
 			});
 		}
@@ -196,22 +267,39 @@ public class MainUIController implements Observer {
 					GameStatistics stats = (GameStatistics) o;
 
 					if (stats.isGameOver()) {
+						processGameOver(stats);
+					}
 
-						timer.stop();
-						GameOverDialog dialog = new GameOverDialog("Game Over", stats.getScore());
-						if (dialog.showAndWait().isPresent()) {
-							stats.getPlayer().setNickName(dialog.getPlayerName());
-							highscoreList.getHighscore().add(stats);
-							showHighscoreList();
-							try {
-								scoreHandler.writeScores(highscoreList);
-							} catch ( JAXBException e) {
-								e.printStackTrace();
-							}
+					else if (stats.isGameContinue() == false
+							&& stats.getHighestValue() == conf.getPropertyAsInt("winningNumber")) {
+
+						VictoryAlert dialog = new VictoryAlert(conf.getPropertyAsString("victoryTitle.alert"),
+								conf.getPropertyAsString("victoryText.alert"));
+						boolean continuation = dialog.show();
+						if (continuation) {
+							stats.setGameContinue(true);
+						} else {
+							stats.setGameOver(true);
 						}
 					}
 				}
 			});
+		}
+	}
+
+	private void processGameOver(GameStatistics stats) {
+
+		timer.stop();
+		GameOverDialog dialog = new GameOverDialog(conf.getPropertyAsString("gameOverDialog.title"), stats.getScore());
+		if (dialog.showAndWait().isPresent()) {
+			stats.getPlayer().setNickName(dialog.getPlayerName());
+			highscoreList.getHighscore().add(stats);
+			showHighscoreList();
+			try {
+				scoreHandler.writeScores(highscoreList, conf.getPropertyAsString("highscoreFileName"));
+			} catch (JAXBException | FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

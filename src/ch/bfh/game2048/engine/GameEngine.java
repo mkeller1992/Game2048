@@ -1,7 +1,5 @@
 package ch.bfh.game2048.engine;
 
-import org.apache.commons.lang3.StringUtils;
-
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
 import ch.bfh.game2048.model.Tile;
@@ -12,7 +10,22 @@ public class GameEngine {
 	GameStatistics stats;
 
 	/**
-	 * Constructor of the GameEngine, Initializes the board with the given size.
+	 * Constructor 1 of the GameEngine, Initializes the board of a given size
+	 * with empty Tiles, yet without any spawned numbers
+	 * 
+	 * @param boardSize
+	 *            size of the board
+	 */
+	
+	public GameEngine(int boardSize){
+		this.boardSize = boardSize;
+		board = new Tile[boardSize][boardSize];
+		initGameBoard();
+	}
+	
+	
+	/**
+	 * Constructor 2 of the GameEngine, Initializes the board with the given size and spawns random tiles.
 	 * All the statistics are recorded in the given GameStatistics-Object.
 	 * 
 	 * @param boardSize
@@ -27,11 +40,14 @@ public class GameEngine {
 		board = new Tile[boardSize][boardSize];
 
 		initGameBoard();
+		
+		spawnRandomTile();
+		spawnRandomTile();
+		
 	}
 
 	/**
-	 * Initializes the gameBoard with new Tile-Objects and spawns two random
-	 * tiles
+	 * Initializes the gameBoard with new (empty) Tile-Objects
 	 */
 	private void initGameBoard() {
 
@@ -40,9 +56,6 @@ public class GameEngine {
 				board[i][j] = new Tile();
 			}
 		}
-
-		spawnRandomTile();
-		spawnRandomTile();
 	}
 
 	private void spawnRandomTile() {
@@ -79,7 +92,9 @@ public class GameEngine {
 		if (moved) {
 			stats.incrementMoves();
 			spawnRandomTile();
-			stats.setGameOver(isGameOver());
+			if(isGameOver()){
+			stats.setGameOver(true);
+			}
 		}		
 		
 		return moved;

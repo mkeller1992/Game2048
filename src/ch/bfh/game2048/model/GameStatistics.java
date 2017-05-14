@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import ch.bfh.game2048.persistence.Config;
+
 @XmlType(propOrder = { "player", "score", "highestValue", "amountOfMoves", "startMil" ,"endMil" })
 public class GameStatistics extends Observable {
 	private Player player;
@@ -26,14 +28,14 @@ public class GameStatistics extends Observable {
 	private long endMil;
 	private int rank;
 	private boolean gameOver;
+	private boolean gameContinue;
 
-	// Need to be moved to "general properties" later:
 	DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
 	NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
-	String timeFormat = "HH:mm:ss";
+	String timeFormat = Config.getInstance().getPropertyAsString("timerTimeFormat");
 
 	public GameStatistics() {
-
+		
 	}
 
 	public GameStatistics(Player player) {
@@ -45,6 +47,8 @@ public class GameStatistics extends Observable {
 		this.startMil = System.currentTimeMillis();
 		this.endMil = 0;
 		this.gameOver = false;
+		this.gameContinue = false;
+		
 	}
 
 
@@ -117,6 +121,10 @@ public class GameStatistics extends Observable {
 	public void setEndMil(long endMil) {
 		this.endMil = endMil;
 	}
+	
+	public String getFormattedDuration() {
+		return DurationFormatUtils.formatDuration(getEndMil()-getStartMil(), timeFormat);
+	}
 
 	public Player getPlayer() {
 		return player;
@@ -137,9 +145,14 @@ public class GameStatistics extends Observable {
 		setChanged();
 		notifyObservers();
 	}
-	
-	public String getFormattedDuration() {
-		return DurationFormatUtils.formatDuration(getEndMil()-getStartMil(), timeFormat);
+
+	public void setGameContinue(boolean gameContinue) {
+		this.gameContinue = gameContinue;
+	}
+
+	@XmlTransient
+	public boolean isGameContinue() {
+		return gameContinue;
 	}
 	
 }

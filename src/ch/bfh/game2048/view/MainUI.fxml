@@ -14,7 +14,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500" prefWidth="400" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.bfh.game2048.view.MainUIController">
 	<center>
-		<GridPane fx:id="gameBoard" prefHeight="400" prefWidth="400" minHeight="400" minWidth="400" maxHeight="400" maxWidth="400">
+		<GridPane fx:id="gameBoard" prefHeight="400" prefWidth="400" minHeight="400" minWidth="400" maxHeight="400" maxWidth="400" onKeyPressed="#handleKeyPressed">
 			<rowConstraints>
 				<RowConstraints minHeight="10.0" prefHeight="150.0" />
 				<RowConstraints minHeight="10.0" prefHeight="150.0" />
