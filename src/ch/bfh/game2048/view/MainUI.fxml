@@ -11,51 +11,54 @@
 <?import javafx.scene.layout.BorderPane?>
 
 
-
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500" prefWidth="400" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.bfh.game2048.view.MainUIController">
-
-	<top>
-		<GridPane prefWidth="400" prefHeight="100" maxWidth="400" BorderPane.alignment="CENTER">
-			<columnConstraints>
-				<ColumnConstraints percentWidth="25" />
-				<ColumnConstraints percentWidth="25" />
-				<ColumnConstraints percentWidth="50" />
-			</columnConstraints>
-			<rowConstraints>
-				<RowConstraints minHeight="10.0" prefHeight="100.0" />
-				<RowConstraints minHeight="10.0" prefHeight="100.0" />
-			</rowConstraints>
-			<children>
-				<Button fx:id="startButton" mnemonicParsing="false" onAction="#startGame" text="Start" GridPane.rowIndex="0" GridPane.columnIndex="0" />
-				<Button fx:id="highScoreButton" mnemonicParsing="false" onAction="#showHighScore" text="Highscore" GridPane.rowIndex="1" GridPane.columnIndex="0" />
-				<Label fx:id="labelScoreName" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="Score:" GridPane.rowIndex="0" GridPane.columnIndex="1">
-					<font>
-						<Font name="System Bold" size="25.0" />
-					</font>
-				</Label>
-				<Label fx:id="labelScoreNumber" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="0" GridPane.rowIndex="0" GridPane.columnIndex="2">
-					<font>
-						<Font name="System Bold" size="25.0" />
-					</font>
-				</Label>
-				<Label fx:id="labelTimerName" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="Time:" GridPane.rowIndex="1" GridPane.columnIndex="1">
-					<font>
-						<Font name="System Bold" size="25.0" />
-					</font>
-				</Label>
-				<Label fx:id="labelTimerTime" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="0" GridPane.rowIndex="1" GridPane.columnIndex="2">
-					<font>
-						<Font name="System Bold" size="25.0" />
-					</font>
-				</Label>
-			</children>
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.bfh.game2048.view.MainUIController">
+   <children>
+      <BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="500" prefWidth="400">
+      
+            	<top>
+      		<GridPane maxWidth="400" prefHeight="100" prefWidth="400" BorderPane.alignment="CENTER">
+      			<columnConstraints>
+      				<ColumnConstraints percentWidth="25" />
+      				<ColumnConstraints percentWidth="25" />
+      				<ColumnConstraints percentWidth="50" />
+      			</columnConstraints>
+      			<rowConstraints>
+      				<RowConstraints minHeight="10.0" prefHeight="100.0" />
+      				<RowConstraints minHeight="10.0" prefHeight="100.0" />
+      			</rowConstraints>
+      			<children>
+      				<Button fx:id="startButton" mnemonicParsing="false" onAction="#startGame" text="Start" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+      				<Button fx:id="highScoreButton" mnemonicParsing="false" onAction="#showHighScore" text="Highscore" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+      				<Label fx:id="labelScoreName" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="Score:" GridPane.columnIndex="1" GridPane.rowIndex="0">
+      					<font>
+      						<Font name="System Bold" size="25.0" />
+      					</font>
+      				</Label>
+      				<Label fx:id="labelScoreNumber" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+      					<font>
+      						<Font name="System Bold" size="25.0" />
+      					</font>
+      				</Label>
+      				<Label fx:id="labelTimerName" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="Time:" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      					<font>
+      						<Font name="System Bold" size="25.0" />
+      					</font>
+      				</Label>
+      				<Label fx:id="labelTimerTime" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+      					<font>
+      						<Font name="System Bold" size="25.0" />
+      					</font>
+      				</Label>
+      			</children>
+      		</GridPane>
+      	</top>
+      
+            
+            	<center>
+      		<GridPane fx:id="gameBoard">
 		</GridPane>
-	</top>
-
-
-	<center>
-		<GridPane fx:id="gameBoard">
-		</GridPane>
-	</center>
-
-</BorderPane>
+      	</center>
+      
+            </BorderPane>
+   </children>
+</StackPane>

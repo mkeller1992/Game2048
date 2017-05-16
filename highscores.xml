@@ -191,5 +191,25 @@
             <StartMillis>1494799956314</StartMillis>
             <EndMillis>1494799982917</EndMillis>
         </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Matthias Keller</Nickname>
+            </player>
+            <Points>16640</Points>
+            <HighestTile>1024</HighestTile>
+            <NumberOfMoves>987</NumberOfMoves>
+            <StartMillis>1494801426787</StartMillis>
+            <EndMillis>1494802313618</EndMillis>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Matthias Keller</Nickname>
+            </player>
+            <Points>16556</Points>
+            <HighestTile>1024</HighestTile>
+            <NumberOfMoves>997</NumberOfMoves>
+            <StartMillis>1494802470513</StartMillis>
+            <EndMillis>1494803395767</EndMillis>
+        </PlayerScore>
     </Highscores>
 </HighscoreList>

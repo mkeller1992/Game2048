@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import ch.bfh.game2048.Main;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
@@ -23,12 +24,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class MainUIController implements Observer {
@@ -69,7 +72,7 @@ public class MainUIController implements Observer {
 	@FXML
 	public void initialize() throws FileNotFoundException, JAXBException {
 
-		setBoardMeasures(3, 400, 400);
+		setBoardMeasures(4, 400, 400);
 		initializeBoard();
 
 		conf = Config.getInstance();
@@ -144,7 +147,15 @@ public class MainUIController implements Observer {
 
 	@FXML
 	void showHighScore(ActionEvent event) {
-		showHighscoreList();
+		
+		try {
+			Main.switchScene(Scenes.HIGHSCORE);
+		} catch (FileNotFoundException | JAXBException e) {
+			e.printStackTrace();
+		}
+		
+		
+//		showHighscoreList();
 	}
 
 	public void setHighscoreList(Highscore highscoreList) {
