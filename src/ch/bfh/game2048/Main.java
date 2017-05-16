@@ -8,6 +8,7 @@ import ch.bfh.game2048.model.Highscore;
 import ch.bfh.game2048.persistence.Config;
 import ch.bfh.game2048.persistence.ScoreHandler;
 import ch.bfh.game2048.view.HighScoreDialogTest;
+import ch.bfh.game2048.view.MainUIController;
 import ch.bfh.game2048.view.Scenes;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +20,7 @@ public class Main extends Application {
 
 	static Stage stage;
 	static Scene mainScene;
+	static MainUIController controller;
 
 	public static void switchScene(Scenes nextScene) throws FileNotFoundException, JAXBException {
 
@@ -27,33 +29,33 @@ public class Main extends Application {
 			stage.setScene(mainScene);
 			return;
 		case HIGHSCORE:
-			Config conf = Config.getInstance();
-			ScoreHandler scoreHandler = new ScoreHandler();
-			Highscore highscoreList = scoreHandler.readScores(conf.getPropertyAsString("highscoreFileName"));
-			HighScoreDialogTest hsTest = new HighScoreDialogTest("Title", highscoreList.getHighscore());
-			Scene scene = new Scene(hsTest, 420, 520);
+			HighScoreDialogTest highScorePane = controller.getHighScorePane();
+			Scene scene = new Scene(highScorePane, 420, 520);
 			stage.setScene(scene);
-			stage.show();
 			break;
 		case SETTINGS:
-
 			break;
+		default:
+			break;
+
 		}
 	}
 
 	@Override
 	public void start(Stage primaryStage) {
-			
-			try {	
-			StackPane root = (StackPane) FXMLLoader.load(getClass().getResource("view/MainUI.fxml"));
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("view/MainUI.fxml"));		
+			StackPane root = (StackPane) loader.load();
+			this.controller = (MainUIController) loader.getController();			
 			this.mainScene = new Scene(root, 420, 520);
 			this.stage = primaryStage;
 			mainScene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());
-				primaryStage.setScene(mainScene);
-				primaryStage.show();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			primaryStage.setScene(mainScene);
+			primaryStage.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) {

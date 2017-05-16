@@ -83,6 +83,11 @@ public class MainUIController implements Observer {
 		installEventHandler(startButton);
 
 	}
+	
+	public HighScoreDialogTest getHighScorePane() throws FileNotFoundException, JAXBException{		
+		return new HighScoreDialogTest("Highscore", highscoreList.getHighscore());
+		
+	}
 
 	public void setBoardMeasures(int numbOfTilesPerRow, int boardWidth, int boardHeight) {
 		this.sizeOfBoard = numbOfTilesPerRow;
