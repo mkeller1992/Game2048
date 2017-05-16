@@ -12,13 +12,14 @@ import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class HighScoreDialogTest extends VBox {
 
@@ -27,16 +28,12 @@ public class HighScoreDialogTest extends VBox {
 	Config conf;
 
 	@SuppressWarnings("rawtypes")
-	public HighScoreDialogTest(String title, List<GameStatistics> highScores) {
+	public HighScoreDialogTest(List<GameStatistics> highScores) {
 
 		conf = Config.getInstance();
 
-		// this.setTitle(title);
-		// this.setHeaderText(null);
-		//
-		// this.getDialogPane().setPrefSize(770, 500);
-
 		TableView table = new TableView<>();
+		table.setPrefHeight(500);
 
 		TableColumn tblRank = new TableColumn(conf.getPropertyAsString("colTitleRank.dialog"));
 		TableColumn tblName = new TableColumn(conf.getPropertyAsString("colTitleName.dialog"));
@@ -56,6 +53,7 @@ public class HighScoreDialogTest extends VBox {
 
 		table.getColumns().addAll(tblRank, tblName, tblScore, tblHighestTile, tblDuration, tblNumbOfMoves, tblDate);
 
+		tblRank.setPrefWidth(50);
 		tblName.setPrefWidth(150);
 		tblScore.setPrefWidth(90);
 		tblScore.setStyle("-fx-alignment: CENTER-RIGHT;");
@@ -77,13 +75,17 @@ public class HighScoreDialogTest extends VBox {
 		// this.getDialogPane().setContent(table);
 		table.getSortOrder().add(tblScore);
 
-		okayButton = new Button("OK");
+		
+		// Panel with "Back to Game"-Button
+		
+		HBox buttonPanel = new HBox();
+		buttonPanel.setAlignment(Pos.CENTER_RIGHT);
+		buttonPanel.setPadding(new Insets(10, 10, 10, 10));		
+		okayButton = new Button(conf.getPropertyAsString("backToGame.button"));
 		okayButton.addEventHandler(MouseEvent.MOUSE_CLICKED, createSolButtonHandler());
+		buttonPanel.getChildren().add(okayButton);
 
-		this.setSpacing(50);
-		this.setPadding(new Insets(30, 30, 30, 30));
-		this.getChildren().addAll(table, okayButton);
-
+		this.getChildren().addAll(table, buttonPanel);	
 	}
 
 	public EventHandler<Event> createSolButtonHandler() {

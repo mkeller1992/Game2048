@@ -23,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -31,6 +32,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -85,7 +87,7 @@ public class MainUIController implements Observer {
 	}
 	
 	public HighScoreDialogTest getHighScorePane() throws FileNotFoundException, JAXBException{		
-		return new HighScoreDialogTest("Highscore", highscoreList.getHighscore());
+		return new HighScoreDialogTest(highscoreList.getHighscore());
 		
 	}
 
@@ -93,6 +95,15 @@ public class MainUIController implements Observer {
 		this.sizeOfBoard = numbOfTilesPerRow;
 		this.boardWidth = boardWidth;
 		this.boardHeight = boardHeight;
+	}
+	
+	// moves the stage to the center of the screen --> After change of scene
+	public void centerStage(){		
+		Stage stage = Main.getStage();
+	    Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+	    stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2); 
+	    stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);  
+		
 	}
 
 	private void initializeBoard() {
@@ -288,7 +299,7 @@ public class MainUIController implements Observer {
 		GameOverDialog dialog = new GameOverDialog(conf.getPropertyAsString("gameOverDialog.title"), stats.getScore());
 		if (dialog.showAndWait().isPresent()) {
 			stats.getPlayer().setNickName(dialog.getPlayerName());
-			highscoreList.getHighscore().add(stats);
+			highscoreList.addHighscore(stats);
 			showHighscoreList();
 			try {
 				scoreHandler.writeScores(highscoreList, conf.getPropertyAsString("highscoreFileName"));

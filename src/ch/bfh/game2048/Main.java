@@ -4,16 +4,16 @@ import java.io.FileNotFoundException;
 
 import javax.xml.bind.JAXBException;
 
-import ch.bfh.game2048.model.Highscore;
-import ch.bfh.game2048.persistence.Config;
-import ch.bfh.game2048.persistence.ScoreHandler;
 import ch.bfh.game2048.view.HighScoreDialogTest;
 import ch.bfh.game2048.view.MainUIController;
 import ch.bfh.game2048.view.Scenes;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -22,6 +22,10 @@ public class Main extends Application {
 	static Scene mainScene;
 	static MainUIController controller;
 
+	public static Stage getStage() {
+		return stage;
+	}
+
 	public static void switchScene(Scenes nextScene) throws FileNotFoundException, JAXBException {
 
 		switch (nextScene) {
@@ -29,9 +33,11 @@ public class Main extends Application {
 			stage.setScene(mainScene);
 			return;
 		case HIGHSCORE:
+
 			HighScoreDialogTest highScorePane = controller.getHighScorePane();
-			Scene scene = new Scene(highScorePane, 420, 520);
+			Scene scene = new Scene(highScorePane, 770, 550);
 			stage.setScene(scene);
+			controller.centerStage();
 			break;
 		case SETTINGS:
 			break;
@@ -45,11 +51,13 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("view/MainUI.fxml"));		
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("view/MainUI.fxml"));
 			StackPane root = (StackPane) loader.load();
-			this.controller = (MainUIController) loader.getController();			
+			this.controller = (MainUIController) loader.getController();
 			this.mainScene = new Scene(root, 420, 520);
 			this.stage = primaryStage;
+			stage.setTitle("2048 by M&M");
+			stage.getIcons().add(new Image(getClass().getResourceAsStream("meteor.png")));
 			mainScene.getStylesheets().add(getClass().getResource("view/application.css").toExternalForm());
 			primaryStage.setScene(mainScene);
 			primaryStage.show();
