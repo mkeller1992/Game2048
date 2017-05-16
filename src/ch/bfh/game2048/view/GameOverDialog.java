@@ -12,7 +12,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 public class GameOverDialog extends Dialog<String> implements InvalidationListener {
 
@@ -25,6 +28,13 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 		conf = Config.getInstance();
 		this.setTitle(title);
 		this.setHeaderText(MessageFormat.format(conf.getPropertyAsString("gameOverText1.dialog"), new Object[] {finalScore}));
+		
+		Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("../meteor.png")));
+		
+		Image image = new Image(getClass().getResource("images/LosingSmiley.png").toExternalForm());
+		ImageView imageView = new ImageView(image);
+		this.setGraphic(imageView);
 
 		// Set the button types.
 		ButtonType loginButtonType = new ButtonType(conf.getPropertyAsString("ok.button"), ButtonData.OK_DONE);
