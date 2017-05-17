@@ -13,7 +13,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import ch.bfh.game2048.persistence.Config;
 
-@XmlType(propOrder = { "player", "score", "highestValue", "amountOfMoves", "startMil" ,"endMil" })
+@XmlType(propOrder = { "player", "score", "highestValue", "amountOfMoves", "startMil" ,"endMil","boardSize" })
 public class GameStatistics extends Observable {
 	private Player player;
 
@@ -28,6 +28,7 @@ public class GameStatistics extends Observable {
 	private long endMil;
 	private long pauseTimeMil;
 	private int rank;
+	private int boardSize;	
 	private boolean gameOver;
 	private boolean gameContinue;
 
@@ -39,7 +40,7 @@ public class GameStatistics extends Observable {
 		
 	}
 
-	public GameStatistics(Player player) {
+	public GameStatistics(Player player, int boardSize) {
 
 		this.player = player;
 		this.score = 0;
@@ -48,6 +49,7 @@ public class GameStatistics extends Observable {
 		this.startMil = System.currentTimeMillis();
 		this.endMil = 0;
 		this.pauseTimeMil = 0;
+		this.boardSize = boardSize;
 		this.gameOver = false;
 		this.gameContinue = false;
 		
@@ -134,6 +136,15 @@ public class GameStatistics extends Observable {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+	}
+
+	@XmlElement(name = "BoardSize")
+	public int getBoardSize() {
+		return boardSize;
+	}
+
+	public void setBoardSize(int boardSize) {
+		this.boardSize = boardSize;
 	}
 
 	@XmlTransient

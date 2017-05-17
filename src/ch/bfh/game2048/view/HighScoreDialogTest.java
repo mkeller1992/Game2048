@@ -1,40 +1,96 @@
 package ch.bfh.game2048.view;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
 import ch.bfh.game2048.Main;
 import ch.bfh.game2048.model.GameStatistics;
+import ch.bfh.game2048.model.Highscore;
 import ch.bfh.game2048.persistence.Config;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 public class HighScoreDialogTest extends VBox {
 
 	EventHandler<Event> btnSolHandler;
 	Button okayButton;
 	Config conf;
+	ComboBox<GameStatistics> boardSizeList;
+	
+	ObservableList<GameStatistics> masterList;
+	FilteredList<GameStatistics> filteredData;
 
-	@SuppressWarnings("rawtypes")
-	public HighScoreDialogTest(List<GameStatistics> highScores) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public HighScoreDialogTest(Highscore highscores) {
 
 		conf = Config.getInstance();
-
+		
 		TableView table = new TableView<>();
-		table.setPrefHeight(500);
+	
 
+		// Assemble titlePane
+		
+		HBox titlePane = new HBox();
+		titlePane.setPrefSize(770,100);
+		titlePane.setPadding(new Insets(10, 10, 10, 10));
+		titlePane.setSpacing(15);
+		Label titleLabel = new Label();
+		Text titleText = new Text("Highscore-List:");
+		titleText.setFont(Font.font(null, FontWeight.BOLD, 20));
+		titleLabel.setGraphic(titleText);
+		
+
+		// Set comboBox with list of board-sizes:
+		ComboBox boardSizeList = new ComboBox();
+		boardSizeList.getItems().setAll(BoardSizes.values());
+		
+		if(highscores.getHighscore().size()!=0){
+			BoardSizes sizeToBeSelected = BoardSizes.findStateByBoardSize(highscores.getHighscore().get(0).getBoardSize());
+			boardSizeList.getSelectionModel().select(sizeToBeSelected);
+		}		
+	
+		boardSizeList.setOnAction((event) -> {
+			
+		    BoardSizes selectedEntry = (BoardSizes) boardSizeList.getSelectionModel().getSelectedItem();		    	   	    
+		    highscores.prepareScoreList(selectedEntry.getBoardSize());	    
+		    masterList = FXCollections.observableArrayList(highscores.getHighscore());		    
+		    filteredData = new FilteredList<>(masterList, p -> true);		   		  		    
+		    table.setItems(filteredData);
+		    table.setEditable(true);
+
+		});
+		
+		
+		TextField filterField = new TextField();
+		filterField.setPromptText("Search Player by Name");
+		
+		
+		titlePane.getChildren().addAll(titleLabel,boardSizeList,filterField);		
+		
+		
+		// Assemble TableView
+		
+		table.setPrefHeight(500);
+		
 		TableColumn tblRank = new TableColumn(conf.getPropertyAsString("colTitleRank.dialog"));
 		TableColumn tblName = new TableColumn(conf.getPropertyAsString("colTitleName.dialog"));
 		TableColumn tblScore = new TableColumn(conf.getPropertyAsString("colTitleScore.dialog"));
@@ -66,26 +122,57 @@ public class HighScoreDialogTest extends VBox {
 		tblDate.setPrefWidth(170);
 		tblDate.setStyle("-fx-alignment: CENTER;");
 
-		tblScore.setSortType(TableColumn.SortType.DESCENDING);
-
-		table.setItems(FXCollections.observableArrayList(highScores));
-		table.setEditable(true);
-
-		// this.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
-		// this.getDialogPane().setContent(table);
-		table.getSortOrder().add(tblScore);
-
 		
+		
+		
+		// Set the way the table-entries are sorted:
+//		tblScore.setSortType(TableColumn.SortType.DESCENDING);
+//		table.getSortOrder().add(tblScore);
+
+	
 		// Panel with "Back to Game"-Button
-		
+
 		HBox buttonPanel = new HBox();
 		buttonPanel.setAlignment(Pos.CENTER_RIGHT);
 		buttonPanel.setPadding(new Insets(10, 10, 10, 10));		
 		okayButton = new Button(conf.getPropertyAsString("backToGame.button"));
 		okayButton.addEventHandler(MouseEvent.MOUSE_CLICKED, createSolButtonHandler());
-		buttonPanel.getChildren().add(okayButton);
+		buttonPanel.getChildren().addAll(okayButton);
 
-		this.getChildren().addAll(table, buttonPanel);	
+
+		// Set master-list with GameStatistics-Objects
+		masterList = FXCollections.observableArrayList(highscores.getHighscore());
+		
+		
+   // 1. Wrap the ObservableList in a FilteredList (initially display all data).
+        filteredData = new FilteredList<>(masterList, p -> true);
+		
+        // 2. Set the filter Predicate whenever the filter changes.
+        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(player -> {
+                // If filter text is empty, display all persons.
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // Compare first name and last name of every person with filter text.
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                if (player.getPlayer().getNickName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches first name.
+                }
+                return false; // Does not match.
+            });
+        });
+
+        
+             
+		table.setItems(filteredData);
+		table.setEditable(true);
+		this.getChildren().addAll(titlePane, table, buttonPanel);
+        
+        
+		
 	}
 
 	public EventHandler<Event> createSolButtonHandler() {

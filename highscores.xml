@@ -10,6 +10,40 @@
             <NumberOfMoves>1934</NumberOfMoves>
             <StartMillis>1494766184284</StartMillis>
             <EndMillis>1494768006330</EndMillis>
+            <BoardSize>0</BoardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Matthias Keller</Nickname>
+            </player>
+            <Points>31844</Points>
+            <HighestTile>2048</HighestTile>
+            <NumberOfMoves>1605</NumberOfMoves>
+            <StartMillis>1494982956756</StartMillis>
+            <EndMillis>1494984269670</EndMillis>
+            <BoardSize>0</BoardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Matthias Keller</Nickname>
+            </player>
+            <Points>30336</Points>
+            <HighestTile>2048</HighestTile>
+            <NumberOfMoves>1614</NumberOfMoves>
+            <StartMillis>1494981188789</StartMillis>
+            <EndMillis>1494982921228</EndMillis>
+            <BoardSize>0</BoardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>Matthias Keller</Nickname>
+            </player>
+            <Points>21604</Points>
+            <HighestTile>2048</HighestTile>
+            <NumberOfMoves>1079</NumberOfMoves>
+            <StartMillis>1494980109625</StartMillis>
+            <EndMillis>1494981171926</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -20,6 +54,7 @@
             <NumberOfMoves>987</NumberOfMoves>
             <StartMillis>1494801426787</StartMillis>
             <EndMillis>1494802313618</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -30,6 +65,7 @@
             <NumberOfMoves>997</NumberOfMoves>
             <StartMillis>1494802470513</StartMillis>
             <EndMillis>1494803395767</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -40,6 +76,7 @@
             <NumberOfMoves>222</NumberOfMoves>
             <StartMillis>1493812002893</StartMillis>
             <EndMillis>1493812034155</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -50,6 +87,7 @@
             <NumberOfMoves>167</NumberOfMoves>
             <StartMillis>1493814024665</StartMillis>
             <EndMillis>1493814032434</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -60,6 +98,7 @@
             <NumberOfMoves>158</NumberOfMoves>
             <StartMillis>1493557510863</StartMillis>
             <EndMillis>1493557520538</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -70,6 +109,7 @@
             <NumberOfMoves>139</NumberOfMoves>
             <StartMillis>1494977846127</StartMillis>
             <EndMillis>1494977875054</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -80,6 +120,7 @@
             <NumberOfMoves>101</NumberOfMoves>
             <StartMillis>1493561959951</StartMillis>
             <EndMillis>1493561967399</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -90,6 +131,7 @@
             <NumberOfMoves>84</NumberOfMoves>
             <StartMillis>1493559941874</StartMillis>
             <EndMillis>1493559963601</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -100,6 +142,7 @@
             <NumberOfMoves>57</NumberOfMoves>
             <StartMillis>1494799956314</StartMillis>
             <EndMillis>1494799982917</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -110,6 +153,7 @@
             <NumberOfMoves>45</NumberOfMoves>
             <StartMillis>1494799615749</StartMillis>
             <EndMillis>1494799676090</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -120,6 +164,7 @@
             <NumberOfMoves>45</NumberOfMoves>
             <StartMillis>1494779419720</StartMillis>
             <EndMillis>1494779430895</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -130,6 +175,7 @@
             <NumberOfMoves>36</NumberOfMoves>
             <StartMillis>1494782464106</StartMillis>
             <EndMillis>1494782501937</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -140,6 +186,7 @@
             <NumberOfMoves>52</NumberOfMoves>
             <StartMillis>1493559521280</StartMillis>
             <EndMillis>1493559598399</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -150,6 +197,7 @@
             <NumberOfMoves>43</NumberOfMoves>
             <StartMillis>1494798163188</StartMillis>
             <EndMillis>1494798172659</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -160,6 +208,7 @@
             <NumberOfMoves>38</NumberOfMoves>
             <StartMillis>1494783625654</StartMillis>
             <EndMillis>1494783648149</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
@@ -170,36 +219,51 @@
             <NumberOfMoves>37</NumberOfMoves>
             <StartMillis>1494799749885</StartMillis>
             <EndMillis>1494799769523</EndMillis>
+            <BoardSize>0</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
-                <Nickname>Test</Nickname>
+                <Nickname>Matthias Keller</Nickname>
             </player>
-            <Points>220</Points>
-            <HighestTile>32</HighestTile>
-            <NumberOfMoves>37</NumberOfMoves>
-            <StartMillis>1494782513409</StartMillis>
-            <EndMillis>1494782531488</EndMillis>
+            <Points>1164</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>124</NumberOfMoves>
+            <StartMillis>1495025765727</StartMillis>
+            <EndMillis>1495025773807</EndMillis>
+            <BoardSize>4</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
-                <Nickname>jkj</Nickname>
+                <Nickname>fdg</Nickname>
             </player>
-            <Points>216</Points>
-            <HighestTile>32</HighestTile>
-            <NumberOfMoves>36</NumberOfMoves>
-            <StartMillis>1494779780820</StartMillis>
-            <EndMillis>1494779787668</EndMillis>
+            <Points>868</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>103</NumberOfMoves>
+            <StartMillis>1495026062140</StartMillis>
+            <EndMillis>1495026068997</EndMillis>
+            <BoardSize>4</BoardSize>
         </PlayerScore>
         <PlayerScore>
             <player>
-                <Nickname>jj</Nickname>
+                <Nickname>dsf</Nickname>
             </player>
-            <Points>140</Points>
-            <HighestTile>32</HighestTile>
-            <NumberOfMoves>24</NumberOfMoves>
-            <StartMillis>1494782803214</StartMillis>
-            <EndMillis>1494782828413</EndMillis>
+            <Points>2592</Points>
+            <HighestTile>256</HighestTile>
+            <NumberOfMoves>227</NumberOfMoves>
+            <StartMillis>1495026508200</StartMillis>
+            <EndMillis>1495026520968</EndMillis>
+            <BoardSize>4</BoardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <player>
+                <Nickname>dffdg</Nickname>
+            </player>
+            <Points>1112</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>119</NumberOfMoves>
+            <StartMillis>1495026722662</StartMillis>
+            <EndMillis>1495026729070</EndMillis>
+            <BoardSize>4</BoardSize>
         </PlayerScore>
     </Highscores>
 </HighscoreList>

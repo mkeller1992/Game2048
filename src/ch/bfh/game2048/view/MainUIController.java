@@ -57,7 +57,7 @@ public class MainUIController implements Observer {
 	private Label labelTimerTime;
 
 	private SuperLabel[][] labelList;
-
+	
 	GameEngine game;
 
 	private ScoreHandler scoreHandler;
@@ -65,7 +65,7 @@ public class MainUIController implements Observer {
 	private Highscore highscoreList;
 	private Config conf;
 
-	private int sizeOfBoard = 4;
+	private int sizeOfBoard;
 	private int boardWidth = 400;
 	private int boardHeight = 400;
 
@@ -87,7 +87,8 @@ public class MainUIController implements Observer {
 	}
 	
 	public HighScoreDialogTest getHighScorePane() throws FileNotFoundException, JAXBException{		
-		return new HighScoreDialogTest(highscoreList.getHighscore());
+		highscoreList.prepareScoreList(sizeOfBoard);
+		return new HighScoreDialogTest(highscoreList);
 		
 	}
 
@@ -149,7 +150,8 @@ public class MainUIController implements Observer {
 		// If no game is ongoing --> Initialize new game:
 		if (game.getStats() == null || game.getStats().isGameOver()) {
 
-			GameStatistics stats = new GameStatistics(new Player());
+			GameStatistics stats = new GameStatistics(new Player(),sizeOfBoard);
+						
 			game = new GameEngine(sizeOfBoard, stats);
 			stats.addObserver(this);
 			timer = new Timer();
@@ -163,24 +165,17 @@ public class MainUIController implements Observer {
 
 	@FXML
 	void showHighScore(ActionEvent event) {
-		
+				
+		showHighscoreList();
+	}
+	
+
+	private void showHighscoreList() {
 		try {
 			Main.switchScene(Scenes.HIGHSCORE);
 		} catch (FileNotFoundException | JAXBException e) {
 			e.printStackTrace();
 		}
-		
-		
-//		showHighscoreList();
-	}
-
-	public void setHighscoreList(Highscore highscoreList) {
-		this.highscoreList = highscoreList;
-	}
-
-	private void showHighscoreList() {
-		HighScoreDialog highScore = new HighScoreDialog("Highscore", highscoreList.getHighscore());
-		highScore.show();
 	}
 
 	private void installEventHandler(final Node keyNode) {

@@ -2,6 +2,8 @@ package ch.bfh.game2048.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -18,25 +20,42 @@ public class Highscore {
 
 	@XmlElementWrapper(name = "Highscores")
 	@XmlElement(name = "PlayerScore")
-	private ArrayList<GameStatistics> highscores;
+	private ArrayList<GameStatistics> highscores;	
+	
+	@XmlTransient
+	private List<GameStatistics> filteredList;
 
 	public Highscore() {
 		comparator = new ScoreComparator();
 		highscores = new ArrayList<GameStatistics>();
+		filteredList = new ArrayList<GameStatistics>();
 	}
 
 	@XmlTransient
-	public ArrayList<GameStatistics> getHighscore() {		
-		Collections.sort(highscores, comparator);
-		setCutListAndSetRanks();
-		return highscores;
+	public List<GameStatistics> getHighscore() {		
+		return filteredList;
 	}
 
 	public void addHighscore(GameStatistics highscore) {
 		highscores.add(highscore);
-		Collections.sort(highscores, comparator);
-		setCutListAndSetRanks();
 	}
+	
+	// Filter scores with certain boardSize, rank them
+	// cut them down to a certain amount of scores
+	public void prepareScoreList(int boardSize){
+		updateFilteredList(boardSize);
+		Collections.sort(filteredList, comparator);
+		setCutListAndSetRanks();		
+	}
+	
+	
+	// Filter scores with certain boardSize and put it in new List
+	public void updateFilteredList(int boardSize){	
+
+		filteredList = highscores.stream().filter(h -> h.getBoardSize() == boardSize).collect(Collectors.toList()); 
+
+	}
+	
 
 	// Cut Highscore-List to the number of allowed entries (specified in Properties)
 	// Set a rank for each score according to the criteria in "ScoreComparator"
@@ -45,12 +64,12 @@ public class Highscore {
 
 		int maxNumberOfScores = Config.getInstance().getPropertyAsInt("maxNumberOfScores");
 		
-		if(highscores.size() > maxNumberOfScores){
-		highscores = new ArrayList<GameStatistics>(highscores.subList(0, maxNumberOfScores));
+		if(filteredList.size() > maxNumberOfScores){
+			filteredList = new ArrayList<GameStatistics>(highscores.subList(0, maxNumberOfScores));
 		}
 
-		for (int i = 0; i < highscores.size(); i++) {
-			highscores.get(i).setRank(i + 1);
+		for (int i = 0; i < filteredList.size(); i++) {
+			filteredList.get(i).setRank(i + 1);
 		}
 	}
 }

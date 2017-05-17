@@ -35,6 +35,7 @@ public class Main extends Application {
 		case HIGHSCORE:
 
 			HighScoreDialogTest highScorePane = controller.getHighScorePane();
+
 			Scene scene = new Scene(highScorePane, 770, 550);
 			stage.setScene(scene);
 			controller.centerStage();

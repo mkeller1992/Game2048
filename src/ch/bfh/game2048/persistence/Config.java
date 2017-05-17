@@ -8,6 +8,9 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class Config {
 
 	public final static String PROPERTIES_FILE_NAME = "2048.properties";
@@ -32,6 +35,10 @@ public class Config {
 	
 	public int getPropertyAsInt(String propertyKey) {
 		return Integer.parseInt(conf.getProperty(propertyKey).toString());
+	}
+	
+	public ObservableList<String> getPropertyAsObservableList(String keyValue) {
+		return FXCollections.observableArrayList(conf.getStringArray(keyValue));
 	}
 	
 	public Configuration load(String fileName) {

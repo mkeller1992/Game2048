@@ -12,7 +12,7 @@ public class EngineTest extends TestCase {
 	GameEngine game;
 	
 	private void init(int boardSize){		
-		game = new GameEngine(boardSize, new GameStatistics(new Player()));
+		game = new GameEngine(boardSize, new GameStatistics(new Player(),boardSize));
 		board = new Tile[boardSize][boardSize];
 		
 		
