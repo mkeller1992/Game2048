@@ -29,68 +29,61 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+@SuppressWarnings("unchecked")
 public class HighScoreDialogTest extends VBox {
 
-	EventHandler<Event> btnSolHandler;
+	TableView table;
 	Button okayButton;
+
+	ComboBox<BoardSizes> boardSizeList;
+
+	Highscore highscores;
 	Config conf;
-	ComboBox<GameStatistics> boardSizeList;
-	
+
+	EventHandler<Event> btnSolHandler;
+
 	ObservableList<GameStatistics> masterList;
 	FilteredList<GameStatistics> filteredData;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public HighScoreDialogTest(Highscore highscores) {
+	@SuppressWarnings({ "rawtypes" })
+	public HighScoreDialogTest(Highscore highscores, int boardSize) {
 
+		this.highscores = highscores;
 		conf = Config.getInstance();
-		
-		TableView table = new TableView<>();
-	
 
 		// Assemble titlePane
-		
+
 		HBox titlePane = new HBox();
-		titlePane.setPrefSize(770,100);
+		titlePane.setPrefSize(770, 100);
 		titlePane.setPadding(new Insets(10, 10, 10, 10));
-		titlePane.setSpacing(15);
+		titlePane.setSpacing(25);
 		Label titleLabel = new Label();
-		Text titleText = new Text("Highscore-List:");
+				
+		Text titleText = new Text(conf.getPropertyAsString("highscoreListTitle"));
 		titleText.setFont(Font.font(null, FontWeight.BOLD, 20));
 		titleLabel.setGraphic(titleText);
-		
 
 		// Set comboBox with list of board-sizes:
-		ComboBox boardSizeList = new ComboBox();
+		boardSizeList = new ComboBox();
 		boardSizeList.getItems().setAll(BoardSizes.values());
-		
-		if(highscores.getHighscore().size()!=0){
-			BoardSizes sizeToBeSelected = BoardSizes.findStateByBoardSize(highscores.getHighscore().get(0).getBoardSize());
-			boardSizeList.getSelectionModel().select(sizeToBeSelected);
-		}		
-	
-		boardSizeList.setOnAction((event) -> {
-			
-		    BoardSizes selectedEntry = (BoardSizes) boardSizeList.getSelectionModel().getSelectedItem();		    	   	    
-		    highscores.prepareScoreList(selectedEntry.getBoardSize());	    
-		    masterList = FXCollections.observableArrayList(highscores.getHighscore());		    
-		    filteredData = new FilteredList<>(masterList, p -> true);		   		  		    
-		    table.setItems(filteredData);
-		    table.setEditable(true);
 
+		BoardSizes sizeToBeSelected = BoardSizes.findStateByBoardSize(boardSize);
+		boardSizeList.getSelectionModel().select(sizeToBeSelected);
+
+		boardSizeList.setOnAction((event) -> {
+			setContentFromLists();
 		});
-		
-		
+
 		TextField filterField = new TextField();
-		filterField.setPromptText("Search Player by Name");
-		
-		
-		titlePane.getChildren().addAll(titleLabel,boardSizeList,filterField);		
-		
-		
+		filterField.setPromptText(conf.getPropertyAsString("highscoreListFilterText"));
+
+		titlePane.getChildren().addAll(titleLabel, boardSizeList, filterField);
+
 		// Assemble TableView
-		
+
+		table = new TableView<>();
 		table.setPrefHeight(500);
-		
+
 		TableColumn tblRank = new TableColumn(conf.getPropertyAsString("colTitleRank.dialog"));
 		TableColumn tblName = new TableColumn(conf.getPropertyAsString("colTitleName.dialog"));
 		TableColumn tblScore = new TableColumn(conf.getPropertyAsString("colTitleScore.dialog"));
@@ -122,57 +115,53 @@ public class HighScoreDialogTest extends VBox {
 		tblDate.setPrefWidth(170);
 		tblDate.setStyle("-fx-alignment: CENTER;");
 
-		
-		
-		
 		// Set the way the table-entries are sorted:
-//		tblScore.setSortType(TableColumn.SortType.DESCENDING);
-//		table.getSortOrder().add(tblScore);
+		// tblScore.setSortType(TableColumn.SortType.DESCENDING);
+		// table.getSortOrder().add(tblScore);
 
-	
 		// Panel with "Back to Game"-Button
 
 		HBox buttonPanel = new HBox();
 		buttonPanel.setAlignment(Pos.CENTER_RIGHT);
-		buttonPanel.setPadding(new Insets(10, 10, 10, 10));		
+		buttonPanel.setPadding(new Insets(10, 10, 10, 10));
 		okayButton = new Button(conf.getPropertyAsString("backToGame.button"));
 		okayButton.addEventHandler(MouseEvent.MOUSE_CLICKED, createSolButtonHandler());
 		buttonPanel.getChildren().addAll(okayButton);
 
+		// Set lists with the score-information
+		setContentFromLists();
 
-		// Set master-list with GameStatistics-Objects
-		masterList = FXCollections.observableArrayList(highscores.getHighscore());
-		
-		
-   // 1. Wrap the ObservableList in a FilteredList (initially display all data).
-        filteredData = new FilteredList<>(masterList, p -> true);
-		
-        // 2. Set the filter Predicate whenever the filter changes.
-        filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(player -> {
-                // If filter text is empty, display all persons.
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
+		// Set the filter Predicate whenever the filter changes.
+		filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData.setPredicate(player -> {
+				// If filter text is empty, display all score-entries.
+				if (newValue == null || newValue.isEmpty()) {
+					return true;
+				}
 
-                // Compare first name and last name of every person with filter text.
-                String lowerCaseFilter = newValue.toLowerCase();
+				// Compare player-nickname with the score-entries in the
+				// tableview
+				String lowerCaseFilter = newValue.toLowerCase();
 
-                if (player.getPlayer().getNickName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name.
-                }
-                return false; // Does not match.
-            });
-        });
+				if (player.getPlayer().getNickName().toLowerCase().contains(lowerCaseFilter)) {
+					return true; // Filter matches first name.
+				}
+				return false; // Does not match.
+			});
+		});
 
-        
-             
+		this.getChildren().addAll(titlePane, table, buttonPanel);
+
+	}
+
+	private void setContentFromLists() {
+
+		BoardSizes selectedEntry = (BoardSizes) boardSizeList.getSelectionModel().getSelectedItem();
+		masterList = FXCollections
+				.observableArrayList(highscores.getFilteredHighscoreList(selectedEntry.getBoardSize()));
+		filteredData = new FilteredList<>(masterList, p -> true);
 		table.setItems(filteredData);
 		table.setEditable(true);
-		this.getChildren().addAll(titlePane, table, buttonPanel);
-        
-        
-		
 	}
 
 	public EventHandler<Event> createSolButtonHandler() {

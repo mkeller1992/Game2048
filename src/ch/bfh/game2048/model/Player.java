@@ -7,10 +7,10 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder={"nickName", "firstName", "lastName", "email"})
 public class Player {		
-	private String nickName;
-	private String firstName;
-	private String lastName;
-	private String email;
+	private String nickName = "";
+	private String firstName= "";
+	private String lastName="";
+	private String email="";
 
 	
 

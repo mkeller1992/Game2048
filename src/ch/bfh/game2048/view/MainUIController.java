@@ -63,6 +63,7 @@ public class MainUIController implements Observer {
 	private ScoreHandler scoreHandler;
 	private Timer timer;
 	private Highscore highscoreList;
+	private Player player;
 	private Config conf;
 
 	private int sizeOfBoard;
@@ -85,10 +86,19 @@ public class MainUIController implements Observer {
 		installEventHandler(startButton);
 
 	}
+
 	
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+
 	public HighScoreDialogTest getHighScorePane() throws FileNotFoundException, JAXBException{		
-		highscoreList.prepareScoreList(sizeOfBoard);
-		return new HighScoreDialogTest(highscoreList);
+		return new HighScoreDialogTest(highscoreList, sizeOfBoard);
 		
 	}
 
@@ -150,7 +160,7 @@ public class MainUIController implements Observer {
 		// If no game is ongoing --> Initialize new game:
 		if (game.getStats() == null || game.getStats().isGameOver()) {
 
-			GameStatistics stats = new GameStatistics(new Player(),sizeOfBoard);
+			GameStatistics stats = new GameStatistics(getPlayer() ,sizeOfBoard);
 						
 			game = new GameEngine(sizeOfBoard, stats);
 			stats.addObserver(this);
@@ -233,6 +243,7 @@ public class MainUIController implements Observer {
 		}
 	}
 
+	// Fade-in effect when a tile is spawned
 	private void fadeIn(Label label, int durationMillis, double from, double to, int nbOfcycles) {
 
 		FadeTransition fadeTransition = new FadeTransition(Duration.millis(durationMillis), label);
@@ -240,7 +251,6 @@ public class MainUIController implements Observer {
 		fadeTransition.setToValue(to);
 		fadeTransition.setCycleCount(nbOfcycles);
 		fadeTransition.play();
-
 	}
 
 	public void update(Observable o, Object arg) {

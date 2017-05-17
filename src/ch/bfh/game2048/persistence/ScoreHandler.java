@@ -21,8 +21,6 @@ public class ScoreHandler {
 
 	public void writeScores(Highscore highscores, String xmlName) throws JAXBException, FileNotFoundException {
 
-		System.out.println("HS Size:" + highscores.getHighscore().size());
-
 		// create JAXB context and instantiate marshaller
 		JAXBContext context = JAXBContext.newInstance(Highscore.class);
 		Marshaller m = context.createMarshaller();

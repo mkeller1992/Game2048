@@ -21,46 +21,36 @@ public class Highscore {
 	@XmlElementWrapper(name = "Highscores")
 	@XmlElement(name = "PlayerScore")
 	private ArrayList<GameStatistics> highscores;	
-	
-	@XmlTransient
-	private List<GameStatistics> filteredList;
 
 	public Highscore() {
 		comparator = new ScoreComparator();
 		highscores = new ArrayList<GameStatistics>();
-		filteredList = new ArrayList<GameStatistics>();
 	}
 
-	@XmlTransient
-	public List<GameStatistics> getHighscore() {		
+
+	public List<GameStatistics> getFilteredHighscoreList(int boardSize) {		
+				
+		List<GameStatistics> filteredList = highscores.stream().filter(h -> h.getBoardSize() == boardSize).collect(Collectors.toList()); 
+		Collections.sort(filteredList, comparator);
+		setCutListAndSetRanks(filteredList);	
 		return filteredList;
 	}
+
 
 	public void addHighscore(GameStatistics highscore) {
 		highscores.add(highscore);
 	}
 	
-	// Filter scores with certain boardSize, rank them
-	// cut them down to a certain amount of scores
-	public void prepareScoreList(int boardSize){
-		updateFilteredList(boardSize);
-		Collections.sort(filteredList, comparator);
-		setCutListAndSetRanks();		
+	
+	public ArrayList<GameStatistics> getCompleteHighscoreList() {
+		return highscores;
 	}
 	
 	
-	// Filter scores with certain boardSize and put it in new List
-	public void updateFilteredList(int boardSize){	
-
-		filteredList = highscores.stream().filter(h -> h.getBoardSize() == boardSize).collect(Collectors.toList()); 
-
-	}
-	
-
 	// Cut Highscore-List to the number of allowed entries (specified in Properties)
 	// Set a rank for each score according to the criteria in "ScoreComparator"
-	
-	private void setCutListAndSetRanks() {
+
+	private void setCutListAndSetRanks(List<GameStatistics> filteredList) {
 
 		int maxNumberOfScores = Config.getInstance().getPropertyAsInt("maxNumberOfScores");
 		
