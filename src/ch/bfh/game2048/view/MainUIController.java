@@ -87,6 +87,7 @@ public class MainUIController implements Observer {
 	@FXML
 	public void initialize() throws FileNotFoundException, JAXBException {
 
+		// set properties
 		conf = Config.getInstance();
 		scoreHandler = new ScoreHandler();
 		highscoreList = scoreHandler.readScores(conf.getPropertyAsString("highscoreFileName"));
@@ -94,6 +95,7 @@ public class MainUIController implements Observer {
 		timer = new Timer();
 		timer.addObserver(this);
 		
+		// prepare gui
 		initializeBoard();
 		pauseResumeButton.setVisible(false);
 		activateKeyHandler(startButton);
@@ -335,8 +337,6 @@ public class MainUIController implements Observer {
 	 * @param Object
 	 * 
 	 */
-	
-	
 	
 	public void update(Observable o, Object arg) {
 

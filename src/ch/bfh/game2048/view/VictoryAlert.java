@@ -10,8 +10,24 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-public class VictoryAlert {
+/**
+ * 
+ * Victory screen which pops up when game is won
+ * 
+ * - Informs the player that he reached the game-winning tile
+ * - Asks the player if he wants to continue playing
+ *
+ */
 
+public class VictoryAlert {
+	Alert alert;
+	Image image;
+	ImageView imageView;
+
+	ButtonType yesButton;
+	ButtonType noButton;
+
+	Config conf;
 	String title;
 	String text;
 
@@ -23,27 +39,39 @@ public class VictoryAlert {
 
 	public boolean show() {
 
-		Config conf = Config.getInstance();
-		
-		Alert alert = new Alert(AlertType.CONFIRMATION);
+		conf = Config.getInstance();
+
+		// initialize alert
+		alert = new Alert(AlertType.CONFIRMATION);
+
+		// set alert-title
 		alert.setTitle(title);
+
+		// set main-text of alert
 		alert.setHeaderText(text);
-		
+
+		// set title-bar icon
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(getClass().getResourceAsStream("../meteor.png")));
-		
-		Image image = new Image(getClass().getResource("images/WinningSmiley.png").toExternalForm());
-		ImageView imageView = new ImageView(image);
+
+		// create and add image
+		image = new Image(getClass().getResource("images/WinningSmiley.png").toExternalForm());
+		imageView = new ImageView(image);
 		alert.setGraphic(imageView);
 
-		ButtonType buttonTypeOne = new ButtonType(conf.getPropertyAsString("yes.button"));
-		ButtonType buttonTypeTwo = new ButtonType(conf.getPropertyAsString("no.button"));
+		// create and add buttons
+		ButtonType yesButton = new ButtonType(conf.getPropertyAsString("yes.button"));
+		ButtonType noButton = new ButtonType(conf.getPropertyAsString("no.button"));
 
-		alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+		alert.getButtonTypes().setAll(yesButton, noButton);
 
 		Optional<ButtonType> result = alert.showAndWait();
 
-		return result.get() == buttonTypeOne ? true : false;
+		/*
+		 * Return true if player clicked the "Yes"-button, which means he wants
+		 * to continue playing
+		 */
+		return result.get() == yesButton ? true : false;
 	}
 
 }

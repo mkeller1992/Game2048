@@ -19,31 +19,48 @@ import javafx.stage.Stage;
 
 /**
  * 
- * Game-over screen
+ * Game-over screen which pops up when game is lost
  * 
- * - Displays the score reached by end of the game
- * - Asks the player to enter his name for the highscore-list
+ * - Displays the score reached by end of the game - Asks the player to enter
+ * his name for the highscore-list
  *
  */
 
-
 public class GameOverDialog extends Dialog<String> implements InvalidationListener {
 
+	GridPane grid;
 	TextField nameField;
+	Image image;
+	ImageView imageView;
 	Node okButton;
 	Config conf;
 
+	/**
+	 * 
+	 * @param title
+	 *            : text to be displayed in the title-bar
+	 * @param finalScore
+	 *            : final score of game that just ended
+	 */
+
 	public GameOverDialog(String title, int finalScore) {
-		
+
 		conf = Config.getInstance();
+
+		// Set text in title-bar
 		this.setTitle(title);
-		this.setHeaderText(MessageFormat.format(conf.getPropertyAsString("gameOverText1.dialog"), new Object[] {finalScore}));
-		
+
+		// Set main-text of dialog
+		this.setHeaderText(
+				MessageFormat.format(conf.getPropertyAsString("gameOverText1.dialog"), new Object[] { finalScore }));
+
+		// Set icons
 		Stage stage = (Stage) this.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image(getClass().getResourceAsStream("../meteor.png")));
-		
-		Image image = new Image(getClass().getResource("images/LosingSmiley.png").toExternalForm());
-		ImageView imageView = new ImageView(image);
+
+		// Set image
+		image = new Image(getClass().getResource("images/LosingSmiley.png").toExternalForm());
+		imageView = new ImageView(image);
 		this.setGraphic(imageView);
 
 		// Set the button types.
@@ -51,7 +68,7 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 		this.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
 
 		// Create the pane, the labels and the fields.
-		GridPane grid = new GridPane();
+		grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 50, 10, 10));
@@ -67,26 +84,25 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 		okButton = this.getDialogPane().lookupButton(loginButtonType);
 		okButton.setDisable(true);
 
-		// Do some validation
+		// Add Listener which checks if input-text is valid
 		nameField.textProperty().addListener(this);
-		
-		// Save user-input as String values
-		// Convert the result to a channel-name/url-pair when the OK button is
-		// clicked.
-		this.setResultConverter(dialogButton -> {
-			if (dialogButton == loginButtonType) {
-				return nameField.getText();
-			}
-			return null;
-		});
 
+		// Add grid-content to the main-pane
 		this.getDialogPane().setContent(grid);
 	}
 
+	/**
+	 * get the player-name entered by the user
+	 * 
+	 */
 	public String getPlayerName() {
 		return nameField.getText();
 	}
 
+	/**
+	 * - Check if input is valid
+	 * - Enable okay-Button when input valid
+	 */
 	@Override
 	public void invalidated(Observable arg0) {
 
