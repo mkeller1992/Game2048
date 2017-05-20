@@ -13,9 +13,32 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import ch.bfh.game2048.persistence.Config;
 
-@XmlType(propOrder = { "player", "score", "highestValue", "amountOfMoves", "startMil" ,"endMil","boardSize" })
+
+/**
+ * Game-Statistics
+ * 
+ * Stores the following statistics for one single game:
+ * 
+ * - player-name
+ * - number of moves needed
+ * - value of highest tile on board
+ * - start-time of the game (in milliseconds)
+ * - end-time of the game (in milliseconds)
+ * - board-size used (number of rows == number of columns)
+ * 
+ * - boolean gameOver: True when user has lost the game
+ * - boolean continue: True when game-winner wants to continue playing
+ * 
+ * - Game-Statistics are stored to an xml-file when user exits program
+ * 
+ */
+
+
+
+@XmlType(propOrder = { "playerName", "score", "highestValue", "amountOfMoves", "startMil", "endMil", "boardSize" })
 public class GameStatistics extends Observable {
-	private Player player;
+
+	private String playerName;
 
 	@XmlElement(name = "Points")
 	private int score;
@@ -28,7 +51,8 @@ public class GameStatistics extends Observable {
 	private long endMil;
 	private long pauseTimeMil;
 	private int rank;
-	private int boardSize;	
+	private int boardSize;
+	
 	private boolean gameOver;
 	private boolean gameContinue;
 
@@ -37,12 +61,12 @@ public class GameStatistics extends Observable {
 	String timeFormat = Config.getInstance().getPropertyAsString("timerTimeFormat");
 
 	public GameStatistics() {
-		
+
 	}
 
-	public GameStatistics(Player player, int boardSize) {
+	public GameStatistics(String playerName, int boardSize) {
 
-		this.player = player;
+		this.playerName = playerName;
 		this.score = 0;
 		this.amountOfMoves = 0;
 		this.highestValue = 0;
@@ -52,12 +76,16 @@ public class GameStatistics extends Observable {
 		this.boardSize = boardSize;
 		this.gameOver = false;
 		this.gameContinue = false;
-		
+
 	}
 
+	@XmlElement(name = "PlayerName")
+	public String getPlayerName() {
+		return playerName;
+	}
 
-	public String getPlayerNickname(){
-		return player.getNickName();
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
 	}
 
 	@XmlTransient
@@ -125,17 +153,9 @@ public class GameStatistics extends Observable {
 	public void setEndMil(long endMil) {
 		this.endMil = endMil;
 	}
-	
+
 	public String getFormattedDuration() {
-		return DurationFormatUtils.formatDuration(getEndMil()-getStartMil(), timeFormat);
-	}
-
-	public Player getPlayer() {
-		return player;
-	}
-
-	public void setPlayer(Player player) {
-		this.player = player;
+		return DurationFormatUtils.formatDuration(getEndMil() - getStartMil(), timeFormat);
 	}
 
 	@XmlElement(name = "BoardSize")
@@ -154,27 +174,48 @@ public class GameStatistics extends Observable {
 
 	public void setGameOver(boolean gameOver) {
 		this.gameOver = gameOver;
-		setEndMil(System.currentTimeMillis()-pauseTimeMil);
+		setEndMil(System.currentTimeMillis() - pauseTimeMil);
 		setChanged();
 		notifyObservers();
 	}
 
+	/** 
+	 * Set to true when player wants to continue playing after reaching game-winning tile
+	 * --> To prevent that the victory alert is displayed multiple times
+	 */	
+	
 	public void setGameContinue(boolean gameContinue) {
 		this.gameContinue = gameContinue;
 	}
-
+	
+	/** 
+	 * Returns true when game-winner wants to continue playing
+	 * --> To prevent that the victory alert is displayed multiple times
+	 */
+	
 	@XmlTransient
 	public boolean isGameContinue() {
 		return gameContinue;
 	}
 	
-	public void pauseTime(){
+	/** 
+	 * Set endMil = time at beginning of the pause -->
+	 * This is only temporary so that at the end of the pause
+	 * the pause-duration can be computed by deducting "endTime"
+	 * 
+	 */
+	
+	public void pauseTime() {
 		setEndMil(System.currentTimeMillis());
 	}
 	
-	public void resumeTime(){
-		this.pauseTimeMil += System.currentTimeMillis()-endMil;
-		
+	/** 
+	 * Previously endMil was set = time at beginning of the pause
+	 * Therefore the pause-duration can be computed by computing
+	 * "current time at resumption" minus "endMil"
+	 * 
+	 */
+	public void resumeTime() {
+		this.pauseTimeMil += System.currentTimeMillis() - endMil;
 	}
-	
 }

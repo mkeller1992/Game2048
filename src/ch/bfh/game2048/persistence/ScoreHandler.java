@@ -19,7 +19,21 @@ public class ScoreHandler {
 
 	GistUtil gistUtil = new GistUtil();
 
-	public void writeScores(Highscore highscores, String xmlName) throws JAXBException, FileNotFoundException {
+	/**
+	 * Marshaller:
+	 * 
+	 * > Writes game-scores to xml-file
+	 * 
+	 * 
+	 * @param highscores : containing list with GameStatistics-objects (game-scores)
+	 * @param xmlFile : path + name of the xml-file that is to be written (must include ".xml")
+	 * @throws JAXBException
+	 * @throws FileNotFoundException
+	 */
+	
+	
+	
+	public void writeScores(Highscore highscores, String xmlFile) throws JAXBException, FileNotFoundException {
 
 		// create JAXB context and instantiate marshaller
 		JAXBContext context = JAXBContext.newInstance(Highscore.class);
@@ -33,10 +47,24 @@ public class ScoreHandler {
 		m.marshal(highscores, System.out);
 
 		// Write to File
-		m.marshal(highscores, new File(xmlName));
+		m.marshal(highscores, new File(xmlFile));
 	}
 
-	public Highscore readScores(String xmlName) throws JAXBException, FileNotFoundException {
+	
+	
+	/**
+	 * 
+	 * Unmarshaller:
+	 * 
+	 * > Reads the game-scores from xml-file
+	 * 
+	 * @param xmlFile : path + name of the xml-file that is to be read (must include ".xml")
+	 * @return an instance of Highscore containing the list with GameStatistics-objects (game-scores)
+	 * @throws JAXBException
+	 * @throws FileNotFoundException
+	 */
+	
+	public Highscore readScores(String xmlFile) throws JAXBException, FileNotFoundException {
 
 		JAXBContext context = JAXBContext.newInstance(Highscore.class);
 
@@ -44,13 +72,22 @@ public class ScoreHandler {
 		// System.out.println("Output from our XML File: ");
 		Unmarshaller um = context.createUnmarshaller();
 
-		Highscore highscores = (Highscore) um.unmarshal(new FileReader(xmlName));
+		Highscore highscores = (Highscore) um.unmarshal(new FileReader(xmlFile));
 
 		// for (GameStatistics g : highscores.getHighscore()) {
 		// System.out.println(g.getScore());
 		// }
 		return highscores;
 	}
+	
+	
+	/**
+	 * 
+	 * write Scores to Gist
+	 * 
+	 * @param highscores
+	 * @throws JAXBException
+	 */
 
 	public void writeScores(Highscore highscores) throws JAXBException {
 
@@ -73,6 +110,16 @@ public class ScoreHandler {
 		gistUtil.setHighScore(content);
 	}
 
+	/**
+	 * 
+	 * Read scores from Gist
+	 * 
+	 * @return
+	 * @throws JAXBException
+	 * @throws FileNotFoundException
+	 */
+	
+	
 	public Highscore readScores() throws JAXBException, FileNotFoundException {
 
 		JAXBContext context = JAXBContext.newInstance(Highscore.class);

@@ -2,71 +2,85 @@
 <HighscoreList>
     <Highscores>
         <PlayerScore>
-            <player>
-                <Nickname>Matthias Keller</Nickname>
-            </player>
-            <Points>36816</Points>
-            <HighestTile>2048</HighestTile>
-            <NumberOfMoves>1934</NumberOfMoves>
-            <StartMillis>1494766184284</StartMillis>
-            <EndMillis>1494768006330</EndMillis>
+            <PlayerName>Matt</PlayerName>
+            <Points>1936</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>178</NumberOfMoves>
+            <StartMillis>1495220437378</StartMillis>
+            <EndMillis>1495220446105</EndMillis>
             <BoardSize>4</BoardSize>
         </PlayerScore>
         <PlayerScore>
-            <player>
-                <Nickname>Matthias Keller</Nickname>
-            </player>
-            <Points>31844</Points>
-            <HighestTile>2048</HighestTile>
-            <NumberOfMoves>1605</NumberOfMoves>
-            <StartMillis>1494982956756</StartMillis>
-            <EndMillis>1494984269670</EndMillis>
+            <PlayerName>Matt</PlayerName>
+            <Points>1112</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>116</NumberOfMoves>
+            <StartMillis>1495221749333</StartMillis>
+            <EndMillis>1495221772404</EndMillis>
             <BoardSize>4</BoardSize>
         </PlayerScore>
         <PlayerScore>
-            <player>
-                <Nickname>Matthias Keller</Nickname>
-            </player>
-            <Points>30336</Points>
-            <HighestTile>2048</HighestTile>
-            <NumberOfMoves>1614</NumberOfMoves>
-            <StartMillis>1494981188789</StartMillis>
-            <EndMillis>1494982921228</EndMillis>
+            <PlayerName>Matthias</PlayerName>
+            <Points>2900</Points>
+            <HighestTile>256</HighestTile>
+            <NumberOfMoves>232</NumberOfMoves>
+            <StartMillis>1495221792077</StartMillis>
+            <EndMillis>1495221807801</EndMillis>
             <BoardSize>4</BoardSize>
         </PlayerScore>
         <PlayerScore>
-            <player>
-                <Nickname>Matthias Keller</Nickname>
-            </player>
-            <Points>21604</Points>
-            <HighestTile>2048</HighestTile>
-            <NumberOfMoves>1079</NumberOfMoves>
-            <StartMillis>1494980109625</StartMillis>
-            <EndMillis>1494981171926</EndMillis>
+            <PlayerName>Mattttt</PlayerName>
+            <Points>1280</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>129</NumberOfMoves>
+            <StartMillis>1495221897772</StartMillis>
+            <EndMillis>1495221906787</EndMillis>
             <BoardSize>4</BoardSize>
         </PlayerScore>
         <PlayerScore>
-            <player>
-                <Nickname>Matthias Keller</Nickname>
-            </player>
-            <Points>16640</Points>
-            <HighestTile>1024</HighestTile>
-            <NumberOfMoves>987</NumberOfMoves>
-            <StartMillis>1494801426787</StartMillis>
-            <EndMillis>1494802313618</EndMillis>
+            <PlayerName>Matthias</PlayerName>
+            <Points>2400</Points>
+            <HighestTile>256</HighestTile>
+            <NumberOfMoves>202</NumberOfMoves>
+            <StartMillis>1495223005354</StartMillis>
+            <EndMillis>1495223014827</EndMillis>
             <BoardSize>4</BoardSize>
         </PlayerScore>
         <PlayerScore>
-            <player>
-                <Nickname>Matthias Keller</Nickname>
-            </player>
-            <Points>16556</Points>
-            <HighestTile>1024</HighestTile>
-            <NumberOfMoves>997</NumberOfMoves>
-            <StartMillis>1494802470513</StartMillis>
-            <EndMillis>1494803395767</EndMillis>
+            <PlayerName>jjj</PlayerName>
+            <Points>744</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>99</NumberOfMoves>
+            <StartMillis>1495277975344</StartMillis>
+            <EndMillis>1495277986339</EndMillis>
             <BoardSize>4</BoardSize>
         </PlayerScore>
-  
+        <PlayerScore>
+            <PlayerName>jjj</PlayerName>
+            <Points>492</Points>
+            <HighestTile>64</HighestTile>
+            <NumberOfMoves>70</NumberOfMoves>
+            <StartMillis>1495285931428</StartMillis>
+            <EndMillis>1495285936583</EndMillis>
+            <BoardSize>4</BoardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <PlayerName>test</PlayerName>
+            <Points>1388</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>147</NumberOfMoves>
+            <StartMillis>1495286156802</StartMillis>
+            <EndMillis>1495286163635</EndMillis>
+            <BoardSize>4</BoardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <PlayerName>test</PlayerName>
+            <Points>1288</Points>
+            <HighestTile>128</HighestTile>
+            <NumberOfMoves>132</NumberOfMoves>
+            <StartMillis>1495286341776</StartMillis>
+            <EndMillis>1495286349120</EndMillis>
+            <BoardSize>4</BoardSize>
+        </PlayerScore>
     </Highscores>
 </HighscoreList>

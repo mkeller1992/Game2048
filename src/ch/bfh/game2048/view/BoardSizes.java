@@ -1,5 +1,16 @@
 package ch.bfh.game2048.view;
 
+/**
+ * Board-Sizes Enum:
+ * 
+ * - Stores the allowed board-sizes and their description
+ * 
+ * - boardSize specifies the number of rows (== number of columns)
+ * - toString() specifies that the first param of the enum will be displayed as text
+ * 
+ */
+
+
 public enum BoardSizes {
 
 	SIZE_3("Board-Size 3x3", 3),
@@ -34,6 +45,10 @@ public enum BoardSizes {
 	    return null;
 	}
 	
+	/**
+	 * Causes the first enum-param to be displayed as text
+	 * e.g. text showed in a combobox that was populated by this enum
+	 */
 	public String toString(){
 		return description;
 	}

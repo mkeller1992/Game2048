@@ -221,6 +221,14 @@ public class GameEngine {
 		return false;
 	}
 	
+	
+	/**
+	 * Checks if there are still zeros on the board
+	 * or if there are at least two adjacent tiles of equal number
+	 * If both is NOT the case, the game is over
+	 * 
+	 * @return true if player cannot move anymore / has lost the game
+	 */
 
 	private boolean isGameOver() {
 		boolean boardFull = true;
@@ -266,6 +274,11 @@ public class GameEngine {
 	private int getRandomValue() {
 		return Math.random() > 0.9 ? 4 : 2;
 	}
+	
+	/**
+	 * Prints the game-board's current constellation
+	 * 
+	 */
 
 	public void print() {
 

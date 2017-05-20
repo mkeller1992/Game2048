@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 
 import javax.xml.bind.JAXBException;
 
-import ch.bfh.game2048.view.HighScoreDialogTest;
+import ch.bfh.game2048.view.HighscorePane;
 import ch.bfh.game2048.view.MainUIController;
 import ch.bfh.game2048.view.Scenes;
 import javafx.application.Application;
@@ -22,32 +22,7 @@ public class Main extends Application {
 	static Scene mainScene;
 	static MainUIController controller;
 
-	public static Stage getStage() {
-		return stage;
-	}
-
-	public static void switchScene(Scenes nextScene) throws FileNotFoundException, JAXBException {
-
-		switch (nextScene) {
-		case MAINSCENE:
-			stage.setScene(mainScene);
-			return;
-		case HIGHSCORE:
-
-			HighScoreDialogTest highScorePane = controller.getHighScorePane();
-
-			Scene scene = new Scene(highScorePane, 770, 550);
-			stage.setScene(scene);
-			controller.centerStage();
-			break;
-		case SETTINGS:
-			break;
-		default:
-			break;
-
-		}
-	}
-
+	
 	@Override
 	public void start(Stage primaryStage) {
 
@@ -111,4 +86,52 @@ public class Main extends Application {
 		// g.setHighScore("test?");
 
 	}
+	
+	
+	public static Stage getStage() {
+		return stage;
+	}
+
+	
+	/**
+	 * Switching from one screen to the other --> method will be replaced
+	 * 
+	 */
+	
+	public static void switchScene(Scenes nextScene) throws FileNotFoundException, JAXBException {
+
+		switch (nextScene) {
+		case MAINSCENE:
+			stage.setScene(mainScene);
+			return;
+		case HIGHSCORE:
+			HighscorePane highScorePane = controller.getHighScorePane();
+			Scene scene = new Scene(highScorePane, 770, 550);
+			stage.setScene(scene);
+			centerStage();
+			break;
+		case SETTINGS:
+			break;
+		default:
+			break;
+
+		}
+	}
+	
+	
+	/**
+	 * moves the stage to the center of the screen
+	 * --> useful in case of switching between scenes of different sizes
+	 * 
+	 */
+	
+	public static void centerStage(){		
+		Stage stage = Main.getStage();
+	    Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+	    stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2); 
+	    stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);  
+		
+	}
+	
+	
 }

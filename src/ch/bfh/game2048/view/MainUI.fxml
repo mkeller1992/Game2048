@@ -28,7 +28,7 @@
       			</rowConstraints>
       			<children>
       				<Button fx:id="startButton" mnemonicParsing="false" onAction="#startGame" text="Start" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-      				<Button fx:id="highScoreButton" mnemonicParsing="false" onAction="#showHighScore" text="Highscore" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+      				<Button fx:id="pauseResumeButton" mnemonicParsing="false" onAction="#handlePauseResume" text="Pause" GridPane.columnIndex="0" GridPane.rowIndex="1" />
       				<Label fx:id="labelScoreName" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="150.0" text="Score:" GridPane.columnIndex="1" GridPane.rowIndex="0">
       					<font>
       						<Font name="System Bold" size="25.0" />
@@ -55,7 +55,7 @@
       
             
             	<center>
-      		<GridPane fx:id="gameBoard">
+      		<GridPane fx:id="gameBoard" minHeight="400" minWidth="400" maxHeight="400" maxWidth="400" prefHeight="400" prefWidth="400">
 		</GridPane>
       	</center>
       

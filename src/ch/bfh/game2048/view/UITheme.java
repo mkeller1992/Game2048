@@ -5,6 +5,19 @@ import java.util.Map;
 
 import javafx.scene.paint.Color;
 
+/**
+ * UI-Theme Enum:
+ * 
+ * Stores necessary information to style the tile-labels:
+ * 
+ * - 1rst param: tile-value
+ * - 2nd param: font-color of tile
+ * - 3rd param: background-color of tile
+ * - 4th param: multiplicator for resizing tile-text (based on tile value's number of digits)
+ * 
+ * 
+ */
+
 
 public enum UITheme {
 	V0(0, Color.rgb(255, 255, 255), "204,192,180", 0.6),
@@ -28,8 +41,6 @@ public enum UITheme {
 	private Color fontColor;
 	private String backgroundColor;
 	private double multiplicator;
-	private int borderWidth;
-	private String borderColor;
 	
 	private static Map<Integer, UITheme> map = new HashMap<Integer, UITheme>();
 
@@ -44,8 +55,6 @@ public enum UITheme {
 		this.fontColor = fontColor;
 		this.backgroundColor = backgroundColor;
 		this.multiplicator = multiplicator;
-		this.borderWidth = 5;
-		this.borderColor = "187, 173, 160";
 
 	}
 	
@@ -63,14 +72,6 @@ public enum UITheme {
 
 	public double getMultiplicator() {
 		return multiplicator;
-	}
-
-	public int getBorderWidth() {
-		return borderWidth;
-	}
-
-	public String getBorderColor() {
-		return borderColor;
 	}
 	
 }

@@ -1,9 +1,7 @@
 package ch.bfh.game2048.engine;
 
-import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
-import ch.bfh.game2048.model.Player;
 import ch.bfh.game2048.model.Tile;
 import junit.framework.TestCase;
 
@@ -12,7 +10,7 @@ public class EngineTest extends TestCase {
 	GameEngine game;
 	
 	private void init(int boardSize){		
-		game = new GameEngine(boardSize, new GameStatistics(new Player(),boardSize));
+		game = new GameEngine(boardSize, new GameStatistics("",boardSize));
 		board = new Tile[boardSize][boardSize];
 		
 		

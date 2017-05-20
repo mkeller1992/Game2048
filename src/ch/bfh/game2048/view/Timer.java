@@ -2,6 +2,15 @@ package ch.bfh.game2048.view;
 
 import java.util.Observable;
 
+/**
+ * Timer:
+ * 
+ * Counts the time elapsed in the game (in milliseconds)
+ * and notifies the Observer-Classes, so that they can display the updated time
+ * 
+ */
+
+
 public class Timer extends Observable implements Runnable {
 
 	long millisElapsed;
@@ -11,9 +20,10 @@ public class Timer extends Observable implements Runnable {
 	
 	public Timer() {
 
-		this.millisElapsed = 0;
-		lastMillis = System.currentTimeMillis();
-		start();
+	}
+	
+	public long getMillisElapsed() {
+		return millisElapsed;
 	}
 
 	public void start(){
@@ -22,9 +32,15 @@ public class Timer extends Observable implements Runnable {
 		timerThread.setDaemon(true);
 		timerThread.start();
 	}
-		
-	public long getMillisElapsed() {
-		return millisElapsed;
+	
+	public void stop(){
+		timerThread.interrupt();
+	}
+	
+	public void reset(){
+		stop();
+		this.millisElapsed = 0;
+		lastMillis = System.currentTimeMillis();
 	}
 
 
@@ -41,16 +57,18 @@ public class Timer extends Observable implements Runnable {
 		}
 	}
 	
+	/**
+	 * long diff: computes the time elapsed since the start of the execution of run()
+	 * the current time is stored in lastMillis before another round of run() is being executed
+	 * Observers are getting notified about the change of time
+	 * 
+	 */
+	
 	private void increaseMillis(){
 		long diff = System.currentTimeMillis() - lastMillis;
 		millisElapsed+= diff;
 		lastMillis = System.currentTimeMillis();
 		this.setChanged();
 		this.notifyObservers();		
-	}
-	
-	public void stop(){
-		timerThread.interrupt();
-		
 	}
 }

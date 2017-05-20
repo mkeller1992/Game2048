@@ -17,6 +17,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * Game-over screen
+ * 
+ * - Displays the score reached by end of the game
+ * - Asks the player to enter his name for the highscore-list
+ *
+ */
+
+
 public class GameOverDialog extends Dialog<String> implements InvalidationListener {
 
 	TextField nameField;

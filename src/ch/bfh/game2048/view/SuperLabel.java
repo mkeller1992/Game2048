@@ -1,5 +1,6 @@
 package ch.bfh.game2048.view;
 
+import ch.bfh.game2048.persistence.Config;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
@@ -7,58 +8,58 @@ import javafx.scene.text.Text;
 public class SuperLabel extends Label {
 
 	int tileValue;
+	double labelLength;
+	String borderColor;
+	int borderWidth;
 
-	public SuperLabel(int tileValue) {
+	public SuperLabel(int tileValue, double labelLength) {
 
 		this.tileValue = tileValue;
-		setLabelText(tileValue);
+		this.labelLength = labelLength;
+		this.borderColor = Config.getInstance().getPropertyAsString("colorOfTileBorder");
+		this.borderWidth = Config.getInstance().getPropertyAsInt("widthOfTileBorder");
+		scaleLabelText(scaleLabelText(new Text("" + tileValue)));
 		setLabelStyle();
-
 	}
 
 	public void setTileNumber(int tileValue) {
 
 		this.tileValue = tileValue;
-		setLabelText(tileValue);
-		setLabelStyle();
-
-	}
-
-	private void setLabelText(int tileValue) {
-
+		
 		if (tileValue == 0) {
 			this.setGraphic(new Text(""));
-			return;
+		} else {
+			this.setGraphic(scaleLabelText(new Text("" + tileValue)));
 		}
+		
+		setLabelStyle();
+	}
 
-		Text tileText = new Text("" + tileValue);
+	private Text scaleLabelText(Text tileText) {
+
 		tileText.setFill(UITheme.valueOf(tileValue).getFontColor());
 
 		Bounds boundsOfText = tileText.getBoundsInLocal();
-		Bounds boundsOfLabel = this.getBoundsInLocal();
 
 		double multiplicator = UITheme.valueOf(tileValue).getMultiplicator();
 
-		double scaleX = multiplicator * (boundsOfLabel.getWidth()) / boundsOfText.getWidth();
-		double scaleY = multiplicator * (boundsOfLabel.getHeight()) / boundsOfText.getHeight();
+		double scaleX = multiplicator * (labelLength / boundsOfText.getWidth());
+		double scaleY = multiplicator * (labelLength / boundsOfText.getHeight());
 
 		double finalScale = Math.min(scaleX, scaleY);
 
 		tileText.setScaleX(finalScale);
 		tileText.setScaleY(finalScale);
 
-		this.setGraphic(tileText);
-
+		return tileText;
 	}
 
 	private void setLabelStyle() {
 
 		String bgColor = UITheme.valueOf(tileValue).getBackgroundcolor();
-		String borderColor = UITheme.valueOf(tileValue).getBorderColor();
-		int borderWidth = UITheme.valueOf(tileValue).getBorderWidth();		
-		
-		this.setStyle("-fx-font-weight: bold; -fx-border-color: rgb(" + borderColor
-				+ "); -fx-border-width: "+borderWidth+"; -fx-background-color: rgb(" + bgColor + ");");
+
+		this.setStyle("-fx-font-weight: bold; -fx-border-color: rgb(" + borderColor + "); -fx-border-width: "
+				+ borderWidth + "; -fx-background-color: rgb(" + bgColor + ");");
 	}
 
 }
