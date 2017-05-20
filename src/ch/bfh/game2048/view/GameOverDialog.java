@@ -51,8 +51,7 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 		this.setTitle(title);
 
 		// Set main-text of dialog
-		this.setHeaderText(
-				MessageFormat.format(conf.getPropertyAsString("gameOverText1.dialog"), new Object[] { finalScore }));
+		this.setHeaderText(MessageFormat.format(conf.getPropertyAsString("gameOverText1.dialog"), new Object[] { finalScore }));
 
 		// Set icons
 		Stage stage = (Stage) this.getDialogPane().getScene().getWindow();

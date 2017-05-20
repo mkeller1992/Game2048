@@ -22,7 +22,6 @@ public class Main extends Application {
 	static Scene mainScene;
 	static MainUIController controller;
 
-	
 	@Override
 	public void start(Stage primaryStage) {
 
@@ -86,18 +85,16 @@ public class Main extends Application {
 		// g.setHighScore("test?");
 
 	}
-	
-	
+
 	public static Stage getStage() {
 		return stage;
 	}
 
-	
 	/**
 	 * Switching from one screen to the other --> method will be replaced
 	 * 
 	 */
-	
+
 	public static void switchScene(Scenes nextScene) throws FileNotFoundException, JAXBException {
 
 		switch (nextScene) {
@@ -117,21 +114,19 @@ public class Main extends Application {
 
 		}
 	}
-	
-	
+
 	/**
 	 * moves the stage to the center of the screen
 	 * --> useful in case of switching between scenes of different sizes
 	 * 
 	 */
-	
-	public static void centerStage(){		
+
+	public static void centerStage() {
 		Stage stage = Main.getStage();
-	    Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-	    stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2); 
-	    stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);  
-		
+		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+		stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
+		stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+
 	}
-	
-	
+
 }

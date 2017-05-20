@@ -16,14 +16,13 @@ public class GameEngine {
 	 * @param boardSize
 	 *            size of the board
 	 */
-	
-	public GameEngine(int boardSize){
+
+	public GameEngine(int boardSize) {
 		this.boardSize = boardSize;
 		board = new Tile[boardSize][boardSize];
 		initGameBoard();
 	}
-	
-	
+
 	/**
 	 * Constructor 2 of the GameEngine, Initializes the board with the given size and spawns random tiles.
 	 * All the statistics are recorded in the given GameStatistics-Object.
@@ -40,10 +39,10 @@ public class GameEngine {
 		board = new Tile[boardSize][boardSize];
 
 		initGameBoard();
-		
+
 		spawnRandomTile();
 		spawnRandomTile();
-		
+
 	}
 
 	/**
@@ -84,7 +83,7 @@ public class GameEngine {
 	 */
 	public boolean move(Direction dir) {
 		boolean moved = false;
-				
+
 		resetMergedInfo();
 
 		moved = moveBoard(dir);
@@ -92,11 +91,10 @@ public class GameEngine {
 		if (moved) {
 			stats.incrementMoves();
 			spawnRandomTile();
-			if(isGameOver()){
-			stats.setGameOver(true);
+			if (isGameOver()) {
+				stats.setGameOver(true);
 			}
-		}		
-		
+		}
 		return moved;
 	}
 
@@ -143,8 +141,7 @@ public class GameEngine {
 					 * the Tile and in which direction.
 					 */
 					int moveBy = moveTile(row, col, dir);
-					boolean merged = mergeTile(row + (moveBy * dir.getRowStep()), col + (moveBy * dir.getColStep()),
-							dir);
+					boolean merged = mergeTile(row + (moveBy * dir.getRowStep()), col + (moveBy * dir.getColStep()), dir);
 
 					if (moveBy > 0 || merged) {
 						validMove = true;
@@ -165,8 +162,7 @@ public class GameEngine {
 	 * @return movedBy number of steps the tile was moved
 	 */
 	private int moveTile(int row, int col, Direction dir) {
-		if (col + dir.getColStep() < boardSize && col + dir.getColStep() >= 0 && row + dir.getRowStep() < boardSize
-				&& row + dir.getRowStep() >= 0) {
+		if (col + dir.getColStep() < boardSize && col + dir.getColStep() >= 0 && row + dir.getRowStep() < boardSize && row + dir.getRowStep() >= 0) {
 
 			if (board[row + dir.getRowStep()][col + dir.getColStep()].getValue() == 0) {
 				Tile tmp = board[row + dir.getRowStep()][col + dir.getColStep()];
@@ -191,8 +187,7 @@ public class GameEngine {
 	 */
 	private boolean mergeTile(int row, int col, Direction dir) {
 		// check for borders
-		if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize && col + dir.getColStep() >= 0
-				&& col + dir.getColStep() < boardSize) {
+		if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize && col + dir.getColStep() >= 0 && col + dir.getColStep() < boardSize) {
 
 			Tile tile1 = board[row][col];
 			Tile tile2 = board[row + dir.getRowStep()][col + dir.getColStep()];
@@ -220,8 +215,7 @@ public class GameEngine {
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * Checks if there are still zeros on the board
 	 * or if there are at least two adjacent tiles of equal number
@@ -244,8 +238,7 @@ public class GameEngine {
 			for (int row = 0; row < boardSize; row++) {
 				for (int col = 0; col < boardSize; col++) {
 					for (Direction dir : Direction.values()) {
-						if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize
-								&& col + dir.getColStep() >= 0 && col + dir.getColStep() < boardSize) {
+						if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize && col + dir.getColStep() >= 0 && col + dir.getColStep() < boardSize) {
 							Tile tile1 = board[row][col];
 							Tile tile2 = board[row + dir.getRowStep()][col + dir.getColStep()];
 							if (tile1.getValue() == tile2.getValue()) {
@@ -274,7 +267,7 @@ public class GameEngine {
 	private int getRandomValue() {
 		return Math.random() > 0.9 ? 4 : 2;
 	}
-	
+
 	/**
 	 * Prints the game-board's current constellation
 	 * 
@@ -302,8 +295,8 @@ public class GameEngine {
 	protected void setBoard(Tile[][] board) {
 		this.board = board;
 	}
-	
-	public Tile[][] getBoard(){
+
+	public Tile[][] getBoard() {
 		return board;
 	}
 

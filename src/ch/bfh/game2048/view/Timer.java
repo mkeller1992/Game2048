@@ -10,39 +10,37 @@ import java.util.Observable;
  * 
  */
 
-
 public class Timer extends Observable implements Runnable {
 
 	long millisElapsed;
-	Thread timerThread; 
+	Thread timerThread;
 
 	long lastMillis;
-	
+
 	public Timer() {
 
 	}
-	
+
 	public long getMillisElapsed() {
 		return millisElapsed;
 	}
 
-	public void start(){
+	public void start() {
 		lastMillis = System.currentTimeMillis();
 		timerThread = new Thread(this);
 		timerThread.setDaemon(true);
 		timerThread.start();
 	}
-	
-	public void stop(){
+
+	public void stop() {
 		timerThread.interrupt();
 	}
-	
-	public void reset(){
+
+	public void reset() {
 		stop();
 		this.millisElapsed = 0;
 		lastMillis = System.currentTimeMillis();
 	}
-
 
 	@Override
 	public void run() {
@@ -56,19 +54,19 @@ public class Timer extends Observable implements Runnable {
 			}
 		}
 	}
-	
+
 	/**
 	 * long diff: computes the time elapsed since the start of the execution of run()
 	 * the current time is stored in lastMillis before another round of run() is being executed
 	 * Observers are getting notified about the change of time
 	 * 
 	 */
-	
-	private void increaseMillis(){
+
+	private void increaseMillis() {
 		long diff = System.currentTimeMillis() - lastMillis;
-		millisElapsed+= diff;
+		millisElapsed += diff;
 		lastMillis = System.currentTimeMillis();
 		this.setChanged();
-		this.notifyObservers();		
+		this.notifyObservers();
 	}
 }

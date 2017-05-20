@@ -24,9 +24,6 @@ import ch.bfh.game2048.engine.ScoreComparator;
  *
  */
 
-
-
-
 @XmlRootElement(name = "HighscoreList")
 public class Highscore {
 
@@ -40,14 +37,12 @@ public class Highscore {
 		comparator = new ScoreComparator();
 		highscores = new ArrayList<GameStatistics>();
 	}
-	
+
 	/**
 	 * Add a single GameStatistics object (== a single game-score)
 	 * 
 	 * @param highscore
 	 */
-	 
-	
 
 	public void addHighscore(GameStatistics highscore) {
 		highscores.add(highscore);
@@ -60,7 +55,7 @@ public class Highscore {
 	 * 
 	 * @return a list including all available scores
 	 */
-	
+
 	public ArrayList<GameStatistics> getCompleteScoreList() {
 		sortList(highscores);
 		return highscores;
@@ -72,19 +67,18 @@ public class Highscore {
 	 * 
 	 * > returned list is sorted according to the criteria in "ScoreComparator"-Class
 	 * 
-	 * @param boardSize : Board-size for which a score-list is to be generated
+	 * @param boardSize
+	 *            Board-size for which a score-list is to be generated
 	 * @return a list including scores of a given @param boardSize
 	 */
-	
+
 	public List<GameStatistics> getFilteredScoreList(int boardSize) {
 
-		List<GameStatistics> filteredList = highscores.stream().filter(h -> h.getBoardSize() == boardSize)
-				.collect(Collectors.toList());
+		List<GameStatistics> filteredList = highscores.stream().filter(h -> h.getBoardSize() == boardSize).collect(Collectors.toList());
 		sortList(filteredList);
 		return filteredList;
 	}
 
-	
 	/**
 	 * 
 	 * Sorts highscore-list, sets ranks of the scores and resizes list to a given number of entries
@@ -92,11 +86,12 @@ public class Highscore {
 	 * > sorting according to criteria in "ScoreComparator"-Class
 	 * > Resizing cuts maximally the first x entries of the list (x = @param maxNumbOfScoresToInclude)
 	 * 
-	 * @param filteredList : base-list with GameStatistics-objects
-	 * @param maxNumbOfScoresToInclude : number of scores to be included in list
+	 * @param filteredList
+	 *            base-list with GameStatistics-objects
+	 * @param maxNumbOfScoresToInclude
+	 *            number of scores to be included in list
 	 * @return
 	 */
-
 
 	public List<GameStatistics> sortSetRanksAndResizeList(List<GameStatistics> filteredList, int maxNumbOfScoresToInclude) {
 
@@ -110,25 +105,27 @@ public class Highscore {
 	 * 
 	 * Sort given score-list according to criteria in "ScoreComparator"-Class
 	 * 
-	 * @param filteredList : list with GameStatistics-Objects to be sorted
+	 * @param filteredList
+	 *            list with GameStatistics-Objects to be sorted
 	 */
-	
-	
+
 	private void sortList(List<GameStatistics> filteredList) {
 		Collections.sort(filteredList, comparator);
 	}
 
-	
 	/**
 	 * Resize score-list to a given number of GameStatistics-objects
 	 * 
 	 * 
-	 * @param filteredList : base-list with GameStatistics-objects
-	 * @param firstRank : first rank of base-list to be included in resulting list
-	 * @param lastRank : last rank of base-list to be included in resulting list
+	 * @param filteredList
+	 *            base-list with GameStatistics-objects
+	 * @param firstRank
+	 *            first rank of base-list to be included in resulting list
+	 * @param lastRank
+	 *            last rank of base-list to be included in resulting list
 	 * @return
 	 */
-	
+
 	public List<GameStatistics> resizeList(List<GameStatistics> filteredList, int firstRank, int lastRank) {
 
 		// Checks first if the list contains the number of requested ranks:
@@ -137,7 +134,6 @@ public class Highscore {
 		}
 		return filteredList;
 	}
-	
 
 	/**
 	 * Sets the score-ranks in a given list of GameStatistics-objects
@@ -145,9 +141,10 @@ public class Highscore {
 	 * > 1.) Sorts the list according to criteria in "ScoreComparator"-Class
 	 * > 2.) Sets the ranks of the GameStatistics-objects --> rank = 1 + index in sorted list
 	 * 
-	 * @param filteredList : relevant score-list for setting the ranks
+	 * @param filteredList
+	 *            relevant score-list for setting the ranks
 	 */
-	
+
 	public void setRanks(List<GameStatistics> filteredList) {
 
 		sortList(filteredList);
@@ -156,18 +153,19 @@ public class Highscore {
 		}
 	}
 
-	
 	/**
 	 * Gets a GameStatistics-object's current score-rank in the given highscore-list
 	 * 
 	 * > 1.) Sorts list according to criteria in "ScoreComparator"-Class
 	 * > 2.) Computes rank of given GameStatistics-object (== its index+1 in sorted list)
 	 * 
-	 * @param filteredList : relevant score-list for computing the rank
-	 * @param scorelistEntry : score whose rank is to be computed
+	 * @param filteredList
+	 *            relevant score-list for computing the rank
+	 * @param scorelistEntry
+	 *            score whose rank is to be computed
 	 * @return current rank of provided scorelistEntry
 	 */
-	
+
 	public int getRankOfListEntry(List<GameStatistics> filteredList, GameStatistics scorelistEntry) {
 
 		sortList(filteredList);

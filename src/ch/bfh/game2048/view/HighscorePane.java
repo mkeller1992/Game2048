@@ -32,18 +32,17 @@ import javafx.scene.text.Text;
 
 /**
  * 
- *  Highscore-Pane displaying:
+ * Highscore-Pane displaying:
  * 
- *  - Rank
- *  - Player-Name
- *  - Game-Score
- *  - Value of highest tile
- *  - Game-Duration
- *  - Number of moves needed
- *  - Date/ time of play
+ * - Rank
+ * - Player-Name
+ * - Game-Score
+ * - Value of highest tile
+ * - Game-Duration
+ * - Number of moves needed
+ * - Date/ time of play
  * 
  */
-
 
 @SuppressWarnings("unchecked")
 public class HighscorePane extends VBox {
@@ -61,26 +60,26 @@ public class HighscorePane extends VBox {
 	TableColumn tblDuration;
 	TableColumn tblNumbOfMoves;
 	TableColumn tblDate;
-	
+
 	HBox bottomPanel;
 	Button okayButton;
-	
-	
+
 	Highscore highscores;
 	Config conf;
 	EventHandler<Event> btnSolHandler;
-	
+
 	ComboBox<BoardSizes> boardSizeList;
 	ObservableList<GameStatistics> masterList;
 	FilteredList<GameStatistics> filteredData;
 
-	
-/**
- * 
- * @param highscores : contains a list with the score-objects
- * @param boardSize : number of rows resp. columns of the board
- */
-	
+	/**
+	 * 
+	 * @param highscores
+	 *            : contains a list with the score-objects
+	 * @param boardSize
+	 *            : number of rows resp. columns of the board
+	 */
+
 	@SuppressWarnings({ "rawtypes" })
 	public HighscorePane(Highscore highscores, int boardSize) {
 
@@ -89,7 +88,7 @@ public class HighscorePane extends VBox {
 
 		/*
 		 * Create and style the top-pane
-		 */	
+		 */
 		titlePane = new HBox();
 		titlePane.setPrefSize(770, 100);
 		titlePane.setPadding(new Insets(10, 10, 10, 10));
@@ -97,7 +96,7 @@ public class HighscorePane extends VBox {
 
 		/*
 		 * Create and style the title of highscore-screen
-		 */	
+		 */
 		titleLabel = new Label();
 		titleText = new Text(conf.getPropertyAsString("highscoreListTitle"));
 		titleText.setFont(Font.font(null, FontWeight.BOLD, 20));
@@ -105,7 +104,7 @@ public class HighscorePane extends VBox {
 
 		/*
 		 * Create and set the ComboBox with list of board-sizes:
-		 */	
+		 */
 		boardSizeList = new ComboBox<BoardSizes>();
 		boardSizeList.getItems().setAll(BoardSizes.values());
 
@@ -118,28 +117,26 @@ public class HighscorePane extends VBox {
 
 		/*
 		 * Include option "filter tableView by player-name"
-		 */	
+		 */
 		filterField = new TextField();
 		filterField.setPromptText(conf.getPropertyAsString("highscoreListFilterText"));
 		setUpNameFilter();
 
 		/*
 		 * Add the components to the top-pane
-		 */		
+		 */
 		titlePane.getChildren().addAll(titleLabel, boardSizeList, filterField);
 
-		
 		/*
 		 * Create the tableView
-		 */	
+		 */
 		table = new TableView<>();
-		table.setPrefHeight(500);	
+		table.setPrefHeight(500);
 		/*
 		 * Populate the tableView with the score-list entries
 		 */
 		setContentFromLists();
-		
-		
+
 		/*
 		 * Specify the column-titles
 		 */
@@ -153,7 +150,7 @@ public class HighscorePane extends VBox {
 
 		/*
 		 * Specify which column displays which property of GameStatistics
-		 */	
+		 */
 		tblRank.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("rankAsString"));
 		tblName.setCellValueFactory(new PropertyValueFactory<GameStatistics, String>("PlayerName"));
 		tblScore.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("score"));
@@ -164,13 +161,12 @@ public class HighscorePane extends VBox {
 
 		/*
 		 * Add all columns to the tableView
-		 */	
+		 */
 		table.getColumns().addAll(tblRank, tblName, tblScore, tblHighestTile, tblDuration, tblNumbOfMoves, tblDate);
 
-		
 		/*
 		 * Specify the width and the alignment of the columns
-		 */	
+		 */
 		tblRank.setPrefWidth(50);
 		tblName.setPrefWidth(150);
 		tblScore.setPrefWidth(90);
@@ -184,7 +180,6 @@ public class HighscorePane extends VBox {
 		tblDate.setPrefWidth(170);
 		tblDate.setStyle("-fx-alignment: CENTER;");
 
-		
 		/*
 		 * Assemble the bottom-panel with the "Back to Game"-Button
 		 */
@@ -193,29 +188,27 @@ public class HighscorePane extends VBox {
 		bottomPanel.setPadding(new Insets(10, 10, 10, 10));
 		okayButton = new Button(conf.getPropertyAsString("backToGame.button"));
 		okayButton.addEventHandler(MouseEvent.MOUSE_CLICKED, createSolButtonHandler());
-		
+
 		/*
 		 * add the components to the bottom-pane
-		 */ 
+		 */
 		bottomPanel.getChildren().addAll(okayButton);
 
-		
 		/*
 		 * add all components to the main-pane
-		 */ 
+		 */
 		this.getChildren().addAll(titlePane, table, bottomPanel);
 	}
-	
 
 	/*
 	 * Setup "filter list by player-name" -functionality
-	 */	
-	private void setUpNameFilter(){
-		
+	 */
+	private void setUpNameFilter() {
+
 		// Set the filter-predicate whenever the filter changes.
 		filterField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredData.setPredicate(player -> {
-				
+
 				// If filter text is empty, display all score-entries.
 				if (newValue == null || newValue.isEmpty()) {
 					return true;
@@ -229,35 +222,33 @@ public class HighscorePane extends VBox {
 				}
 				return false; // Does not match.
 			});
-		});		
+		});
 	}
-	
-	
+
 	/*
-	 *  Populate the tableView with the items from the score-list
-	 */	
-	
+	 * Populate the tableView with the items from the score-list
+	 */
+
 	private void setContentFromLists() {
 
 		BoardSizes selectedEntry = boardSizeList.getSelectionModel().getSelectedItem();
 		List<GameStatistics> baseScoreList = highscores.getFilteredScoreList(selectedEntry.getBoardSize());
-		
+
 		// Get number of ranks to be displayed
-		int numberOfScoreEntriesToShow = conf.getPropertyAsInt("maxNumberOfScores");		
-		
+		int numberOfScoreEntriesToShow = conf.getPropertyAsInt("maxNumberOfScores");
+
 		// Sort, set ranks and resize score-list
 		highscores.sortSetRanksAndResizeList(baseScoreList, numberOfScoreEntriesToShow);
-		
+
 		// convert list to a format which can be filtered and added to tableView
 		masterList = FXCollections.observableArrayList(baseScoreList);
 		filteredData = new FilteredList<>(masterList, p -> true);
 		table.setItems(filteredData);
 		table.setEditable(true);
 	}
-	
-	
+
 	/*
-	 *  Switch back to main-scene upon button-click
+	 * Switch back to main-scene upon button-click
 	 */
 
 	private EventHandler<Event> createSolButtonHandler() {

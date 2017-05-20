@@ -13,7 +13,6 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import ch.bfh.game2048.persistence.Config;
 
-
 /**
  * Game-Statistics
  * 
@@ -33,8 +32,6 @@ import ch.bfh.game2048.persistence.Config;
  * 
  */
 
-
-
 @XmlType(propOrder = { "playerName", "score", "highestValue", "amountOfMoves", "startMil", "endMil", "boardSize" })
 public class GameStatistics extends Observable {
 
@@ -52,7 +49,7 @@ public class GameStatistics extends Observable {
 	private long pauseTimeMil;
 	private int rank;
 	private int boardSize;
-	
+
 	private boolean gameOver;
 	private boolean gameContinue;
 
@@ -179,37 +176,37 @@ public class GameStatistics extends Observable {
 		notifyObservers();
 	}
 
-	/** 
+	/**
 	 * Set to true when player wants to continue playing after reaching game-winning tile
 	 * --> To prevent that the victory alert is displayed multiple times
-	 */	
-	
+	 */
+
 	public void setGameContinue(boolean gameContinue) {
 		this.gameContinue = gameContinue;
 	}
-	
-	/** 
+
+	/**
 	 * Returns true when game-winner wants to continue playing
 	 * --> To prevent that the victory alert is displayed multiple times
 	 */
-	
+
 	@XmlTransient
 	public boolean isGameContinue() {
 		return gameContinue;
 	}
-	
-	/** 
+
+	/**
 	 * Set endMil = time at beginning of the pause -->
 	 * This is only temporary so that at the end of the pause
 	 * the pause-duration can be computed by deducting "endTime"
 	 * 
 	 */
-	
+
 	public void pauseTime() {
 		setEndMil(System.currentTimeMillis());
 	}
-	
-	/** 
+
+	/**
 	 * Previously endMil was set = time at beginning of the pause
 	 * Therefore the pause-duration can be computed by computing
 	 * "current time at resumption" minus "endMil"
