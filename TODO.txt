@@ -8,3 +8,25 @@ Engine:
  - Zug rückgängig machen
 
 KI:
+
+
+
+
+TODO:
+- REFACTORING!!
+
+- Scores
+-- ScoreHandler
+
+-- HighscorePane
+---> spalte mehr mit inet/local
+
+-- GameStatistic
+--> variable mit local/inet
+
+
+Highscore-Lokal    Inet-NoSQL-DB
+	XML			
+	
+	\					/
+		   Highscore		

@@ -1,13 +1,28 @@
 package ch.bfh.game2048.engine;
 
+import java.util.Observable;
+
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.time.StopWatch;
+
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
 import ch.bfh.game2048.model.Tile;
+import javafx.util.Pair;
 
-public class GameEngine {
-	int boardSize;
-	Tile[][] board;
-	GameStatistics stats;
+public class GameEngine extends Observable {
+	private int boardSize;
+	private Tile[][] board;
+	private GameStatistics stats;
+	private int tileValueToWin;
+
+	private boolean isRunning = false;;
+	private boolean isPaused = false;;
+
+	private StopWatch timer;
+
+	private Tile[][] lastBoard;
+	private GameStatistics lastStats;
 
 	/**
 	 * Constructor 1 of the GameEngine, Initializes the board of a given size
@@ -17,39 +32,49 @@ public class GameEngine {
 	 *            size of the board
 	 */
 
-	public GameEngine(int boardSize) {
+	public GameEngine(int boardSize, int tileValueToWin) {
 		this.boardSize = boardSize;
-		board = new Tile[boardSize][boardSize];
-		initGameBoard();
+		this.tileValueToWin = tileValueToWin;
+		timer = new StopWatch();
+
 	}
 
 	/**
-	 * Constructor 2 of the GameEngine, Initializes the board with the given size and spawns random tiles.
-	 * All the statistics are recorded in the given GameStatistics-Object.
-	 * 
-	 * @param boardSize
-	 *            size of the board
-	 * @param stats
-	 *            object to store the game statistics
+	 * Start / Restart
 	 */
-	public GameEngine(int boardSize, GameStatistics stats) {
-		this.boardSize = boardSize;
-		this.stats = stats;
-
+	public void startGame() {
 		board = new Tile[boardSize][boardSize];
-
 		initGameBoard();
 
 		spawnRandomTile();
 		spawnRandomTile();
 
+		isRunning = true;
+		isPaused = false;
+		timer.reset();
+		timer.start();
+
+		stats = new GameStatistics(boardSize);
+	}
+
+	public void pauseGame() {
+		isPaused = true;
+		timer.suspend();
+	}
+
+	public void resumeGame() {
+		isPaused = false;
+		timer.resume();
+	}
+
+	public Long getDuration() {
+		return timer.getTime();
 	}
 
 	/**
 	 * Initializes the gameBoard with new (empty) Tile-Objects
 	 */
 	private void initGameBoard() {
-
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize; j++) {
 				board[i][j] = new Tile();
@@ -72,6 +97,9 @@ public class GameEngine {
 		}
 	}
 
+	public boolean move(Direction dir){
+		return move(dir, false);
+	}
 	/**
 	 * Moves the whole board in a given Direction.
 	 * 
@@ -81,21 +109,57 @@ public class GameEngine {
 	 *            the direction to move the Board
 	 * @return boolean true if something was moved
 	 */
-	public boolean move(Direction dir) {
-		boolean moved = false;
+	protected boolean move(Direction dir, boolean simulation) {
+		if (isRunning && !isPaused) {
 
-		resetMergedInfo();
+			Tile[][] tmpBoard = SerializationUtils.clone(board); // TODO:
+			GameStatistics tmpStats = SerializationUtils.clone(stats); // TODO:
+																		// test!
 
-		moved = moveBoard(dir);
+			boolean moved = false;
 
-		if (moved) {
-			stats.incrementMoves();
-			spawnRandomTile();
-			if (isGameOver()) {
-				stats.setGameOver(true);
+			resetMergedInfo();
+
+			moved = moveBoard(dir);
+
+			if (moved) {
+				stats.incrementAmountOfMoves();
+				spawnRandomTile();
+
+				if (simulation == false) {
+					if (isGameOver()) {
+						timer.stop();
+						stats.setDuration(timer.getTime());
+						isRunning = false;
+
+						this.setChanged();
+						notifyObservers(new Pair<String, Boolean>("gameOver", true));
+					}
+//					this.setChanged();
+//					notifyObservers(new Pair<String, Long>("score", stats.getScore()));
+					if (stats.getHighestValue() >= tileValueToWin) {
+						this.setChanged();
+						notifyObservers(new Pair<String, Boolean>("won", true));
+					}
+					
+				}
+				lastBoard = tmpBoard;
+				lastStats = tmpStats;
+				
+
 			}
+			return moved;
 		}
-		return moved;
+		return false;
+
+	}
+
+	public void revertMove() {
+		board = lastBoard; // TODO: richtige kopie
+		stats = lastStats; // TODO: "
+
+		notifyObservers(new Pair<String, Long>("score", stats.getScore()));
+
 	}
 
 	/**
@@ -206,7 +270,7 @@ public class GameEngine {
 				board[row + dir.getRowStep()][col + dir.getColStep()].setValue(mergedValue);
 				board[row + dir.getRowStep()][col + dir.getColStep()].setMerged(true);
 
-				stats.addScore(mergedValue);
+				stats.addScore((long) mergedValue);
 				if (mergedValue > stats.getHighestValue()) {
 					stats.setHighestValue(mergedValue);
 				}
@@ -217,9 +281,8 @@ public class GameEngine {
 	}
 
 	/**
-	 * Checks if there are still zeros on the board
-	 * or if there are at least two adjacent tiles of equal number
-	 * If both is NOT the case, the game is over
+	 * Checks if there are still zeros on the board or if there are at least two
+	 * adjacent tiles of equal number If both is NOT the case, the game is over
 	 * 
 	 * @return true if player cannot move anymore / has lost the game
 	 */
@@ -272,7 +335,6 @@ public class GameEngine {
 	 * Prints the game-board's current constellation
 	 * 
 	 */
-
 	public void print() {
 
 		for (int i = 0; i < boardSize; i++) {

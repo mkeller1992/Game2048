@@ -1,4 +1,4 @@
-package ch.bfh.game2048;
+package ch.bfh.game2048.persistence;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,25 +16,30 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
+import ch.bfh.game2048.model.GameStatistics;
 
-public class Tryout {
+public class FirebaseHandler {
+	List<GameStatistics> highscore;
+	
+	DatabaseReference scoreRef;
 
-	public void tryOut(){
-		//		gson();
+	public FirebaseHandler() {
+		highscore = new ArrayList<GameStatistics>();
 		
 		try {
-			firebase();
+			init();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void firebase() throws IOException{
+	public void addGameStatistic(GameStatistics stats){
+	
+	}
+
+	private void init() throws IOException{
 		// Fetch the service account key JSON file contents
 		FileInputStream serviceAccount = new FileInputStream("serviceAccountCredentials.json");
 
@@ -54,15 +59,10 @@ public class Tryout {
 		    .getInstance()
 		    .getReference("/highscore");
 		
+		scoreRef = ref.child("scores");		
 		
-		
-		
-		DatabaseReference scoreRef = ref.child("scores");		
-		
-		
-		scoreRef.push().setValue(new Score(234, "alds", 23));
-		
-		scoreRef.orderByChild("score").addChildEventListener(new ChildEventListener() {
+			
+		scoreRef.addChildEventListener(new ChildEventListener() {
 			
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {
@@ -85,8 +85,8 @@ public class Tryout {
 			@Override
 			public void onChildAdded(DataSnapshot arg0, String arg1) {			
 				
-				Score score = arg0.getValue(Score.class);
-				System.out.println(score.name +" - "+score.score);
+				GameStatistics score = arg0.getValue(GameStatistics.class);
+				System.out.println(score.getPlayerName()+" - "+score.getScore());
 				
 			}
 			
@@ -96,23 +96,15 @@ public class Tryout {
 				
 			}
 		});
-		
-		System.out.println("done...");
-		
+			
 	}
 	
-	public void gson(){
-		Gson gson = new Gson();
-		
+	public List<GameStatistics> getHighscore() {
+		return highscore;
+	}
 
-		String json = "[{\"score\":829834,\"name\":\"ludi\",\"time\":234},{\"score\":12312,\"name\":\"asdf\",\"time\":23},{\"score\":342,\"name\":\"vbdfg\",\"time\":123},{\"score\":12334234,\"name\":\"asdf\",\"time\":54},{\"score\":123,\"name\":\"ycv\",\"time\":34},{\"score\":546564,\"name\":\"adsf\",\"time\":34}]";
-		List<Score> hmm = gson.fromJson(json, new TypeToken<List<Score>>(){}.getType());
-		
-		System.out.println(hmm.size());
-		for(Score s : hmm){
-			System.out.println(s.name);
-		}
+	public void setHighscore(List<GameStatistics> highscore) {
+		this.highscore = highscore;
 	}
-	
 
 }

@@ -1,31 +1,27 @@
 package ch.bfh.game2048.view;
 
-import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.JAXBException;
-
-import ch.bfh.game2048.Main;
-import ch.bfh.game2048.model.GameStatistics;
-import ch.bfh.game2048.model.Highscore;
 import ch.bfh.game2048.persistence.Config;
 import ch.bfh.game2048.view.model.BoardSizes;
-import ch.bfh.game2048.view.model.Scene;
+import ch.bfh.game2048.view.model.HighscoreEntry;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -36,13 +32,8 @@ import javafx.scene.text.Text;
  * 
  * Highscore-Pane displaying:
  * 
- * - Rank
- * - Player-Name
- * - Game-Score
- * - Value of highest tile
- * - Game-Duration
- * - Number of moves needed
- * - Date/ time of play
+ * - Rank - Player-Name - Game-Score - Value of highest tile - Game-Duration -
+ * Number of moves needed - Date/ time of play
  * 
  */
 
@@ -55,24 +46,20 @@ public class HighscorePane extends VBox {
 	TextField filterField;
 
 	TableView table;
-	TableColumn tblRank;
-	TableColumn tblName;
-	TableColumn tblScore;
-	TableColumn tblHighestTile;
-	TableColumn tblDuration;
-	TableColumn tblNumbOfMoves;
-	TableColumn tblDate;
+	TableColumn<HighscoreEntry, Integer> tblRank;
+	TableColumn<HighscoreEntry, String> tblName;
+	TableColumn<HighscoreEntry, Integer> tblScore;
+	TableColumn<HighscoreEntry, Integer> tblHighestTile;
+	TableColumn<HighscoreEntry, String> tblDuration;
+	TableColumn<HighscoreEntry, Integer> tblNumbOfMoves;
+	TableColumn<HighscoreEntry, String> tblDate;
 
-	HBox bottomPanel;
-	Button okayButton;
-
-	Highscore highscores;
 	Config conf;
 	EventHandler<Event> btnSolHandler;
 
 	ComboBox<BoardSizes> boardSizeList;
-	ObservableList<GameStatistics> masterList;
-	FilteredList<GameStatistics> filteredData;
+	ObservableList<HighscoreEntry> masterList;
+	FilteredList<HighscoreEntry> filteredData;
 
 	/**
 	 * 
@@ -83,9 +70,7 @@ public class HighscorePane extends VBox {
 	 */
 
 	@SuppressWarnings({ "rawtypes" })
-	public HighscorePane(Highscore highscores, int boardSize) {
-
-		this.highscores = highscores;
+	public HighscorePane(List<HighscoreEntry> highscores) {
 		conf = Config.getInstance();
 
 		/*
@@ -104,40 +89,25 @@ public class HighscorePane extends VBox {
 		titleText.setFont(Font.font(null, FontWeight.BOLD, 20));
 		titleLabel.setGraphic(titleText);
 
-		/*
-		 * Create and set the ComboBox with list of board-sizes:
-		 */
-		boardSizeList = new ComboBox<BoardSizes>();
-		boardSizeList.getItems().setAll(BoardSizes.values());
-
-		BoardSizes sizeToBeSelected = BoardSizes.findStateByBoardSize(boardSize);
-		boardSizeList.getSelectionModel().select(sizeToBeSelected);
-
-		boardSizeList.setOnAction((event) -> {
-			setContentFromLists();
-		});
 
 		/*
 		 * Include option "filter tableView by player-name"
 		 */
 		filterField = new TextField();
 		filterField.setPromptText(conf.getPropertyAsString("highscoreListFilterText"));
-		setUpNameFilter();
+
 
 		/*
 		 * Add the components to the top-pane
 		 */
-		titlePane.getChildren().addAll(titleLabel, boardSizeList, filterField);
+		titlePane.getChildren().addAll(titleLabel, filterField);
 
 		/*
 		 * Create the tableView
 		 */
 		table = new TableView<>();
 		table.setPrefHeight(500);
-		/*
-		 * Populate the tableView with the score-list entries
-		 */
-		setContentFromLists();
+
 
 		/*
 		 * Specify the column-titles
@@ -153,14 +123,36 @@ public class HighscorePane extends VBox {
 		/*
 		 * Specify which column displays which property of GameStatistics
 		 */
-		tblRank.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("rankAsString"));
-		tblName.setCellValueFactory(new PropertyValueFactory<GameStatistics, String>("PlayerName"));
-		tblScore.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("score"));
-		tblHighestTile.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("highestValue"));
-		tblDuration.setCellValueFactory(new PropertyValueFactory<GameStatistics, Long>("formattedDuration"));
-		tblNumbOfMoves.setCellValueFactory(new PropertyValueFactory<GameStatistics, Integer>("amountOfMoves"));
-		tblDate.setCellValueFactory(new PropertyValueFactory<GameStatistics, String>("formattedDate"));
+		tblRank.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("Rank"));
+		tblName.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, String>("Nickname"));
+		tblScore.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("score"));
+		tblHighestTile.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("highestValue"));
+		tblDuration.setCellValueFactory(cellData ->{
+			SimpleStringProperty property = new SimpleStringProperty();
+			long duration = cellData.getValue().getDuration();
+			long h =TimeUnit.MILLISECONDS.toHours(duration);
+			long m =TimeUnit.MILLISECONDS.toMinutes(duration);
+			long s =TimeUnit.MILLISECONDS.toSeconds(duration);
+			property.setValue(String.format("%02d:%02d:%02d", h,m,s));
+			return property;
+		});
+		tblNumbOfMoves.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("numOfMoves"));
+		tblDate.setCellValueFactory(cellData ->{
+			SimpleStringProperty property = new SimpleStringProperty();
 
+			DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+			formatter.format(new Date(cellData.getValue().getTimestamp()));
+			property.setValue(formatter.format(new Date(cellData.getValue().getTimestamp())));
+			return property;
+		});
+
+		/*
+		 * Populate the tableView with the score-list entries
+		 */	
+	    table.setItems(FXCollections.observableList(highscores));
+	 
+		
+		
 		/*
 		 * Add all columns to the tableView
 		 */
@@ -183,90 +175,12 @@ public class HighscorePane extends VBox {
 		tblDate.setStyle("-fx-alignment: CENTER;");
 
 		/*
-		 * Assemble the bottom-panel with the "Back to Game"-Button
-		 */
-		bottomPanel = new HBox();
-		bottomPanel.setAlignment(Pos.CENTER_RIGHT);
-		bottomPanel.setPadding(new Insets(10, 10, 10, 10));
-		okayButton = new Button(conf.getPropertyAsString("backToGame.button"));
-		okayButton.addEventHandler(MouseEvent.MOUSE_CLICKED, createSolButtonHandler());
-
-		/*
-		 * add the components to the bottom-pane
-		 */
-		bottomPanel.getChildren().addAll(okayButton);
-
-		/*
 		 * add all components to the main-pane
 		 */
-		this.getChildren().addAll(titlePane, table, bottomPanel);
+		this.getChildren().addAll(titlePane, table);
 	}
 
-	/*
-	 * Setup "filter list by player-name" -functionality
-	 */
-	private void setUpNameFilter() {
 
-		// Set the filter-predicate whenever the filter changes.
-		filterField.textProperty().addListener((observable, oldValue, newValue) -> {
-			filteredData.setPredicate(player -> {
 
-				// If filter text is empty, display all score-entries.
-				if (newValue == null || newValue.isEmpty()) {
-					return true;
-				}
 
-				// Compare player-nickname with the nickname-entries in the tableview
-				String lowerCaseFilter = newValue.toLowerCase();
-
-				if (player.getPlayerName().toLowerCase().contains(lowerCaseFilter)) {
-					return true; // Filter matches first name.
-				}
-				return false; // Does not match.
-			});
-		});
-	}
-
-	/*
-	 * Populate the tableView with the items from the score-list
-	 */
-
-	private void setContentFromLists() {
-
-		BoardSizes selectedEntry = boardSizeList.getSelectionModel().getSelectedItem();
-		List<GameStatistics> baseScoreList = highscores.getFilteredScoreList(selectedEntry.getBoardSize());
-
-		// Get number of ranks to be displayed
-		int numberOfScoreEntriesToShow = conf.getPropertyAsInt("maxNumberOfScores");
-
-		// Sort, set ranks and resize score-list
-		highscores.sortSetRanksAndResizeList(baseScoreList, numberOfScoreEntriesToShow);
-
-		// convert list to a format which can be filtered and added to tableView
-		masterList = FXCollections.observableArrayList(baseScoreList);
-		filteredData = new FilteredList<>(masterList, p -> true);
-		table.setItems(filteredData);
-		table.setEditable(true);
-	}
-
-	/*
-	 * Switch back to main-scene upon button-click
-	 */
-
-	private EventHandler<Event> createSolButtonHandler() {
-		btnSolHandler = new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event event) {
-
-//				try {
-//					Main.switchScene(Scenes.MAINSCENE);
-//				} catch (FileNotFoundException | JAXBException e) {
-//					e.printStackTrace();
-//				}
-
-			}
-		};
-		return btnSolHandler;
-	}
 }

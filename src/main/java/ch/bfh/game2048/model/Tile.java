@@ -1,5 +1,7 @@
 package ch.bfh.game2048.model;
 
+import java.io.Serializable;
+
 /**
  * Tile
  * 
@@ -14,7 +16,9 @@ package ch.bfh.game2048.model;
  * 
  * 
  */
-public class Tile {
+public class Tile implements Serializable{	
+	private static final long serialVersionUID = 7771519660781671721L;
+	
 	private int value;
 	private boolean merged;
 	private boolean spawned;

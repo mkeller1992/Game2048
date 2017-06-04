@@ -1,15 +1,14 @@
 package ch.bfh.game2048.view;
 
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.plaf.synth.SynthScrollBarUI;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import ch.bfh.game2048.Main;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
@@ -17,8 +16,10 @@ import ch.bfh.game2048.model.Highscore;
 import ch.bfh.game2048.model.Tile;
 import ch.bfh.game2048.persistence.Config;
 import ch.bfh.game2048.persistence.ScoreHandler;
-import ch.bfh.game2048.view.model.Scene;
+import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +33,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
 public class GamePaneController implements Observer {
 
@@ -42,49 +44,57 @@ public class GamePaneController implements Observer {
 	private GridPane gameBoard;
 
 	@FXML
-	private Button startButton;
+	protected Button startButton;
 
 	@FXML
-	private Button pauseResumeButton;
+	protected Button pauseResumeButton;
+
+	@FXML
+	private Button btnHint;
 
 	@FXML
 	private Label labelScoreName;
 
 	@FXML
-	private Label labelScoreNumber; // where the current score gets displayed
+	protected Label labelScoreNumber; // where the current score gets displayed
 
 	@FXML
-	private Label labelTimerTime; // where the time of the stop-watch gets displayed
+	protected Label labelTimerName;
+	
+	@FXML
+	protected Label labelTimerTime; // where the time of the stop-watch gets
+									// displayed
 
 	private SuperLabel[][] labelList;
 
 	GameEngine game;
 
 	private ScoreHandler scoreHandler;
-	private Timer timer;
 	private Highscore highscoreList;
-	private Config conf;
+	protected Config conf;
 
-	private int numbOfBoardColumns = 4;
+	protected int numbOfBoardColumns = 4;
 
-	private boolean isRunning = false;
+	protected boolean isActive = false; // pause / no-pause
+	protected boolean isRunning = false; // game-running / (game-over/not yet
+											// started)
+	private boolean ignoreWinMessage = false;
+
+	protected Timeline timer;
 
 	/**
 	 * 
 	 * Initialization upon opening of the application:
 	 * 
-	 * Initializes and stores the following properties:
-	 * - conf: For accessing the data in the property-file
-	 * - scoreHandler: Marshaller / Unmarshaller for database
-	 * - game: Game-Engine
-	 * - timer: Stopwatch on main-screen
+	 * Initializes and stores the following properties: - conf: For accessing
+	 * the data in the property-file - scoreHandler: Marshaller / Unmarshaller
+	 * for database - game: Game-Engine - timer: Stopwatch on main-screen
 	 * 
-	 * > Sets up gameBoard on main-screen with empty tiles
-	 * > Registers Key-Handler (for triggering tile-moves upon keystrokes)
+	 * > Sets up gameBoard on main-screen with empty tiles > Registers
+	 * Key-Handler (for triggering tile-moves upon keystrokes)
 	 * 
 	 * 
 	 */
-
 	@FXML
 	public void initialize() throws FileNotFoundException, JAXBException {
 
@@ -92,14 +102,17 @@ public class GamePaneController implements Observer {
 		conf = Config.getInstance();
 		scoreHandler = new ScoreHandler();
 		highscoreList = scoreHandler.readScores(conf.getPropertyAsString("highscoreFileName"));
-		game = new GameEngine(numbOfBoardColumns);
-		timer = new Timer();
-		timer.addObserver(this);
 
 		// prepare gui
 		initializeBoard();
 		pauseResumeButton.setVisible(false);
 		activateKeyHandler(startButton);
+
+		timer = new Timeline(new KeyFrame(Duration.millis(50), ae -> updateGui()));
+		timer.setCycleCount(Animation.INDEFINITE);
+
+		game = new GameEngine(numbOfBoardColumns, conf.getPropertyAsInt("winningNumber"));
+		game.addObserver(this);
 	}
 
 	// Event-Handlers:
@@ -107,31 +120,32 @@ public class GamePaneController implements Observer {
 	/**
 	 * Start-/ restart game function:
 	 * 
-	 * - Creates a new instance of GameStatitics which gathers game-specific information
+	 * - Creates a new instance of GameStatitics which gathers game-specific
+	 * information
 	 * 
-	 * - Creates a new instance of the game-engine:
-	 * > A new Tile-array with two randomly placed numbers will automatically be created by the engine
+	 * - Creates a new instance of the game-engine: > A new Tile-array with two
+	 * randomly placed numbers will automatically be created by the engine
 	 * 
-	 * - updateLabelList() initiates the mapping of the newly created Tile-array to the tile-Labels
+	 * - updateLabelList() initiates the mapping of the newly created Tile-array
+	 * to the tile-Labels
 	 * 
-	 * - Sets buttons / Label to their appropriate state
-	 * - Starts the time-counter on the main-screen
+	 * - Sets buttons / Label to their appropriate state - Starts the
+	 * time-counter on the main-screen
 	 * 
 	 */
-
 	@FXML
-	void startGame(ActionEvent event) {
+	protected void startGame(ActionEvent event) {
+		game.startGame();
 
-		GameStatistics stats = new GameStatistics("", numbOfBoardColumns);
-		stats.addObserver(this);
-		game = new GameEngine(numbOfBoardColumns, stats);
 		updateLabelList(game.getBoard());
 
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));
 		pauseResumeButton.setVisible(true);
-		timer.start();
+		isActive = true;
 		isRunning = true;
+
+		timer.play();
 	}
 
 	/**
@@ -139,28 +153,29 @@ public class GamePaneController implements Observer {
 	 * 
 	 * Based on whether the game is running or paused it...
 	 * 
-	 * - ... pauses or restarts the time-counter on the main-screen
-	 * - ... pauses or resumes the time measuring in Game Statistics
-	 * - ... sets the appropriate description of the Pause/ Resume-Button
-	 * - ... sets isRunning = true in order to quit the pause, or = false to start the pause
+	 * - ... pauses or restarts the time-counter on the main-screen - ... pauses
+	 * or resumes the time measuring in Game Statistics - ... sets the
+	 * appropriate description of the Pause/ Resume-Button - ... sets isRunning
+	 * = true in order to quit the pause, or = false to start the pause
 	 * 
 	 */
 
 	@FXML
 	void handlePauseResume(ActionEvent event) {
-
-		// If game is currently running:
 		if (isRunning) {
-			timer.stop();
-			game.getStats().pauseTime();
-			pauseResumeButton.setText(conf.getPropertyAsString("resume.button"));
-			isRunning = false;
-			// If game is currently paused:
-		} else {
-			timer.start();
-			game.getStats().resumeTime();
-			pauseResumeButton.setText(conf.getPropertyAsString("pause.button"));
-			isRunning = true;
+			// If game is currently running:
+			if (isActive) {
+				game.pauseGame();
+				timer.pause();
+				pauseResumeButton.setText(conf.getPropertyAsString("resume.button"));
+				isActive = false;
+				// If game is currently paused:
+			} else {
+				game.resumeGame();
+				timer.play();
+				pauseResumeButton.setText(conf.getPropertyAsString("pause.button"));
+				isActive = true;
+			}
 		}
 	}
 
@@ -169,14 +184,14 @@ public class GamePaneController implements Observer {
 	 *
 	 * - reacts on key-Up, key-Down, key-left, key-right
 	 * 
-	 * - provided the move was valid (boolean move == true):
-	 * > triggers the update of the Label-array (UI) based on the Tile-array (Engine)
-	 * > sets the new score on the main-screen
+	 * - provided the move was valid (boolean move == true): > triggers the
+	 * update of the Label-array (UI) based on the Tile-array (Engine) > sets
+	 * the new score on the main-screen
 	 * 
 	 * 
 	 * @param keyNode
-	 *            The javafx-component upon which the Key-Handler
-	 *            is to be registered
+	 *            The javafx-component upon which the Key-Handler is to be
+	 *            registered
 	 */
 
 	private void activateKeyHandler(final Node keyNode) {
@@ -186,7 +201,7 @@ public class GamePaneController implements Observer {
 		final EventHandler<KeyEvent> keyEventHandler = new EventHandler<KeyEvent>() {
 			public void handle(final KeyEvent keyEvent) {
 
-				if (isRunning) {
+				if (isActive) {
 					System.out.println(keyEvent.getCode());
 					boolean moved = false;
 					if (keyEvent.getCode() == KeyCode.UP) {
@@ -204,13 +219,18 @@ public class GamePaneController implements Observer {
 
 					if (moved) {
 						updateLabelList(game.getBoard());
-						labelScoreNumber.setText("" + game.getStats().getFormattedScore() + " Pts");
+						updateScoreLabel(game.getStats().getScore());
 					}
 				}
 				keyEvent.consume();
 			}
 		};
 		keyNode.setOnKeyPressed(keyEventHandler);
+	}
+	
+	protected void updateScoreLabel(long score){
+		// TODO: Formatt!!!
+		labelScoreNumber.setText("" + score + " Pts");		
 	}
 
 	// Setters and Getters:
@@ -224,24 +244,16 @@ public class GamePaneController implements Observer {
 	}
 
 	/**
-	 * - Method will be removed after integration of scene-switch
-	 * 
-	 */
-
-	public HighscorePane getHighScorePane() throws FileNotFoundException, JAXBException {
-		return new HighscorePane(highscoreList, numbOfBoardColumns);
-	}
-
-	/**
 	 * - Populates the displayed game-board with EMPTY Labels (tiles)
 	 * 
-	 * - sets the width of each label based on board-width and tile-number per column
+	 * - sets the width of each label based on board-width and tile-number per
+	 * column
 	 * 
-	 * - Adds the created labels (tiles) to the labelList-Array for later updating
+	 * - Adds the created labels (tiles) to the labelList-Array for later
+	 * updating
 	 * 
 	 */
-
-	private void initializeBoard() {
+	protected void initializeBoard() {
 
 		labelList = new SuperLabel[numbOfBoardColumns][numbOfBoardColumns];
 		double boardLength = (gameBoard.getPrefWidth() * 1.0) / numbOfBoardColumns;
@@ -264,12 +276,11 @@ public class GamePaneController implements Observer {
 	 * 
 	 * Maps the current Tile-Array (Engine) to the label-Array (UI)
 	 * 
-	 * - the displayed numbers on the board-tiles get updated
-	 * - a visual effect is being triggered if the tile has just been merged / spawned
+	 * - the displayed numbers on the board-tiles get updated - a visual effect
+	 * is being triggered if the tile has just been merged / spawned
 	 * 
 	 */
-
-	private void updateLabelList(Tile[][] tileArray) {
+	protected void updateLabelList(Tile[][] tileArray) {
 
 		int i = 0;
 		int j = 0;
@@ -299,14 +310,15 @@ public class GamePaneController implements Observer {
 	 * @param durationMillis:
 	 *            duration of the fade-in in milliseconds
 	 * @param from:
-	 *            opacity of label at the beginning of effect (range: 0.0 to 1.0)
+	 *            opacity of label at the beginning of effect (range: 0.0 to
+	 *            1.0)
 	 * @param to:
 	 *            opacity of label at the end of the effect (range: 0.0 to 1.0)
 	 * @param nbOfcycles:
-	 *            number of times the fade-in effect gets executed upon method-call
+	 *            number of times the fade-in effect gets executed upon
+	 *            method-call
 	 * 
 	 */
-
 	private void fadeIn(Label label, int durationMillis, double from, double to, int nbOfcycles) {
 
 		FadeTransition fadeTransition = new FadeTransition(Duration.millis(durationMillis), label);
@@ -321,9 +333,8 @@ public class GamePaneController implements Observer {
 	 * 
 	 * Reacts upon notification:
 	 * 
-	 * > Updates stop-watch on main-screen
-	 * > Checks if boolean gameOver has to be set to "true"
-	 * > Handles cases of game-won and game-over
+	 * > Updates stop-watch on main-screen > Checks if boolean gameOver has to
+	 * be set to "true" > Handles cases of game-won and game-over
 	 * 
 	 * 
 	 * @param Observable:
@@ -331,77 +342,54 @@ public class GamePaneController implements Observer {
 	 * @param Object
 	 * 
 	 */
-
 	public void update(Observable o, Object arg) {
-
-		if (o instanceof Timer) {
-
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					long millis = ((Timer) o).getMillisElapsed();
-					labelTimerTime.setText(DurationFormatUtils.formatDuration(millis, conf.getPropertyAsString("timerTimeFormat")));
-				}
-			});
-		}
-
-		else if (o instanceof GameStatistics) {
+		if (o instanceof GameEngine) {
+			Pair p = (Pair) arg;
 
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
 
-					GameStatistics stats = (GameStatistics) o;
-
-					// case: player has reached game-over:
-					if (stats.isGameOver()) {
-						processGameOver(stats);
-					}
-
-					// case: Game-winning number has just been reached:
-					else if (stats.isGameContinue() == false && stats.getHighestValue() == conf.getPropertyAsInt("winningNumber")) {
-
-						// Display victory notification + ask user if he wants to continue:
-						VictoryAlert dialog = new VictoryAlert(conf.getPropertyAsString("victoryTitle.alert"), conf.getPropertyAsString("victoryText.alert"));
-						boolean continuation = dialog.show();
-
-						// case: Winner wants to continue till game-over:
-						if (continuation) {
-							stats.setGameContinue(true);
-
-							// case: Winner wants to quit game upon achieving the winning-number:
-						} else {
-							stats.setGameOver(true);
-						}
+					switch ((String) p.getKey()) {
+					case "gameOver":
+						processGameOver(game.getStats());
+						break;
+					case "won":
+						processGameWon();
+						break;
+					// case "score":
+					// Long score = (Long) p.getValue();
+					// labelScoreNumber.setText(score.toString());
+					// break;
 					}
 				}
 			});
 		}
 	}
+	
 
 	/**
 	 * Triggers following actions in case of game-over:
 	 * 
-	 * - resets the timer, hides the Pause-Button
-	 * - opens the Game-Over alert where user can put his name
-	 * - saves the the typed username to the GameStatistics-object and adds that object to Highscores
-	 * - switches to the highscore-screen
-	 * - Writes the new score to the database
+	 * - resets the timer, hides the Pause-Button - opens the Game-Over alert
+	 * where user can put his name - saves the the typed username to the
+	 * GameStatistics-object and adds that object to Highscores - switches to
+	 * the highscore-screen - Writes the new score to the database
 	 * 
 	 * 
 	 * @param stats:
-	 *            GameStatistics, containing exclusively information about the current game
+	 *            GameStatistics, containing exclusively information about the
+	 *            current game
 	 * 
 	 */
 
 	private void processGameOver(GameStatistics stats) {
-
-		timer.reset();
+		isActive = false;
 		isRunning = false;
 		pauseResumeButton.setVisible(false);
 
 		// Display game-over alert:
-		GameOverDialog dialog = new GameOverDialog(conf.getPropertyAsString("gameOverDialog.title"), stats.getScore());
+		GameOverDialog dialog = new GameOverDialog(conf.getPropertyAsString("gameOverDialog.title"), stats.getScore().intValue());
 
 		if (dialog.showAndWait().isPresent()) {
 			stats.setPlayerName(dialog.getPlayerName());
@@ -409,13 +397,52 @@ public class GamePaneController implements Observer {
 
 			try {
 				// Display highscore-list:
-//				Main.switchScene(Scenes.HIGHSCORE);
+				// Main.switchScene(Scenes.HIGHSCORE);
 
 				// Write scores to database:
-				scoreHandler.writeScores(highscoreList, conf.getPropertyAsString("highscoreFileName"));
+				// scoreHandler.writeScores(highscoreList,
+				// conf.getPropertyAsString("highscoreFileName"));
 			} catch (Exception e) {
 			}
 		}
 	}
 
+	/**
+	 * Display victory notification + ask user if he wants to continue:
+	 */
+	private void processGameWon() {
+		if (!ignoreWinMessage) {
+			VictoryAlert dialog = new VictoryAlert(conf.getPropertyAsString("victoryTitle.alert"), conf.getPropertyAsString("victoryText.alert"));
+			boolean continuation = dialog.show();
+
+			if (continuation) {
+				// case: Winner wants to continue till game-over:
+				ignoreWinMessage = true;
+			} else {
+				// case: Winner wants to quit game upon achieving the
+				// winning-number:
+				processGameOver(game.getStats());
+			}
+		}
+	}
+
+	/**
+	 * This method is periodically triggered by Timeline Animation.
+	 */
+	protected void updateGui() {
+		if (isRunning && isActive) {
+			labelTimerTime.setText(DurationFormatUtils.formatDuration(game.getDuration(), conf.getPropertyAsString("timerTimeFormat")));
+		}
+	}
+
+	/**
+	 * Provides the player with a hint about the next move. e.g. which move
+	 * gives the most points or merges the most tiles... (maybe configurable) du
+	 * ghörsch nüd me?
+	 * 
+	 * 
+	 */
+	@FXML
+	public void hintAction() {
+	}
 }

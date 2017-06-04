@@ -10,7 +10,7 @@ public class EngineTest extends TestCase {
 	GameEngine game;
 	
 	private void init(int boardSize){		
-		game = new GameEngine(boardSize, new GameStatistics("",boardSize));
+		game = new GameEngine(boardSize, 2048);
 		board = new Tile[boardSize][boardSize];
 		
 		
@@ -48,7 +48,7 @@ public class EngineTest extends TestCase {
 
 		assertEquals(board[0][3].getValue(), 8);
 		assertEquals((int)game.getStats().getHighestValue(), 8);
-		assertEquals((int)game.getStats().getScore(), 12);
+		assertEquals(game.getStats().getScore().intValue(), 12);
 		
 	}
 	
@@ -77,7 +77,7 @@ public class EngineTest extends TestCase {
 
 		assertEquals(board[0][0].getValue(), 4);
 		assertEquals(board[0][1].getValue(), 4);
-		assertEquals((int)game.getStats().getScore(), 8);
+		assertEquals(game.getStats().getScore().intValue(), 8);
 	}
 	
 	
@@ -105,7 +105,7 @@ public class EngineTest extends TestCase {
 
 		assertEquals(board[0][2].getValue(), 4);
 		assertEquals(board[0][3].getValue(), 4);
-		assertEquals((int)game.getStats().getScore(), 8);
+		assertEquals(game.getStats().getScore().intValue(), 8);
 	}
 	
 	
@@ -135,7 +135,7 @@ public class EngineTest extends TestCase {
 		assertEquals(board[2][0].getValue(), 8);
 		assertEquals(board[3][0].getValue(), 4);
 		assertEquals(board[3][1].getValue(), 4);
-		assertEquals((int)game.getStats().getScore(), 12);
+		assertEquals(game.getStats().getScore().intValue(), 12);
 	}
 	
 	
@@ -165,7 +165,7 @@ public class EngineTest extends TestCase {
 		assertEquals(board[2][0].getValue(), 4);
 		assertEquals(board[3][0].getValue(), 4);
 		assertEquals(board[3][1].getValue(), 4);
-		assertEquals((int)game.getStats().getScore(), 8);
+		assertEquals(game.getStats().getScore().intValue(), 8);
 	}
 	
 	

@@ -10,6 +10,8 @@ public enum Scene {
 
 	MAINSCENE("Game"),
 	HIGHSCORE("Highscore"),
+	SINGLEAI("Single AI"),
+	MULTIAI("Multi AI"),
 	SETTINGS("Settings");
 	
 	String description;
