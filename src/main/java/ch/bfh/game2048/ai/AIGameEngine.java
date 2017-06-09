@@ -28,6 +28,10 @@ public class AIGameEngine extends GameEngine {
 		return validMove;
 	}
 	
+	public boolean move(Direction dir, boolean simulate){
+		return super.move(dir, simulate);
+	}
+	
 	/**
 	 * more or less just a helper method counting 0 on the board
 	 * @return
@@ -46,6 +50,9 @@ public class AIGameEngine extends GameEngine {
 		return c;		
 	}
 	
+	public void setBoard(Tile[][] board){
+		this.setBoard(board);
+	}
 	
 
 }

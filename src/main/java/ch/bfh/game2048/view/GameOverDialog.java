@@ -99,8 +99,7 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 	}
 
 	/**
-	 * - Check if input is valid
-	 * - Enable okay-Button when input valid
+	 * - Check if input is valid - Enable okay-Button when input valid
 	 */
 	@Override
 	public void invalidated(Observable arg0) {

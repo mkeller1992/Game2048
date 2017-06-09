@@ -52,7 +52,7 @@ public class VictoryAlert {
 
 		// set title-bar icon
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(getClass().getResourceAsStream("../meteor.png")));
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("images/meteor.png")));
 
 		// create and add image
 		image = new Image(getClass().getResource("images/WinningSmiley.png").toExternalForm());

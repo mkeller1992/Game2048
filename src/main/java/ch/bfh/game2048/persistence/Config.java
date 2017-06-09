@@ -15,25 +15,26 @@ public class Config {
 
 	public final static String PROPERTIES_FILE_NAME = "2048.properties";
 	FileBasedConfigurationBuilder<FileBasedConfiguration> builder;
-	Configuration conf;
+	public Configuration conf;
 
 	private static Config instance = new Config();
 
 	private Config() {
 
 		conf = load(PROPERTIES_FILE_NAME);
+	
 	}
 
-	public void setProperty(String key, String attribute) {
+	public void setProperty(String key, Object attribute) {
 		conf.setProperty(key, attribute);
 	}
 
 	public String getPropertyAsString(String propertyKey) {
-		return conf.getProperty(propertyKey).toString();
+		return conf.getString(propertyKey);		
 	}
 
 	public int getPropertyAsInt(String propertyKey) {
-		return Integer.parseInt(conf.getProperty(propertyKey).toString());
+		return conf.getInt(propertyKey);		
 	}
 
 	public ObservableList<String> getPropertyAsObservableList(String keyValue) {

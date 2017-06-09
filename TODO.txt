@@ -1,32 +1,22 @@
-
-GUI:
- - Add NumberOfMoves
- - Add TimeElapsed
- - Add Highscore
-
 Engine:
- - Zug rückgängig machen
+ 
 
 KI:
+- board laden und empfehlung abgeben
+- Mätthu AI einbinden
+
+GUI:
+- Zug rückgängig einbinden
+- Hint einbinden
+- Highscore
+-> XML
+-> Firebase
 
 
+- Settings-Object
+
+- UML
 
 
-TODO:
-- REFACTORING!!
-
-- Scores
--- ScoreHandler
-
--- HighscorePane
----> spalte mehr mit inet/local
-
--- GameStatistic
---> variable mit local/inet
-
-
-Highscore-Lokal    Inet-NoSQL-DB
-	XML			
-	
-	\					/
-		   Highscore		
+BUG-LIST:
+- GameOver wenn alles bis auf die linke spalte gefüllt ist.

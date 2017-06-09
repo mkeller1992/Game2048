@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
@@ -60,7 +61,7 @@ public class GamePaneController implements Observer {
 
 	@FXML
 	protected Label labelTimerName;
-	
+
 	@FXML
 	protected Label labelTimerTime; // where the time of the stop-watch gets
 									// displayed
@@ -74,6 +75,7 @@ public class GamePaneController implements Observer {
 	protected Config conf;
 
 	protected int numbOfBoardColumns = 4;
+	protected BaseAIStrategy aiStrategy;
 
 	protected boolean isActive = false; // pause / no-pause
 	protected boolean isRunning = false; // game-running / (game-over/not yet
@@ -102,6 +104,8 @@ public class GamePaneController implements Observer {
 		conf = Config.getInstance();
 		scoreHandler = new ScoreHandler();
 		highscoreList = scoreHandler.readScores(conf.getPropertyAsString("highscoreFileName"));
+
+		numbOfBoardColumns = conf.getPropertyAsInt("boardSize");
 
 		// prepare gui
 		initializeBoard();
@@ -135,8 +139,9 @@ public class GamePaneController implements Observer {
 	 */
 	@FXML
 	protected void startGame(ActionEvent event) {
+		isRunning = false;		
+		updateBoardSize();
 		game.startGame();
-
 		updateLabelList(game.getBoard());
 
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
@@ -146,6 +151,19 @@ public class GamePaneController implements Observer {
 		isRunning = true;
 
 		timer.play();
+	}
+
+	public void updateBoardSize() {
+		// check for changed board size
+		if (numbOfBoardColumns != conf.getPropertyAsInt("boardSize")) {		
+			if (isRunning == false) {				
+				numbOfBoardColumns = conf.getPropertyAsInt("boardSize");
+				game = new GameEngine(numbOfBoardColumns, conf.getPropertyAsInt("winningNumber"));
+				initializeBoard();
+			}
+
+		}
+
 	}
 
 	/**
@@ -227,10 +245,10 @@ public class GamePaneController implements Observer {
 		};
 		keyNode.setOnKeyPressed(keyEventHandler);
 	}
-	
-	protected void updateScoreLabel(long score){
+
+	protected void updateScoreLabel(long score) {
 		// TODO: Formatt!!!
-		labelScoreNumber.setText("" + score + " Pts");		
+		labelScoreNumber.setText("" + score + " Pts");
 	}
 
 	// Setters and Getters:
@@ -254,7 +272,7 @@ public class GamePaneController implements Observer {
 	 * 
 	 */
 	protected void initializeBoard() {
-
+		gameBoard.getChildren().clear();
 		labelList = new SuperLabel[numbOfBoardColumns][numbOfBoardColumns];
 		double boardLength = (gameBoard.getPrefWidth() * 1.0) / numbOfBoardColumns;
 
@@ -366,7 +384,6 @@ public class GamePaneController implements Observer {
 			});
 		}
 	}
-	
 
 	/**
 	 * Triggers following actions in case of game-over:
@@ -437,12 +454,13 @@ public class GamePaneController implements Observer {
 
 	/**
 	 * Provides the player with a hint about the next move. e.g. which move
-	 * gives the most points or merges the most tiles... (maybe configurable) du
-	 * ghörsch nüd me?
-	 * 
-	 * 
+	 * gives the most points or merges the most tiles... (maybe configurable) 
 	 */
 	@FXML
 	public void hintAction() {
+		if(aiStrategy == null){
+			
+		}
+		
 	}
 }

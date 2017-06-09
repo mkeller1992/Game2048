@@ -61,11 +61,11 @@ public class MainUIController {
 				if (gamePane == null) {
 					FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/GamePane.fxml"));
 					gameController = new GamePaneController();
-					loader.setController(gameController);
-					gamePane = (Pane) loader.load();					
-					
+					loader.setController(gameController);					
+					gamePane = (Pane) loader.load();											
 				}
 
+				gameController.updateBoardSize();
 				gameController.handlePauseResume(null);
 
 				mainPane.setCenter(gamePane);
@@ -85,7 +85,9 @@ public class MainUIController {
 
 				mainStage.setWidth(800);
 			} else if (scene.equals(Scene.SETTINGS)) {
+				SettingsController settingsController = new SettingsController();
 				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/Settings.fxml"));
+				loader.setController(settingsController);
 				Pane settingsPane = (Pane) loader.load();
 
 				mainPane.setCenter(settingsPane);
@@ -96,8 +98,9 @@ public class MainUIController {
 				if(singleAIPane==null){
 					singleAIController = new SingleAIController();
 					FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/GamePane.fxml"));
-					loader.setController(singleAIController);
+					loader.setController(singleAIController);					
 					singleAIPane = (Pane) loader.load();
+					singleAIController.updateBoardSize();
 				}
 				
 

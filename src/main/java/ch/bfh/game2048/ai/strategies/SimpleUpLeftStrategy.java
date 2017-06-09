@@ -4,12 +4,12 @@ import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
 
-public class SimpleUpLeftAI extends BaseAIStrategy {
+public class SimpleUpLeftStrategy extends BaseAIStrategy {
 	Direction lastMove = Direction.UP;
 	AIGameEngine engine;
 	
 	
-	public SimpleUpLeftAI(AIGameEngine engine) {
+	public SimpleUpLeftStrategy(AIGameEngine engine) {
 		super(engine);
 	}
 

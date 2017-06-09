@@ -9,7 +9,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 import ch.bfh.game2048.ai.strategies.RandomStrategy;
-import ch.bfh.game2048.ai.strategies.SimpleUpLeftAI;
+import ch.bfh.game2048.ai.strategies.SimpleUpLeftStrategy;
 import ch.bfh.game2048.model.Direction;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -77,6 +77,7 @@ public class SingleAIController extends GamePaneController {
 					});
 
 				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		});

@@ -27,15 +27,15 @@
         </rowConstraints>
          <children>
             <Label text="Board Size" />
-            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" />
+            <ChoiceBox fx:id="chbBoardSize" prefWidth="150.0" GridPane.columnIndex="1" />
             <Label text="UI-Theme" GridPane.rowIndex="1" />
             <Label text="Player Name" GridPane.rowIndex="2" />
             <Label text="Hint-Strategy" GridPane.rowIndex="3" />
             <Label text="Use Online Highscore" GridPane.rowIndex="4" />
-            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="chbUiTheme" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="txtPlayerName" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ChoiceBox fx:id="chbHintStrategy" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ChoiceBox fx:id="chbOnlineScore" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

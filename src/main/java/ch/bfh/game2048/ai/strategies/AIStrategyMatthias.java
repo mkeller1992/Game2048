@@ -3,6 +3,7 @@ package ch.bfh.game2048.ai.strategies;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
@@ -45,6 +46,7 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		int[][] board = gameBoard;
 		double totalScore = 0;
 
+		
 		// Simulate a move and retrieve the corresponding statistics-object
 		MoveStats moveStats = simulateMove(board, direction);
 
@@ -136,8 +138,31 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 
 	@Override
 	public boolean initializeAI() {
-		// TODO Auto-generated method stub
-		return false;
+		AIGameEngine engine = new AIGameEngine(4, 2048);
+		
+		Tile[][] board = engine.getBoard();		
+		engine.setBoard(board);
+		engine.move(Direction.DOWN, true);
+		
+		Tile[][] boardAfterMove = engine.getBoard();
+		engine.revertMove();
+		
+		return true;		
+	}
+	
+	private Tile[][] getBordAfterSimulatedMove(Tile[][] board, Direction dir){
+		Tile[][] tmpBoard = engine.getBoard();
+		Tile[][] retVal;
+		
+		engine.setBoard(board);
+		engine.move(dir, true);
+		
+		retVal = engine.getBoard();
+		
+		engine.revertMove();
+		engine.setBoard(tmpBoard);
+		
+		return retVal;
 	}
 
 
