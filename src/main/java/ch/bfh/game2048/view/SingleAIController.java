@@ -5,8 +5,10 @@ import java.io.FileNotFoundException;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.StopWatch;
 
 import ch.bfh.game2048.ai.AIGameEngine;
+import ch.bfh.game2048.ai.strategies.AIStrategyMatthias;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 import ch.bfh.game2048.ai.strategies.RandomStrategy;
 import ch.bfh.game2048.ai.strategies.SimpleUpLeftStrategy;
@@ -30,13 +32,15 @@ public class SingleAIController extends GamePaneController {
 
 		game = new AIGameEngine(numbOfBoardColumns, conf.getPropertyAsInt("winningNumber"));
 		game.addObserver(this);
-		
-		labelTimerName.setText("Moves:");
 
+		labelTimerName.setText("Moves: ");
+
+		ignoreWinMessage = true;
+		btnHint.setVisible(false);
 	}
 
 	private void loadAIEngine() {
-		aiStrategy = new RandomStrategy((AIGameEngine) game);
+		aiStrategy = new AIStrategyMatthias((AIGameEngine) game);
 		aiStrategy.initializeAI();
 	}
 
@@ -51,26 +55,41 @@ public class SingleAIController extends GamePaneController {
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));
 		pauseResumeButton.setVisible(true);
+		pauseResumeButton.setText(conf.getPropertyAsString("pause.button"));
 		isActive = true;
 		isRunning = true;
 
 		timer.play();
+
+		playGame();
+	}
+
+	@Override
+	protected void handleResume() {
+
+		super.handleResume();
+			
+		playGame();
+	}
+
+	private void playGame() {
 
 		// start thread
 		aiPlayer = new Thread(() -> {
 
 			while (isRunning && isActive) {
 				try {
-					Thread.sleep(50);
+					Thread.sleep(100);
 
 					Direction dir = aiStrategy.getMove(game.getBoard());
-					System.out.println("doing move: "+ dir);
+
+					System.out.println("doing move: " + dir);
 					game.move(dir);
-					
+
 					Platform.runLater(new Runnable() {
 						@Override
-						public void run() {							
-	
+						public void run() {
+
 							updateLabelList(game.getBoard());
 							updateScoreLabel(game.getStats().getScore());
 						}
@@ -85,10 +104,10 @@ public class SingleAIController extends GamePaneController {
 		aiPlayer.start();
 
 	}
-	
+
 	protected void updateGui() {
 		if (isRunning && isActive) {
-			labelTimerTime.setText(""+game.getStats().getAmountOfMoves());
+			labelTimerTime.setText(" " + game.getStats().getAmountOfMoves());
 		}
 	}
 

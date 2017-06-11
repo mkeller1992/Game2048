@@ -5,9 +5,7 @@ import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
 
 public class SimpleUpLeftStrategy extends BaseAIStrategy {
-	Direction lastMove = Direction.UP;
-	AIGameEngine engine;
-	
+	Direction lastMove = Direction.UP;		
 	
 	public SimpleUpLeftStrategy(AIGameEngine engine) {
 		super(engine);
@@ -29,12 +27,12 @@ public class SimpleUpLeftStrategy extends BaseAIStrategy {
 		}
 		
 		if(engine.isMoveValid(moveDir)){
-			System.out.println("suggesting moving in direction: " + moveDir);
+//			System.out.println("suggesting moving in direction: " + moveDir);
 			return moveDir;			
 		} else {
 			for(Direction d : Direction.values()){
 				if(engine.isMoveValid(d)){
-					System.out.println("moving in alternative direction: " + d);
+//					System.out.println("moving in alternative direction: " + d);
 					return d;
 				}
 			}

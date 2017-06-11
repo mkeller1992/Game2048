@@ -123,10 +123,14 @@ public class GameEngine extends Observable {
 			moved = moveBoard(dir);
 
 			if (moved) {
-				stats.incrementAmountOfMoves();
-				spawnRandomTile();
 
 				if (simulation == false) {
+					
+					// A tile will only be spawned if it's not a simulation  ---- >   TODO !!!
+					
+					stats.incrementAmountOfMoves();
+					spawnRandomTile();
+					
 					if (isGameOver()) {
 						timer.stop();
 						stats.setDuration(timer.getTime());
@@ -361,5 +365,13 @@ public class GameEngine extends Observable {
 	public Tile[][] getBoard() {
 		return board;
 	}
+	public boolean isRunning() {
+		return isRunning;
+	}
+
+	public boolean isPaused() {
+		return isPaused;
+	}
+
 
 }

@@ -51,7 +51,7 @@ public class GamePaneController implements Observer {
 	protected Button pauseResumeButton;
 
 	@FXML
-	private Button btnHint;
+	protected Button btnHint;
 
 	@FXML
 	private Label labelScoreName;
@@ -80,7 +80,7 @@ public class GamePaneController implements Observer {
 	protected boolean isActive = false; // pause / no-pause
 	protected boolean isRunning = false; // game-running / (game-over/not yet
 											// started)
-	private boolean ignoreWinMessage = false;
+	protected boolean ignoreWinMessage = false;
 
 	protected Timeline timer;
 
@@ -110,7 +110,6 @@ public class GamePaneController implements Observer {
 		// prepare gui
 		initializeBoard();
 		pauseResumeButton.setVisible(false);
-		activateKeyHandler(startButton);
 
 		timer = new Timeline(new KeyFrame(Duration.millis(50), ae -> updateGui()));
 		timer.setCycleCount(Animation.INDEFINITE);
@@ -139,7 +138,10 @@ public class GamePaneController implements Observer {
 	 */
 	@FXML
 	protected void startGame(ActionEvent event) {
-		isRunning = false;		
+
+		activateKeyHandler(startButton);
+
+		isRunning = false;
 		updateBoardSize();
 		game.startGame();
 		updateLabelList(game.getBoard());
@@ -147,6 +149,7 @@ public class GamePaneController implements Observer {
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));
 		pauseResumeButton.setVisible(true);
+		pauseResumeButton.setText(conf.getPropertyAsString("pause.button"));
 		isActive = true;
 		isRunning = true;
 
@@ -155,15 +158,13 @@ public class GamePaneController implements Observer {
 
 	public void updateBoardSize() {
 		// check for changed board size
-		if (numbOfBoardColumns != conf.getPropertyAsInt("boardSize")) {		
-			if (isRunning == false) {				
+		if (numbOfBoardColumns != conf.getPropertyAsInt("boardSize")) {
+			if (isRunning == false) {
 				numbOfBoardColumns = conf.getPropertyAsInt("boardSize");
 				game = new GameEngine(numbOfBoardColumns, conf.getPropertyAsInt("winningNumber"));
 				initializeBoard();
 			}
-
 		}
-
 	}
 
 	/**
@@ -180,15 +181,39 @@ public class GamePaneController implements Observer {
 
 	@FXML
 	void handlePauseResume(ActionEvent event) {
+		if (isActive) {
+			handlePause();
+			// If game is currently paused:
+		} else {
+			handleResume();
+		}
+	}
+
+	/**
+	 * Pauses the game after pause-button was pushed
+	 * - Timer gets suspended and Pause-Button-text turns into "Resume"
+	 */
+
+	protected void handlePause() {
 		if (isRunning) {
-			// If game is currently running:
 			if (isActive) {
 				game.pauseGame();
 				timer.pause();
 				pauseResumeButton.setText(conf.getPropertyAsString("resume.button"));
 				isActive = false;
-				// If game is currently paused:
-			} else {
+			}
+		}
+	}
+
+	/**
+	 * Resumes the game after resume-button was pushed
+	 * - Timer continues and Resume-Button-text turns into "Pause"
+	 * 
+	 */
+
+	protected void handleResume() {
+		if (isRunning) {
+			if (!isActive) {
 				game.resumeGame();
 				timer.play();
 				pauseResumeButton.setText(conf.getPropertyAsString("pause.button"));
@@ -214,8 +239,6 @@ public class GamePaneController implements Observer {
 
 	private void activateKeyHandler(final Node keyNode) {
 
-		// handler for enter key press / release events, other keys are
-		// handled by the parent (keyboard) node handler
 		final EventHandler<KeyEvent> keyEventHandler = new EventHandler<KeyEvent>() {
 			public void handle(final KeyEvent keyEvent) {
 
@@ -454,13 +477,13 @@ public class GamePaneController implements Observer {
 
 	/**
 	 * Provides the player with a hint about the next move. e.g. which move
-	 * gives the most points or merges the most tiles... (maybe configurable) 
+	 * gives the most points or merges the most tiles... (maybe configurable)
 	 */
 	@FXML
 	public void hintAction() {
-		if(aiStrategy == null){
-			
+		if (aiStrategy == null) {
+
 		}
-		
+
 	}
 }

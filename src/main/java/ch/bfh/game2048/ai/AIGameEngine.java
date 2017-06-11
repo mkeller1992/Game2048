@@ -5,10 +5,15 @@ import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
 
 public class AIGameEngine extends GameEngine {
-
+	private int aiNumber = 0;
+	
 	public AIGameEngine(int boardSize, int tileValueToWin) {
 		super(boardSize, tileValueToWin);
-		// TODO Auto-generated constructor stub
+	}
+	
+	public AIGameEngine(int boardSize, int tileValueToWin, int aiNumber) {
+		super(boardSize, tileValueToWin);
+		this.aiNumber = aiNumber;
 	}
 	
 	
@@ -24,7 +29,6 @@ public class AIGameEngine extends GameEngine {
 		if(validMove){
 			revertMove();
 		}
-		
 		return validMove;
 	}
 	
@@ -50,9 +54,12 @@ public class AIGameEngine extends GameEngine {
 		return c;		
 	}
 	
-	public void setBoard(Tile[][] board){
+	public void setGameBoard(Tile[][] board){
 		this.setBoard(board);
 	}
-	
 
+	public int getAiNumber() {
+		return aiNumber;
+	}
+	
 }

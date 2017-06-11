@@ -29,6 +29,7 @@ public class Main extends Application {
 			    @Override
 			    public void handle(WindowEvent event) {
 			        Config.getInstance().write();
+			        System.exit(0);
 			    }
 			});
 
