@@ -40,6 +40,8 @@ public class RecursiveStrategy extends BaseAIStrategy {
 	@Override
 	public Direction getMove(Tile[][] board) {
 
+		engine.setGameBoard(board);
+		
 		// Reset values from previous move
 		resetStats();
 

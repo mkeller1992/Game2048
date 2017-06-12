@@ -1,15 +1,19 @@
 package ch.bfh.game2048.view;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Constructor;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.plaf.synth.SynthScrollBarUI;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
+import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
@@ -75,7 +79,9 @@ public class GamePaneController implements Observer {
 	protected Config conf;
 
 	protected int numbOfBoardColumns = 4;
+
 	protected BaseAIStrategy aiStrategy;
+	protected Strategy strategyEnum;
 
 	protected boolean isActive = false; // pause / no-pause
 	protected boolean isRunning = false; // game-running / (game-over/not yet
@@ -110,6 +116,7 @@ public class GamePaneController implements Observer {
 		// prepare gui
 		initializeBoard();
 		pauseResumeButton.setVisible(false);
+		btnHint.setVisible(false);
 
 		timer = new Timeline(new KeyFrame(Duration.millis(50), ae -> updateGui()));
 		timer.setCycleCount(Animation.INDEFINITE);
@@ -139,12 +146,21 @@ public class GamePaneController implements Observer {
 	@FXML
 	protected void startGame(ActionEvent event) {
 
-		activateKeyHandler(startButton);
+		activateKeyHandler(rootPane);
 
 		isRunning = false;
 		updateBoardSize();
 		game.startGame();
 		updateLabelList(game.getBoard());
+
+		// Only for 4x4 board all strategies can give hints
+		// Therefore set hint-button invisible for other board-sizes
+
+		if (getNumbOfBoardColumns() != 4) {
+			btnHint.setVisible(false);
+		} else {
+			btnHint.setVisible(true);
+		}
 
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));
@@ -270,8 +286,9 @@ public class GamePaneController implements Observer {
 	}
 
 	protected void updateScoreLabel(long score) {
-		// TODO: Formatt!!!
-		labelScoreNumber.setText("" + score + " Pts");
+
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
+		labelScoreNumber.setText(nf.format(score) + " Pts");
 	}
 
 	// Setters and Getters:
@@ -384,6 +401,7 @@ public class GamePaneController implements Observer {
 	 * 
 	 */
 	public void update(Observable o, Object arg) {
+
 		if (o instanceof GameEngine) {
 			Pair p = (Pair) arg;
 
@@ -481,9 +499,36 @@ public class GamePaneController implements Observer {
 	 */
 	@FXML
 	public void hintAction() {
-		if (aiStrategy == null) {
+		if (isActive && isRunning) {
+
+			// if the strategy has been changed in the config, reset the variable to null so it gets initialized with the new class
+			if (strategyEnum != null && !conf.getPropertyAsString("strategy").equals(strategyEnum.getDescription())) {
+				aiStrategy = null;
+			}
+
+			if (aiStrategy == null) {
+				String strategy = conf.getPropertyAsString("strategy");
+				Constructor<? extends BaseAIStrategy> constructor;
+
+				strategyEnum = Strategy.findStateByDescription(strategy);
+
+				Class<? extends BaseAIStrategy> strategyClazz = strategyEnum.getStrategy();
+
+				try {
+					constructor = strategyClazz.getConstructor(AIGameEngine.class);
+
+					aiStrategy = constructor.newInstance(new AIGameEngine(numbOfBoardColumns, conf.getPropertyAsInt("winningNumber")));
+					aiStrategy.initializeAI();
+					aiStrategy.getEngine().startGame();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			Direction dirSuggestion = aiStrategy.getMove(game.getBoard());
+			System.out.println(dirSuggestion.toString());
 
 		}
-
 	}
 }

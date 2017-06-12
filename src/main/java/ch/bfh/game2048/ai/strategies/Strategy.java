@@ -1,9 +1,14 @@
 package ch.bfh.game2048.ai.strategies;
 
+import java.lang.reflect.Constructor;
+
+import ch.bfh.game2048.ai.AIGameEngine;
+import ch.bfh.game2048.persistence.Config;
+
 public enum Strategy {
 	SIMPLEUPLEFT("Simple UP/Left", SimpleUpLeftStrategy.class),
-	RANDOM("Random moves", RandomStrategy.class);
-	
+	RANDOM("Random moves", RandomStrategy.class),
+	MATTHIASSUPERSTRAT("SUPER FANCY SHIT", AIStrategyMatthias.class);	
 	
 	private String description;
 	private Class<? extends BaseAIStrategy> strategy;
@@ -53,6 +58,30 @@ public enum Strategy {
 
 	public String toString(){
 		return description;
+	}
+	
+	/**
+	 * (With standard engine [4x4, 2048])
+	 * @param strategy
+	 * @return
+	 */
+	public static BaseAIStrategy getAIStrategy(Strategy strategy){
+		Constructor<? extends BaseAIStrategy> constructor;
+
+		Class<? extends BaseAIStrategy> strategyClazz = strategy.getStrategy();
+
+		try {
+			constructor = strategyClazz.getConstructor(AIGameEngine.class);
+
+			BaseAIStrategy aiStrategy = constructor.newInstance(new AIGameEngine(4, Config.getInstance().getPropertyAsInt("winningNumber")));
+			aiStrategy.initializeAI();
+			aiStrategy.getEngine().startGame();
+			return aiStrategy;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 }

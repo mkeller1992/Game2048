@@ -4,14 +4,9 @@ import java.io.FileNotFoundException;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.apache.commons.lang3.time.StopWatch;
-
 import ch.bfh.game2048.ai.AIGameEngine;
-import ch.bfh.game2048.ai.strategies.AIStrategyMatthias;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
-import ch.bfh.game2048.ai.strategies.RandomStrategy;
-import ch.bfh.game2048.ai.strategies.SimpleUpLeftStrategy;
+import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.model.Direction;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -40,17 +35,20 @@ public class SingleAIController extends GamePaneController {
 	}
 
 	private void loadAIEngine() {
-		aiStrategy = new AIStrategyMatthias((AIGameEngine) game);
+		aiStrategy = Strategy.getAIStrategy(Strategy.findStateByDescription(conf.getPropertyAsString("strategy")));
 		aiStrategy.initializeAI();
+		
+		game = aiStrategy.getEngine();	
+		game.addObserver(this);
 	}
 
 	@FXML
 	@Override
 	protected void startGame(ActionEvent event) {
-		game.startGame();
-		updateLabelList(game.getBoard());
 
 		loadAIEngine();
+		updateLabelList(game.getBoard());
+		game.startGame();
 
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));

@@ -58,6 +58,7 @@ public class GameEngine extends Observable {
 
 	public void pauseGame() {
 		isPaused = true;
+		System.out.println(isRunning);
 		timer.suspend();
 	}
 
@@ -133,7 +134,6 @@ public class GameEngine extends Observable {
 						timer.stop();
 						stats.setDuration(timer.getTime());
 						isRunning = false;
-
 						this.setChanged();
 						notifyObservers(new Pair<String, Boolean>("gameOver", true));
 					}
@@ -360,8 +360,14 @@ public class GameEngine extends Observable {
 		this.board = board;
 	}
 
+	/**
+	 * Needed for simulating moves
+	 * 
+	 * @return a clone of the current board
+	 */
+	
 	public Tile[][] getBoard() {
-		return board;
+		return SerializationUtils.clone(board);
 	}
 
 	public boolean isRunning() {

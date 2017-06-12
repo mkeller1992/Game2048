@@ -1,7 +1,5 @@
 package ch.bfh.game2048.ai.strategies;
 
-import java.util.Collections;
-
 import org.apache.commons.lang3.SerializationUtils;
 
 import ch.bfh.game2048.ai.AIGameEngine;
@@ -36,43 +34,33 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	@Override
 	public Direction getMove(Tile[][] board) {
 
+		engine.setGameBoard(board);
+
 		// Reset values from previous move
 		valueChanges = new Double[board.length];
-
 
 		// Check if move is valid and set the corresponding board-value-change:
 		int i = 0;
 		for (Direction dir : Direction.values()) {
 			if (engine.isMoveValid(dir)) {
-				valueChanges[i] = calculateExpectedValue(cloneBoard(engine.getBoard()), dir);
+				valueChanges[i] = calculateExpectedValue(engine.getBoard(), dir);
 			}
 			i++;
 		}
-	
 
 		// Check if in case of moving up there is the risk of being forced to move "down" subsequently
 		// if risk exists --> set board-value-change of "up-move" to a very low number
 		if (valueChanges[0] != null) {
-			Tile[][] boardAfterUp = getBoardAfterSimulatedMove(cloneBoard(board), Direction.UP);
+			Tile[][] boardAfterUp = getBoardAfterSimulatedMove(engine.getBoard(), Direction.UP);
 
 			if (riskOfDeadLockAfterUP(boardAfterUp, 2) | riskOfDeadLockAfterUP(boardAfterUp, 1)) {
-				
-				System.out.println("Up: "+valueChanges[0]);
-				
 				valueChanges[0] = -10000d;
-				
-
-				System.out.println("Left: "+valueChanges[1]);
-				System.out.println("Right: "+valueChanges[2]);
-				System.out.println("Down: "+valueChanges[3]);
-				System.out.println("**********************************************");
-				
 			}
 		}
 
 		// Set max. expected board-change out of all directions
-		
-		double maxVal = -1000000;	
+
+		double maxVal = -1000000;
 		for (Double v : valueChanges) {
 			if (v != null && v > maxVal) {
 				maxVal = v;
@@ -95,7 +83,7 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	 * Computes the average expected board-value-change of the next 2 moves
 	 * That means the total score consists of:
 	 * 
-	 * ... more to come soon...
+	 * ... more to come soon... TODO
 	 * 
 	 * 
 	 * @param clonedGameBoard
@@ -285,10 +273,15 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	}
 
 	/**
-	 * A helper method counting the empty tiles on the board
+	 * A helper method counting the empty tiles on the board...
+	 * ...from indexOfFirstRow to indexOfEndRow (inclusive)
 	 * 
 	 * @param gameBoard
-	 * @return number of zeros resp. empty tiles on the board
+	 * @param indexOfFirstRow
+	 *            first row to count empty tiles
+	 * @param indexOfEndRow
+	 *            last row to count empty tiles
+	 * @return amount of empty tiles within specified rows
 	 */
 	public int getAmountOfEmptyTiles(Tile[][] gameBoard, int indexOfFirstRow, int indexOfEndRow) {
 		int c = 0;
