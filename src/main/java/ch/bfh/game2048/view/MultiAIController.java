@@ -68,6 +68,7 @@ public class MultiAIController implements Observer {
 		stopwatch = new StopWatch();
 
 		resultScreen.setFont(Font.font("Consolas", FontWeight.BOLD, 16));
+		resultScreen.setEditable(false);
 
 		// Populate Thread-Amount ChoiceBox:
 		chbThreadAmount.setItems(Config.getInstance().getPropertyAsObservableList("threadArray"));
