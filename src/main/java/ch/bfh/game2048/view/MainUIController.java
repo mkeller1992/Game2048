@@ -78,7 +78,7 @@ public class MainUIController {
 
 				mainPane.setCenter(gamePane);
 
-				mainStage.setWidth(420);
+				mainStage.setWidth(440);
 			} else if (scene.equals(Scene.HIGHSCORE)) {
 
 				List<HighscoreEntry> highscores = new ArrayList<HighscoreEntry>();
@@ -99,7 +99,7 @@ public class MainUIController {
 				Pane settingsPane = (Pane) loader.load();
 
 				mainPane.setCenter(settingsPane);
-				mainStage.setWidth(425);
+				mainStage.setWidth(440);
 
 			} else if (scene.equals(Scene.SINGLEAI)) {
 
@@ -113,7 +113,7 @@ public class MainUIController {
 
 				singleAIController.handleResume();
 				mainPane.setCenter(singleAIPane);
-				mainStage.setWidth(420);
+				mainStage.setWidth(440);
 
 			} else if (scene.equals(Scene.MULTIAI)) {
 
@@ -124,7 +124,7 @@ public class MainUIController {
 					multiAiPane = (Pane) loader.load();					
 				}				
 				mainPane.setCenter(multiAiPane);
-				mainStage.setWidth(650);				
+				mainStage.setWidth(590);				
 				
 			}
 		} catch (IOException e) {

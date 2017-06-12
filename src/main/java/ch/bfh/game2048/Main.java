@@ -19,7 +19,7 @@ public class Main extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/MainUI.fxml"));
 			BorderPane root = (BorderPane) loader.load();
-			Scene mainScene = new Scene(root, 420, 520);
+			Scene mainScene = new Scene(root, 440, 550);
 			Stage stage = primaryStage;
 			stage.setTitle("2048 by M&M");
 

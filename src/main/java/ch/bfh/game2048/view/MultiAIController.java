@@ -1,31 +1,39 @@
 package ch.bfh.game2048.view;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.StopWatch;
+
 import ch.bfh.game2048.ai.AIGameEngine;
-import ch.bfh.game2048.ai.strategies.AIStrategyMatthias;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 import ch.bfh.game2048.ai.strategies.SimpleUpLeftStrategy;
 import ch.bfh.game2048.model.Direction;
+import ch.bfh.game2048.persistence.Config;
+import ch.bfh.game2048.view.model.Scene;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.Pair;
 
 public class MultiAIController implements Observer {
 
 	@FXML
-	ChoiceBox comboStrategy;
+	ChoiceBox chbStrategy;
 
 	@FXML
-	ChoiceBox comboThreadAmount;
+	ChoiceBox<String> chbThreadAmount;
 
 	@FXML
 	Button buttonStart;
@@ -36,9 +44,18 @@ public class MultiAIController implements Observer {
 	@FXML
 	Label labelTime;
 
-	MultiAIStats multiAiStats;
+	@FXML
+	Label labelStrategy;
 
+	@FXML
+	Label labelNumbOfThreads;
+
+	@FXML
+	Label labelRunningTime;
+
+	MultiAIStats multiAiStats;
 	MultiAIController instance;
+	StopWatch stopwatch;
 
 	public MultiAIController() {
 		this.instance = this;
@@ -47,6 +64,21 @@ public class MultiAIController implements Observer {
 	@FXML
 	public void initialize() {
 		multiAiStats = new MultiAIStats();
+
+		stopwatch = new StopWatch();
+
+		resultScreen.setFont(Font.font("Consolas", FontWeight.BOLD, 16));
+
+		// Populate Thread-Amount ChoiceBox:
+		chbThreadAmount.setItems(Config.getInstance().getPropertyAsObservableList("threadArray"));
+		chbThreadAmount.getSelectionModel().select(Config.getInstance().getPropertyAsString("selectedThreadAmount"));
+
+		// Add event-handler to Thread-Amount ChoiceBox:
+		chbThreadAmount.setOnAction((event) -> {
+			String selectedEntry = chbThreadAmount.getSelectionModel().getSelectedItem();
+			Config.getInstance().setProperty("selectedThreadAmount", selectedEntry);
+		});
+
 	}
 
 	@Override
@@ -59,23 +91,30 @@ public class MultiAIController implements Observer {
 	}
 
 	public void start() {
+
+		buttonStart.setText(Config.getInstance().getPropertyAsString("restart.button"));
+
 		// start StopWatch
+		if (stopwatch != null) {
+			stopwatch.reset();
+		}
+		stopwatch.start();
+
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 
 				System.out.println("let the fun begin...");
 
-				ExecutorService executor = Executors.newFixedThreadPool(50);
-
-				int amountOfThreads = 8;
+				ExecutorService executor = Executors.newFixedThreadPool(100);
 
 				ArrayList<AiPlayer> players = new ArrayList<AiPlayer>();
 
+				int amountOfThreads = Config.getInstance().getPropertyAsInt("selectedThreadAmount");
+				
 				for (int i = 0; i < amountOfThreads; i++) {
 					AIGameEngine engine = new AIGameEngine(4, 2048, i);
-					BaseAIStrategy strategy = new AIStrategyMatthias(engine);
+					BaseAIStrategy strategy = new SimpleUpLeftStrategy(engine);
 					Runnable aiPlayer = new AiPlayer(strategy, instance, engine);
 					players.add((AiPlayer) aiPlayer);
 					executor.execute(aiPlayer);
@@ -92,8 +131,8 @@ public class MultiAIController implements Observer {
 				while (!executor.isTerminated()) {
 					// AI's am spilen warten auf punkte und infos und blah blah
 					System.out.println("waiting loop...");
-					updateGameStatistic(players);
-					updateGUI();
+					updateGameStatistic(players, false);
+					updateGUI(players, false);
 
 					try {
 						Thread.sleep(500);
@@ -101,23 +140,28 @@ public class MultiAIController implements Observer {
 						e.printStackTrace();
 					}
 				}
-				// Stop timer (StopWatch)
-				System.out.println("all threads finished...");
+
+				// Responsible for displaying the stats of the longest game:
+				updateGameStatistic(players, true);
+				updateGUI(players, true);
 			}
 		});
 		t.start();
 
 	}
 
-	private void updateGameStatistic(ArrayList<AiPlayer> players) {
+	private void updateGameStatistic(ArrayList<AiPlayer> players, boolean allEnded) {
 		int amountOfLosses = 0;
 		int amountOfWins = 0;
 		int maxPoints = 0;
 		int minPoints = Integer.MAX_VALUE;
+		int totalPoints = 0;
 
 		for (AiPlayer p : players) {
 
-			if (p.game.isRunning()) {
+			totalPoints += p.game.getStats().getScore();
+
+			if (p.game.isRunning() || allEnded) {
 				maxPoints = Math.max(p.game.getStats().getScore().intValue(), maxPoints);
 				minPoints = Math.min(p.game.getStats().getScore().intValue(), minPoints);
 			}
@@ -134,19 +178,52 @@ public class MultiAIController implements Observer {
 		multiAiStats.setAmountOfWins(amountOfWins);
 		multiAiStats.setMaxPoints(maxPoints);
 		multiAiStats.setMinPoints(minPoints);
+		multiAiStats.setAveragePoints(totalPoints / players.size());
 
 	}
 
-	private void updateGUI() {
+	private void updateGUI(ArrayList<AiPlayer> players, boolean allEnded) {
+
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
+		StringBuilder sb = new StringBuilder();
+
+		for (AiPlayer p : players) {
+			if (!p.game.isRunning()) {
+				sb.append(String.format("%1$-5s %2$-6s %3$-10s %4$-7s", p.game.getAiNumber(), (p.game.getDuration() / 1000), nf.format(p.game.getStats().getScore()), p.game.getStats().getHighestValue()) + "\n");
+			}
+		}
 
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 
-				String text = "Amount of losses: " + multiAiStats.getAmountOfLosses() + "\n" + "Amount of wins: " + multiAiStats.getAmountOfWins() + "\n" + "Max. points: " + multiAiStats.getMaxPoints() + "\n" + "Min. points: "
-						+ multiAiStats.getMinPoints() + "\n";
+				String winLossRatio = multiAiStats.getAmountOfWins() + "/" + multiAiStats.getAmountOfLosses();
+
+				String text = String.format("%1$-13s %2$-6s", "Games won: ", winLossRatio) + "\n";
+				text += String.format("%1$-13s %2$-6s", "Max. Points: ", nf.format(multiAiStats.getMaxPoints())) + "\n";
+				text += String.format("%1$-13s %2$-6s", "Av. Points: ", nf.format(multiAiStats.getAveragePoints())) + "\n";
+				text += String.format("%1$-13s %2$-6s", "Min. Points: ", nf.format(multiAiStats.getMinPoints())) + "\n\n";
+				text += "-------------------------------\n";
+				text += String.format("%1$-5s %2$-6s %3$-10s %4$-7s", "Th#", "Time", "Points", "Highest");
+				text += "\n-------------------------------\n" + sb.toString();
+
+				if (multiAiStats.getAmountOfLosses() > 0) {
+					text += "-------------------------------\n";
+				}
+
+				System.out.println("Second");
+
 				resultScreen.setText(text);
-				// use stopwatch
+
+				// display current stopwatch-time:
+				stopwatch.split();
+				labelTime.setText(DurationFormatUtils.formatDuration(stopwatch.getSplitTime(), Config.getInstance().getPropertyAsString("timerTimeFormat")));
+
+				// if all threads have ended --> Stop stopwatch:
+				if (allEnded) {
+					stopwatch.stop();
+				}
+
 			}
 		});
 
