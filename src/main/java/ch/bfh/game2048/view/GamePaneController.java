@@ -74,8 +74,6 @@ public class GamePaneController implements Observer {
 
 	GameEngine game;
 
-	private ScoreHandler scoreHandler;
-	private Highscore highscoreList;
 	protected Config conf;
 
 	protected int numbOfBoardColumns = 4;
@@ -105,11 +103,8 @@ public class GamePaneController implements Observer {
 	 */
 	@FXML
 	public void initialize() throws FileNotFoundException, JAXBException {
-
 		// set properties
 		conf = Config.getInstance();
-		scoreHandler = new ScoreHandler();
-		highscoreList = scoreHandler.readScores(conf.getPropertyAsString("highscoreFileName"));
 
 		numbOfBoardColumns = conf.getPropertyAsInt("boardSize");
 
@@ -442,8 +437,9 @@ public class GamePaneController implements Observer {
 
 		if (dialog.showAndWait().isPresent()) {
 			stats.setPlayerName(dialog.getPlayerName());
-			highscoreList.addHighscore(stats);
-
+			
+			ScoreHandler.getInstance().getHighscore().addHighscore(stats);			
+			ScoreHandler.getInstance().writeScores(Config.getInstance().getPropertyAsString("highscoreFileName"));
 			try {
 				// Display highscore-list:
 				// Main.switchScene(Scenes.HIGHSCORE);

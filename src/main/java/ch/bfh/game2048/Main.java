@@ -1,6 +1,7 @@
 package ch.bfh.game2048;
 
 import ch.bfh.game2048.persistence.Config;
+import ch.bfh.game2048.persistence.ScoreHandler;
 import ch.bfh.game2048.view.MainUIController;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -29,6 +30,7 @@ public class Main extends Application {
 			    @Override
 			    public void handle(WindowEvent event) {
 			        Config.getInstance().write();
+			        ScoreHandler.getInstance().writeScores(Config.getInstance().getPropertyAsString("highscoreFileName"));
 			        System.exit(0);
 			    }
 			});

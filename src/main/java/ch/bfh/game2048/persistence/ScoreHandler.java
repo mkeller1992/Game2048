@@ -2,22 +2,26 @@ package ch.bfh.game2048.persistence;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.lang3.StringUtils;
-
+import ch.bfh.game2048.model.GameStatistics;
 import ch.bfh.game2048.model.Highscore;
+import ch.bfh.game2048.view.model.HighscoreEntry;
 
 public class ScoreHandler {
+	private static ScoreHandler instance = null;
+
+	private Highscore highscore = null;
 
 	/**
 	 * Marshaller:
@@ -32,23 +36,27 @@ public class ScoreHandler {
 	 *            include ".xml")
 	 * @throws JAXBException
 	 * @throws FileNotFoundException
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
-	public void writeScores(Highscore highscores, String xmlFile) throws JAXBException, URISyntaxException {
+	public void writeScores(String xmlFile) {
+		try {
+			// create JAXB context and instantiate marshaller
+			JAXBContext context = JAXBContext.newInstance(Highscore.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-		// create JAXB context and instantiate marshaller
-		JAXBContext context = JAXBContext.newInstance(Highscore.class);
-		Marshaller m = context.createMarshaller();
-		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			// to marshal "Umlaute" correctly
+			m.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
 
-		// to marshal "Umlaute" correctly
-		m.setProperty(Marshaller.JAXB_ENCODING, "ISO-8859-1");
+			// Write to System.out
+			m.marshal(highscore, System.out);
 
-		// Write to System.out
-		m.marshal(highscores, System.out);
-
-		// Write to File
-		m.marshal(highscores, new File(this.getClass().getResource("/highscore/"+xmlFile).toURI()));
+			// Write to File
+			m.marshal(highscore, new File(this.getClass().getResource("/highscore/" + xmlFile).toURI()));
+		} catch (Exception e) {
+			System.out.println("Could not save Highscores...");
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -66,20 +74,58 @@ public class ScoreHandler {
 	 * @throws FileNotFoundException
 	 */
 
-	public Highscore readScores(String xmlFile) throws JAXBException, FileNotFoundException {
+	public void readScores(String xmlFile) {
+		try {
+			JAXBContext context = JAXBContext.newInstance(Highscore.class);
 
-		JAXBContext context = JAXBContext.newInstance(Highscore.class);
+			// get variables from our xml file, created before
+			// System.out.println("Output from our XML File: ");
+			Unmarshaller um = context.createUnmarshaller();
 
-		// get variables from our xml file, created before
-		// System.out.println("Output from our XML File: ");
-		Unmarshaller um = context.createUnmarshaller();
+			InputStreamReader in = new InputStreamReader(this.getClass().getResourceAsStream("/highscore/" + xmlFile));
+			highscore = (Highscore) um.unmarshal(in);
 
-		InputStreamReader in = new InputStreamReader(this.getClass().getResourceAsStream("/highscore/" + xmlFile));
-		Highscore highscores = (Highscore) um.unmarshal(in);
+			// for (GameStatistics g : highscores.getHighscore()) {
+			// System.out.println(g.getScore());
+			// }
+		} catch (Exception e) {
+			System.out.println("Could not load Highscores...");
+			e.printStackTrace();
+		}
 
-		// for (GameStatistics g : highscores.getHighscore()) {
-		// System.out.println(g.getScore());
-		// }
-		return highscores;
+	}
+
+	public List<HighscoreEntry> getHighscoreEntryList() {
+		List<HighscoreEntry> hsList = new ArrayList<HighscoreEntry>();
+
+		int i = 1;
+		for (GameStatistics stats :  highscore.getHighscoreList().stream().sorted((h1,h2) -> h2.compareTo(h1)).collect(Collectors.toList())) {
+			HighscoreEntry highscoreEntry = new HighscoreEntry(stats);
+			highscoreEntry.setRank(i);
+			i++;
+			hsList.add(highscoreEntry);
+		}
+
+		return hsList;
+	}
+
+	public Highscore getHighscore() {
+		return highscore;
+	}
+
+	public void setHighscore(Highscore highscore) {
+		this.highscore = highscore;
+	}
+
+	protected ScoreHandler() {
+
+	}
+
+	public static ScoreHandler getInstance() {
+		if (instance == null) {
+			instance = new ScoreHandler();
+			instance.readScores(Config.getInstance().getPropertyAsString("highscoreFileName"));
+		}
+		return instance;
 	}
 }

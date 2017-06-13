@@ -18,9 +18,6 @@ public class HighscoreEntry {
 	private LongProperty timestamp;
 	private IntegerProperty boardsize;
 	
-	
-	
-	
 	/**
 	 * 
 	 */
@@ -28,14 +25,15 @@ public class HighscoreEntry {
 		super();
 	}
 	
-	public HighscoreEntry(GameStatistics stats){		
-		this.nickname.set(stats.getPlayerName());
-		this.score.set(stats.getScore());
-		this.maxTile.set(stats.getHighestValue());
-		this.duration.set(stats.getDuration());
-		this.numOfMoves.set(stats.getAmountOfMoves());
-		this.timestamp.set(stats.getStartTimestamp());
-		this.boardsize.set(stats.getBoardSize());
+	public HighscoreEntry(GameStatistics stats){	
+		this.rank = new SimpleIntegerProperty();
+		this.nickname = new SimpleStringProperty(stats.getPlayerName());
+		this.score = new SimpleLongProperty(stats.getScore());
+		this.maxTile = new SimpleIntegerProperty(stats.getHighestValue());
+		this.duration = new SimpleLongProperty(stats.getDuration());			
+		this.numOfMoves = new SimpleIntegerProperty(stats.getAmountOfMoves());
+		this.timestamp = new SimpleLongProperty(stats.getStartTimestamp());
+		this.boardsize = new SimpleIntegerProperty(stats.getBoardSize());
 	}
 	
 	public HighscoreEntry(int rank, String nickname, long score, int maxtile, long duration, int numOfMoves, long timestamp, int boardsize){

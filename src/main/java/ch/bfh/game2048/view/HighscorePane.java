@@ -52,6 +52,7 @@ public class HighscorePane extends VBox {
 	TableColumn<HighscoreEntry, Integer> tblHighestTile;
 	TableColumn<HighscoreEntry, String> tblDuration;
 	TableColumn<HighscoreEntry, Integer> tblNumbOfMoves;
+	TableColumn<HighscoreEntry, String> tblBoardSize;
 	TableColumn<HighscoreEntry, String> tblDate;
 
 	Config conf;
@@ -69,7 +70,6 @@ public class HighscorePane extends VBox {
 	 *            : number of rows resp. columns of the board
 	 */
 
-	@SuppressWarnings({ "rawtypes" })
 	public HighscorePane(List<HighscoreEntry> highscores) {
 		conf = Config.getInstance();
 
@@ -112,13 +112,14 @@ public class HighscorePane extends VBox {
 		/*
 		 * Specify the column-titles
 		 */
-		tblRank = new TableColumn(conf.getPropertyAsString("colTitleRank.dialog"));
-		tblName = new TableColumn(conf.getPropertyAsString("colTitleName.dialog"));
-		tblScore = new TableColumn(conf.getPropertyAsString("colTitleScore.dialog"));
-		tblHighestTile = new TableColumn(conf.getPropertyAsString("colTitleMaxTile.dialog"));
-		tblDuration = new TableColumn(conf.getPropertyAsString("colTitleDuration.dialog"));
-		tblNumbOfMoves = new TableColumn(conf.getPropertyAsString("colTitleNumbOfMoves.dialog"));
-		tblDate = new TableColumn(conf.getPropertyAsString("colTitleDateTime.dialog"));
+		tblRank = new TableColumn<HighscoreEntry, Integer>(conf.getPropertyAsString("colTitleRank.dialog"));
+		tblName = new TableColumn<HighscoreEntry, String>(conf.getPropertyAsString("colTitleName.dialog"));
+		tblScore = new TableColumn<HighscoreEntry, Integer>(conf.getPropertyAsString("colTitleScore.dialog"));
+		tblHighestTile = new TableColumn<HighscoreEntry, Integer>(conf.getPropertyAsString("colTitleMaxTile.dialog"));
+		tblDuration = new TableColumn<HighscoreEntry, String>(conf.getPropertyAsString("colTitleDuration.dialog"));
+		tblNumbOfMoves = new TableColumn<HighscoreEntry, Integer>(conf.getPropertyAsString("colTitleNumbOfMoves.dialog"));
+		tblBoardSize = new TableColumn<HighscoreEntry, String>(conf.getPropertyAsString("colTitleBoardSize.dialog"));
+		tblDate = new TableColumn<HighscoreEntry, String>(conf.getPropertyAsString("colTitleDateTime.dialog"));
 
 		/*
 		 * Specify which column displays which property of GameStatistics
@@ -145,6 +146,13 @@ public class HighscorePane extends VBox {
 			property.setValue(formatter.format(new Date(cellData.getValue().getTimestamp())));
 			return property;
 		});
+		tblBoardSize.setCellValueFactory(cellData ->{
+			SimpleStringProperty property = new SimpleStringProperty();
+
+			String boardSize = BoardSizes.findStateByBoardSize(cellData.getValue().getBoardsize()).toString();
+			property.setValue(boardSize);
+			return property;
+		});
 
 		/*
 		 * Populate the tableView with the score-list entries
@@ -156,22 +164,22 @@ public class HighscorePane extends VBox {
 		/*
 		 * Add all columns to the tableView
 		 */
-		table.getColumns().addAll(tblRank, tblName, tblScore, tblHighestTile, tblDuration, tblNumbOfMoves, tblDate);
+		table.getColumns().addAll(tblRank, tblName, tblScore, tblHighestTile, tblDuration, tblNumbOfMoves, tblBoardSize, tblDate);
 
 		/*
 		 * Specify the width and the alignment of the columns
 		 */
 		tblRank.setPrefWidth(50);
 		tblName.setPrefWidth(150);
-		tblScore.setPrefWidth(90);
+		tblScore.setPrefWidth(80);
 		tblScore.setStyle("-fx-alignment: CENTER-RIGHT;");
-		tblHighestTile.setPrefWidth(90);
+		tblHighestTile.setPrefWidth(80);
 		tblHighestTile.setStyle("-fx-alignment: CENTER-RIGHT;");
-		tblDuration.setPrefWidth(90);
+		tblDuration.setPrefWidth(80);
 		tblDuration.setStyle("-fx-alignment: CENTER-RIGHT;");
-		tblNumbOfMoves.setPrefWidth(90);
+		tblNumbOfMoves.setPrefWidth(80);
 		tblNumbOfMoves.setStyle("-fx-alignment: CENTER-RIGHT;");
-		tblDate.setPrefWidth(170);
+		tblDate.setPrefWidth(140);
 		tblDate.setStyle("-fx-alignment: CENTER;");
 
 		/*

@@ -378,12 +378,4 @@ public class GameEngine extends Observable {
 		return isPaused;
 	}
 
-	public boolean isRunning() {
-		return isRunning;
-	}
-
-	public boolean isPaused() {
-		return isPaused;
-	}
-
 }

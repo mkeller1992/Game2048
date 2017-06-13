@@ -31,8 +31,6 @@ public class Highscore {
 
 	public Highscore() {
 		highscores = new ArrayList<GameStatistics>();
-
-		highscores.stream().filter(stats -> stats.getScore() >= 1000).toArray();
 	}
 
 	/**

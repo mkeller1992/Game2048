@@ -1,9 +1,15 @@
 package ch.bfh.game2048.view;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+
+import ch.bfh.game2048.model.Highscore;
+import ch.bfh.game2048.persistence.Config;
+import ch.bfh.game2048.persistence.ScoreHandler;
 import ch.bfh.game2048.view.model.HighscoreEntry;
 import ch.bfh.game2048.view.model.Scene;
 import javafx.application.Platform;
@@ -50,6 +56,11 @@ public class MainUIController {
 			System.out.println(selectedEntry);
 			switchScene(selectedEntry);
 		});
+		
+		
+		ScoreHandler.getInstance().readScores(Config.getInstance().getPropertyAsString("highscoreFileName"));
+	
+
 	}
 
 	/**
@@ -84,13 +95,7 @@ public class MainUIController {
 
 				mainStage.setWidth(440);
 			} else if (scene.equals(Scene.HIGHSCORE)) {
-
-				List<HighscoreEntry> highscores = new ArrayList<HighscoreEntry>();
-
-				highscores.add(new HighscoreEntry(1, "ludi", 234, 34, 234, 234, System.currentTimeMillis(), 4));
-				highscores.add(new HighscoreEntry(2, "ladsf", 124, 34, 234, 234, System.currentTimeMillis(), 4));
-
-				HighscorePane highscorePane = new HighscorePane(highscores);
+				HighscorePane highscorePane = new HighscorePane(ScoreHandler.getInstance().getHighscoreEntryList());
 
 				gameController.handlePauseResume(null);
 				mainPane.setCenter(highscorePane);

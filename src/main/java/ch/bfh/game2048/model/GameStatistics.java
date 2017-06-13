@@ -23,17 +23,16 @@ import javax.xml.bind.annotation.XmlType;
  * - Game-Statistics are stored to an xml-file when user exits program
  * 
  */
-@XmlType(propOrder = { "playerName", "score", "highestValue", "amountOfMoves", "startTimestamp", "duration", "boardSize" })
+@XmlType(propOrder = { "playerName", "score", "amountOfMoves", "highestValue", "startTimestamp", "duration", "boardSize" })
 public class GameStatistics implements Comparable<GameStatistics>, Serializable{
 	private static final long serialVersionUID = 5027351164259846728L;
 
 	private String playerName;
 
-	@XmlElement(name = "Points")
 	private Long score;
 
-	@XmlElement(name = "NumberOfMoves")
 	private Integer amountOfMoves;
+		
 	private Integer highestValue;
 
 	private Long startTimestamp;
@@ -79,6 +78,10 @@ public class GameStatistics implements Comparable<GameStatistics>, Serializable{
 
 	public void addScore(Long score) {
 		this.score += score;
+	}	
+
+	public void setScore(Long score) {
+		this.score = score;
 	}
 
 	public Integer getAmountOfMoves() {
@@ -87,6 +90,10 @@ public class GameStatistics implements Comparable<GameStatistics>, Serializable{
 
 	public void incrementAmountOfMoves() {
 		this.amountOfMoves++;
+	}
+	
+	public void setAmountOfMoves(Integer amountOfMoves) {
+		this.amountOfMoves = amountOfMoves;
 	}
 
 	public Integer getHighestValue() {
