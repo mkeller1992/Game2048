@@ -5,6 +5,14 @@ KI:
 - board laden und empfehlung abgeben
 - Mätthu AI einbinden
 
+
+Strategien:
+- Random (Done)
+- Simple UP/LEFT (Done)
+- Max Merge [=Protective] (Tinu)
+- Max Score [=Greedy] (Tinu)
+- Mätthu Advanced
+
 GUI:
 - Zug rückgängig einbinden
 - Hint einbinden

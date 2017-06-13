@@ -1,13 +1,13 @@
 package ch.bfh.game2048.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import ch.bfh.game2048.ai.AIGameEngine;
+import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 
 /**
  * 
@@ -17,8 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * Includes:
  * 
- * > Getting full score-list or just an extract based on board-size
- * > Methods to sort, resize and set ranks on given score-lists
+ * > Getting full score-list or just an extract based on board-size > Methods to
+ * sort, resize and set ranks on given score-lists
  *
  */
 
@@ -31,6 +31,8 @@ public class Highscore {
 
 	public Highscore() {
 		highscores = new ArrayList<GameStatistics>();
+
+		highscores.stream().filter(stats -> stats.getScore() >= 1000).toArray();
 	}
 
 	/**
@@ -43,10 +45,8 @@ public class Highscore {
 		highscores.add(highscore);
 	}
 
-
 	public ArrayList<GameStatistics> getHighscoreList() {
 		return highscores;
 	}
-
 
 }

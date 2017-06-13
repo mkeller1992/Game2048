@@ -34,7 +34,6 @@ public class ScoreHandler {
 	 * @throws FileNotFoundException
 	 * @throws URISyntaxException 
 	 */
-
 	public void writeScores(Highscore highscores, String xmlFile) throws JAXBException, URISyntaxException {
 
 		// create JAXB context and instantiate marshaller

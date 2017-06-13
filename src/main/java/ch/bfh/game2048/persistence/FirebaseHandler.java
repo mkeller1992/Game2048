@@ -99,6 +99,31 @@ public class FirebaseHandler {
 			
 	}
 	
+	
+//	scoreRef.addValueEventListener(new ValueEventListener() {
+//		public void onDataChange(DataSnapshot snapshot) {
+//
+//			ArrayList<GameStatistics> tempScoreArray = new ArrayList<GameStatistics>();
+//
+//			for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+//				GameStatistics score = postSnapshot.getValue(GameStatistics.class);
+//				tempScoreArray.add(score);
+//			}
+//
+//			highscore.setHighscores(tempScoreArray);
+//
+//			setChanged();
+//			notifyObservers();
+//		}
+//
+//		@Override
+//		public void onCancelled(DatabaseError firebaseError) {
+//			System.out.println("The read failed: " + firebaseError.getMessage());
+//
+//		}
+//	});
+	
+	
 	public List<GameStatistics> getHighscore() {
 		return highscore;
 	}
@@ -106,5 +131,9 @@ public class FirebaseHandler {
 	public void setHighscore(List<GameStatistics> highscore) {
 		this.highscore = highscore;
 	}
+	
+	
+	
+	
 
 }
