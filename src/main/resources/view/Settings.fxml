@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -9,8 +14,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <GridPane hgap="20.0" layoutX="14.0" layoutY="12.0" prefHeight="500.0" prefWidth="377.0" vgap="20.0">
         <columnConstraints>
@@ -26,16 +30,21 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Board Size" />
+            <Label text="Board Size:">
+               <font>
+                  <Font size="18.0" />
+               </font></Label>
             <ChoiceBox fx:id="chbBoardSize" prefWidth="150.0" GridPane.columnIndex="1" />
-            <Label text="UI-Theme" GridPane.rowIndex="1" />
-            <Label text="Player Name" GridPane.rowIndex="2" />
-            <Label text="Hint-Strategy" GridPane.rowIndex="3" />
-            <Label text="Use Online Highscore" GridPane.rowIndex="4" />
-            <ChoiceBox fx:id="chbUiTheme" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Player Name:" GridPane.rowIndex="2">
+               <font>
+                  <Font size="18.0" />
+               </font></Label>
+            <Label text="Hint-Strategy:" GridPane.rowIndex="1">
+               <font>
+                  <Font size="18.0" />
+               </font></Label>
             <TextField fx:id="txtPlayerName" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ChoiceBox fx:id="chbHintStrategy" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ChoiceBox fx:id="chbOnlineScore" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="chbHintStrategy" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

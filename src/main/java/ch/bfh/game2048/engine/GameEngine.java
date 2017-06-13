@@ -22,7 +22,6 @@ public class GameEngine extends Observable {
 	private StopWatch timer;
 
 	private Tile[][] lastBoard;
-	private GameStatistics lastStats;
 
 	/**
 	 * Constructor 1 of the GameEngine, Initializes the board of a given size
@@ -59,6 +58,7 @@ public class GameEngine extends Observable {
 
 	public void pauseGame() {
 		isPaused = true;
+		System.out.println(isRunning);
 		timer.suspend();
 	}
 
@@ -97,9 +97,10 @@ public class GameEngine extends Observable {
 		}
 	}
 
-	public boolean move(Direction dir){
+	public boolean move(Direction dir) {
 		return move(dir, false);
 	}
+
 	/**
 	 * Moves the whole board in a given Direction.
 	 * 
@@ -112,40 +113,39 @@ public class GameEngine extends Observable {
 	protected boolean move(Direction dir, boolean simulation) {
 		if (isRunning && !isPaused) {
 
-			Tile[][] tmpBoard = SerializationUtils.clone(board); // TODO:
-			GameStatistics tmpStats = SerializationUtils.clone(stats); // TODO:
-																		// test!
+			Tile[][] tmpBoard = SerializationUtils.clone(board);
 
 			boolean moved = false;
 
 			resetMergedInfo();
 
-			moved = moveBoard(dir);
+			moved = moveBoard(dir, simulation);
 
 			if (moved) {
-				stats.incrementAmountOfMoves();
-				spawnRandomTile();
 
 				if (simulation == false) {
+
+					// A tile will only be spawned if it's not a simulation
+
+					stats.incrementAmountOfMoves();
+					spawnRandomTile();
+
 					if (isGameOver()) {
 						timer.stop();
 						stats.setDuration(timer.getTime());
 						isRunning = false;
-
 						this.setChanged();
 						notifyObservers(new Pair<String, Boolean>("gameOver", true));
 					}
-//					this.setChanged();
-//					notifyObservers(new Pair<String, Long>("score", stats.getScore()));
+					// this.setChanged();
+					// notifyObservers(new Pair<String, Long>("score", stats.getScore()));
 					if (stats.getHighestValue() >= tileValueToWin) {
 						this.setChanged();
 						notifyObservers(new Pair<String, Boolean>("won", true));
 					}
-					
+
 				}
 				lastBoard = tmpBoard;
-				lastStats = tmpStats;
-				
 
 			}
 			return moved;
@@ -156,7 +156,6 @@ public class GameEngine extends Observable {
 
 	public void revertMove() {
 		board = lastBoard; // TODO: richtige kopie
-		stats = lastStats; // TODO: "
 
 		notifyObservers(new Pair<String, Long>("score", stats.getScore()));
 
@@ -171,7 +170,7 @@ public class GameEngine extends Observable {
 	 * @param dir
 	 * @return
 	 */
-	private boolean moveBoard(Direction dir) {
+	private boolean moveBoard(Direction dir, boolean simulation) {
 		boolean validMove = false;
 
 		/*
@@ -205,7 +204,7 @@ public class GameEngine extends Observable {
 					 * the Tile and in which direction.
 					 */
 					int moveBy = moveTile(row, col, dir);
-					boolean merged = mergeTile(row + (moveBy * dir.getRowStep()), col + (moveBy * dir.getColStep()), dir);
+					boolean merged = mergeTile(row + (moveBy * dir.getRowStep()), col + (moveBy * dir.getColStep()), dir, simulation);
 
 					if (moveBy > 0 || merged) {
 						validMove = true;
@@ -249,7 +248,7 @@ public class GameEngine extends Observable {
 	 * @param dir
 	 * @return true if a merge was made
 	 */
-	private boolean mergeTile(int row, int col, Direction dir) {
+	private boolean mergeTile(int row, int col, Direction dir, boolean simulation) {
 		// check for borders
 		if (row + dir.getRowStep() >= 0 && row + dir.getRowStep() < boardSize && col + dir.getColStep() >= 0 && col + dir.getColStep() < boardSize) {
 
@@ -270,9 +269,12 @@ public class GameEngine extends Observable {
 				board[row + dir.getRowStep()][col + dir.getColStep()].setValue(mergedValue);
 				board[row + dir.getRowStep()][col + dir.getColStep()].setMerged(true);
 
-				stats.addScore((long) mergedValue);
-				if (mergedValue > stats.getHighestValue()) {
-					stats.setHighestValue(mergedValue);
+				// If move is not just a simulation, update score-sheet
+				if (!simulation) {
+					stats.addScore((long) mergedValue);
+					if (mergedValue > stats.getHighestValue()) {
+						stats.setHighestValue(mergedValue);
+					}
 				}
 				return true;
 			}
@@ -358,8 +360,22 @@ public class GameEngine extends Observable {
 		this.board = board;
 	}
 
+	/**
+	 * Needed for simulating moves
+	 * 
+	 * @return a clone of the current board
+	 */
+	
 	public Tile[][] getBoard() {
-		return board;
+		return SerializationUtils.clone(board);
+	}
+
+	public boolean isRunning() {
+		return isRunning;
+	}
+
+	public boolean isPaused() {
+		return isPaused;
 	}
 
 	public boolean isRunning() {

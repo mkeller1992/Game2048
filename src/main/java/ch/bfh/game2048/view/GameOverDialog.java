@@ -73,7 +73,7 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 		grid.setPadding(new Insets(20, 50, 10, 10));
 
 		nameField = new TextField();
-		nameField.setPromptText(conf.getPropertyAsString("promptTextName.dialog"));
+		nameField.setText(conf.getPropertyAsString("playerName"));
 
 		grid.add(new Label(conf.getPropertyAsString("gameOverText2.dialog")), 0, 0);
 		grid.add(nameField, 1, 0);
@@ -88,6 +88,9 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 
 		// Add grid-content to the main-pane
 		this.getDialogPane().setContent(grid);
+		
+		// Enable okay-button if name is already pre-entered
+		invalidated(null);
 	}
 
 	/**

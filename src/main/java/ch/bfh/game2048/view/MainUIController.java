@@ -14,6 +14,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+/**
+ * Scene-Switcher
+ * 
+ * - Conducts the switch between the different game-screens
+ *
+ */
+
 public class MainUIController {
 	@FXML
 	BorderPane mainPane;
@@ -25,12 +32,14 @@ public class MainUIController {
 
 	Pane gamePane;
 	GamePaneController gameController;
-	
+
 	Pane singleAIPane;
 	SingleAIController singleAIController;
 
-	Pane settingsPane;
 	Pane multiAiPane;
+	MultiAIController multiAIController;
+
+	Pane settingsPane;
 
 	@FXML
 	public void initialize() {
@@ -41,36 +50,39 @@ public class MainUIController {
 			System.out.println(selectedEntry);
 			switchScene(selectedEntry);
 		});
-
-//		try {
-//			FXMLLoader settingsLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/Settings.fxml"));
-//			settingsPane = (Pane) settingsLoader.load();
-//
-//			FXMLLoader multiAiLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/MulitAI.fxml"));
-//			multiAiPane = (Pane) multiAiLoader.load();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-
 	}
+
+	/**
+	 * 
+	 * Conducts the switch between the different game-screens
+	 * 
+	 * @param scene
+	 *            an enum-state representing the target-scene
+	 */
 
 	public void switchScene(Scene scene) {
 		try {
+			if (gameController != null) {
+				gameController.handlePause();
+			}
+			if (singleAIController != null) {
+				singleAIController.handlePause();
+			}
 			if (scene.equals(Scene.MAINSCENE)) {
 
 				if (gamePane == null) {
 					FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/GamePane.fxml"));
 					gameController = new GamePaneController();
-					loader.setController(gameController);					
-					gamePane = (Pane) loader.load();											
+					loader.setController(gameController);
+					gamePane = (Pane) loader.load();
 				}
 
 				gameController.updateBoardSize();
-				gameController.handlePauseResume(null);
+				gameController.handleResume();
 
 				mainPane.setCenter(gamePane);
 
-				mainStage.setWidth(420);
+				mainStage.setWidth(440);
 			} else if (scene.equals(Scene.HIGHSCORE)) {
 
 				List<HighscoreEntry> highscores = new ArrayList<HighscoreEntry>();
@@ -91,33 +103,35 @@ public class MainUIController {
 				Pane settingsPane = (Pane) loader.load();
 
 				mainPane.setCenter(settingsPane);
-				mainStage.setWidth(425);
-				
+				mainStage.setWidth(440);
+
 			} else if (scene.equals(Scene.SINGLEAI)) {
-				
-				if(singleAIPane==null){
+
+				if (singleAIPane == null) {
 					singleAIController = new SingleAIController();
 					FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/GamePane.fxml"));
-					loader.setController(singleAIController);					
+					loader.setController(singleAIController);
 					singleAIPane = (Pane) loader.load();
 					singleAIController.updateBoardSize();
 				}
-				
 
-
+				singleAIController.handleResume();
 				mainPane.setCenter(singleAIPane);
-				mainStage.setWidth(420);
-			
-				
-			} else if (scene.equals(Scene.MULTIAI)) {
-				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/MultiAI.fxml"));
-				Pane multiAiPane = (Pane) loader.load();
+				mainStage.setWidth(440);
 
+			} else if (scene.equals(Scene.MULTIAI)) {
+
+				if (multiAiPane == null) {
+					multiAIController = new MultiAIController();
+					FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/MultiAI.fxml"));
+					loader.setController(multiAIController);
+					multiAiPane = (Pane) loader.load();
+				}
 				mainPane.setCenter(multiAiPane);
-				mainStage.setWidth(650);
+				mainStage.setWidth(590);
+
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

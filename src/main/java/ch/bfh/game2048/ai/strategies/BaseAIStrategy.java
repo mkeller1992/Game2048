@@ -5,7 +5,7 @@ import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
 
 public abstract class BaseAIStrategy {	
-	AIGameEngine engine;
+	AIGameEngine engine;	
 
 
 	public BaseAIStrategy(AIGameEngine engine) {
