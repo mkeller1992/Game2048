@@ -46,6 +46,8 @@ public class SingleAIController extends GamePaneController {
 	@Override
 	protected void startGame(ActionEvent event) {
 
+		isRunning = false;
+		updateBoardSize();
 		loadAIEngine();
 		updateLabelList(game.getBoard());
 		game.startGame();
