@@ -117,9 +117,9 @@ public class MainUIController {
 					FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/GamePane.fxml"));
 					loader.setController(singleAIController);
 					singleAIPane = (Pane) loader.load();
-					singleAIController.updateBoardSize();
 				}
 
+				singleAIController.updateBoardSize();
 				singleAIController.handleResume();
 				mainPane.setCenter(singleAIPane);
 				mainStage.setWidth(440);
