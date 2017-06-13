@@ -116,7 +116,6 @@ public class GamePaneController implements Observer {
 		// prepare gui
 		initializeBoard();
 		pauseResumeButton.setVisible(false);
-		btnHint.setVisible(false);
 
 		timer = new Timeline(new KeyFrame(Duration.millis(50), ae -> updateGui()));
 		timer.setCycleCount(Animation.INDEFINITE);
@@ -152,15 +151,6 @@ public class GamePaneController implements Observer {
 		updateBoardSize();
 		game.startGame();
 		updateLabelList(game.getBoard());
-
-		// Only for 4x4 board all strategies can give hints
-		// Therefore set hint-button invisible for other board-sizes
-
-		if (getNumbOfBoardColumns() != 4) {
-			btnHint.setVisible(false);
-		} else {
-			btnHint.setVisible(true);
-		}
 
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));
