@@ -178,6 +178,7 @@ public class GamePaneController implements Observer {
 			if (isRunning == false) {
 				numbOfBoardColumns = conf.getPropertyAsInt("boardSize");
 				game = new GameEngine(numbOfBoardColumns, conf.getPropertyAsInt("winningNumber"));
+				game.addObserver(this);
 				initializeBoard();
 			}
 		}

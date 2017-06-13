@@ -10,10 +10,8 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 
 	private int[][] weights;
 
-	double valueChangeAfterUP;
-	double valueChangeAfterDOWN;
-	double valueChangeAfterLEFT;
-	double valueChangeAfterRIGHT;
+	private int[][] weights4x4;
+	private int[][] weightsDefault;
 
 	Double[] valueChanges;
 
@@ -25,19 +23,38 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	@Override
 	public boolean initializeAI() {
 
-		// the weights to compute the value of a certain board-constellation:
-		weights = new int[][] { new int[] { 21, 20, 19, 15 }, new int[] { 18, 17, 15, 14 }, new int[] { 13, 12, 10, 9 }, new int[] { 9, 8, 6, 5 } };
-		return true;
+		weights4x4 = new int[][] { new int[] { 21, 20, 19, 15 }, new int[] { 18, 17, 15, 14 }, new int[] { 13, 12, 10, 9 }, new int[] { 9, 8, 6, 5 } };
 
+		weightsDefault = new int[8][8];
+		
+		
+		int c = 1;
+		for (int i = 7; i >= 0; i--) {
+			for (int j = 7; j >= 0; j--) {
+				weightsDefault[i][j] = c;
+				c++;
+			}
+		}
+		
+
+
+		return true;
 	}
 
 	@Override
 	public Direction getMove(Tile[][] board) {
 
+		// Choose relevant tile-weights based on board-size
+		if(board.length == 4){
+			weights = weights4x4;
+		} else {
+			weights = weightsDefault;
+		}	
+		
 		engine.setGameBoard(board);
 
 		// Reset values from previous move
-		valueChanges = new Double[board.length];
+		valueChanges = new Double[4];
 
 		// Check if move is valid and set the corresponding board-value-change:
 		int i = 0;
@@ -50,7 +67,7 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 
 		// Check if in case of moving up there is the risk of being forced to move "down" subsequently
 		// if risk exists --> set board-value-change of "up-move" to a very low number
-		if (valueChanges[0] != null) {
+		if (board.length == 4 &&valueChanges[0] != null) {
 			Tile[][] boardAfterUp = getBoardAfterSimulatedMove(engine.getBoard(), Direction.UP);
 
 			if (riskOfDeadLockAfterUP(boardAfterUp, 2) | riskOfDeadLockAfterUP(boardAfterUp, 1)) {
@@ -87,8 +104,10 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	 * 
 	 * 
 	 * @param clonedGameBoard
+	 *            a clone of the current board
 	 * @param direction
-	 * @return
+	 *            initial direction to test
+	 * @return the average expected board-value-change induced by 2 moves ahead
 	 */
 
 	public double calculateExpectedValue(Tile[][] clonedGameBoard, Direction direction) {
@@ -116,9 +135,9 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		// for each empty tile on current board compute the case that:
 		// - a 4 will be spawned
 		// - a 2 will be spawned
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < clonedGameBoard.length; i++) {
 
-			for (int j = 0; j < 4; j++) {
+			for (int j = 0; j < clonedGameBoard.length; j++) {
 
 				if (board[i][j].getValue() == 0) {
 
@@ -263,9 +282,9 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 
 		double total = 0;
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < gameBoard.length; i++) {
 
-			for (int j = 0; j < 4; j++) {
+			for (int j = 0; j < gameBoard.length; j++) {
 				total += (weights[i][j] * gameBoard[i][j].getValue());
 			}
 		}

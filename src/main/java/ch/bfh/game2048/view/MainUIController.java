@@ -14,6 +14,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+/**
+ * Scene-Switcher
+ * 
+ * - Conducts the switch between the different game-screens
+ *
+ */
+
 public class MainUIController {
 	@FXML
 	BorderPane mainPane;
@@ -43,18 +50,15 @@ public class MainUIController {
 			System.out.println(selectedEntry);
 			switchScene(selectedEntry);
 		});
-
-		// try {
-		// FXMLLoader settingsLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/Settings.fxml"));
-		// settingsPane = (Pane) settingsLoader.load();
-		//
-		// FXMLLoader multiAiLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/MulitAI.fxml"));
-		// multiAiPane = (Pane) multiAiLoader.load();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-
 	}
+
+	/**
+	 * 
+	 * Conducts the switch between the different game-screens
+	 * 
+	 * @param scene
+	 *            an enum-state representing the target-scene
+	 */
 
 	public void switchScene(Scene scene) {
 		try {
@@ -121,11 +125,11 @@ public class MainUIController {
 					multiAIController = new MultiAIController();
 					FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/MultiAI.fxml"));
 					loader.setController(multiAIController);
-					multiAiPane = (Pane) loader.load();					
-				}				
+					multiAiPane = (Pane) loader.load();
+				}
 				mainPane.setCenter(multiAiPane);
-				mainStage.setWidth(590);				
-				
+				mainStage.setWidth(590);
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

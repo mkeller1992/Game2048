@@ -21,6 +21,9 @@ public class RandomStrategy extends BaseAIStrategy {
 
 	@Override
 	public Direction getMove(Tile[][] board) {
+		
+		engine.setGameBoard(board);
+		
 		Direction dir;
 		do {
 			dir = Direction.values()[rand.nextInt(3)];

@@ -113,7 +113,7 @@ public class GameEngine extends Observable {
 	protected boolean move(Direction dir, boolean simulation) {
 		if (isRunning && !isPaused) {
 
-			Tile[][] tmpBoard = SerializationUtils.clone(board); // TODO:
+			Tile[][] tmpBoard = SerializationUtils.clone(board);
 
 			boolean moved = false;
 
@@ -125,7 +125,7 @@ public class GameEngine extends Observable {
 
 				if (simulation == false) {
 
-					// A tile will only be spawned if it's not a simulation ---- > TODO !!!
+					// A tile will only be spawned if it's not a simulation
 
 					stats.incrementAmountOfMoves();
 					spawnRandomTile();

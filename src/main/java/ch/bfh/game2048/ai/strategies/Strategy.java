@@ -60,12 +60,15 @@ public enum Strategy {
 		return description;
 	}
 	
-	/**
-	 * (With standard engine [4x4, 2048])
-	 * @param strategy
-	 * @return
-	 */
-	public static BaseAIStrategy getAIStrategy(Strategy strategy){
+/**
+ * - Returns Strategy.class which corresponds to @param strategy
+ * - initializes GameEngine with provided board-size
+ * 
+ * @param strategy
+ * @param boardSize
+ * @return
+ */
+	public static BaseAIStrategy getAIStrategy(Strategy strategy, int boardSize){
 		Constructor<? extends BaseAIStrategy> constructor;
 
 		Class<? extends BaseAIStrategy> strategyClazz = strategy.getStrategy();
@@ -73,7 +76,7 @@ public enum Strategy {
 		try {
 			constructor = strategyClazz.getConstructor(AIGameEngine.class);
 
-			BaseAIStrategy aiStrategy = constructor.newInstance(new AIGameEngine(4, Config.getInstance().getPropertyAsInt("winningNumber")));
+			BaseAIStrategy aiStrategy = constructor.newInstance(new AIGameEngine(boardSize, Config.getInstance().getPropertyAsInt("winningNumber")));
 			aiStrategy.initializeAI();
 			aiStrategy.getEngine().startGame();
 			return aiStrategy;

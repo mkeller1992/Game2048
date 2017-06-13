@@ -15,10 +15,7 @@ public class RecursiveStrategy extends BaseAIStrategy {
 	private int finalDepth;
 	private int[][] weights;
 	
-	double valueChangeAfterUP;
-	double valueChangeAfterDOWN;
-	double valueChangeAfterLEFT;
-	double valueChangeAfterRIGHT;
+	Double[] valueChanges;
 
 
 	public RecursiveStrategy(AIGameEngine engine) {
@@ -43,74 +40,34 @@ public class RecursiveStrategy extends BaseAIStrategy {
 		engine.setGameBoard(board);
 		
 		// Reset values from previous move
-		resetStats();
-
+		valueChanges = new Double[board.length];		
+		
 		// Get the direction with the highest expected increase of board-value
-		double maxVal = -1000000;
-
-		// if move up is a valid move
-		if (engine.isMoveValid(Direction.UP)) {
-
-			valueChangeAfterUP = calculateExpectedValue(0, cloneBoard(engine.getBoard()), Direction.UP, 1, 0);
-			
-			maxVal = Math.max(valueChangeAfterUP,maxVal);
-
+		double maxVal = -1000000;		
+		
+		// Check if move is valid and set the corresponding board-value-change:
+		int i = 0;
+		for (Direction dir : Direction.values()) {
+			if (engine.isMoveValid(dir)) {
+				valueChanges[i] = calculateExpectedValue(finalDepth, engine.getBoard(), dir, 1, 0);
+				maxVal = Math.max(valueChanges[i], maxVal);
+			}
+			i++;
 		}
 
-		// if move down is a valid move
-		if (engine.isMoveValid(Direction.DOWN)) {
-			valueChangeAfterDOWN = calculateExpectedValue(0, cloneBoard(engine.getBoard()), Direction.DOWN, 1, 0);
-
-			maxVal = Math.max(valueChangeAfterDOWN,maxVal);
-
-		}
-
-
-		// if move left is a valid move
-		if (engine.isMoveValid(Direction.LEFT)) {
 		
-		valueChangeAfterLEFT = calculateExpectedValue(0, cloneBoard(engine.getBoard()), Direction.LEFT, 1, 0);
-		
-		maxVal = Math.max(valueChangeAfterLEFT,maxVal);
-		
-		}
-		
-		
-		// if move right is a valid move
-		if (engine.isMoveValid(Direction.RIGHT)) {
-		
-		valueChangeAfterRIGHT = calculateExpectedValue(0, cloneBoard(engine.getBoard()), Direction.RIGHT, 1, 0);
-		
-		maxVal = Math.max(valueChangeAfterRIGHT,maxVal);
-		
-		}
-
-		// Apply suitable move according to expected increases of board-value
-
-		if (valueChangeAfterUP == maxVal && engine.isMoveValid(Direction.UP)) {
-			return Direction.UP;
-		}
-
-		if (valueChangeAfterLEFT == maxVal && engine.isMoveValid(Direction.LEFT)) {
-			return Direction.LEFT;
-		}
-
-		if (valueChangeAfterRIGHT == maxVal && engine.isMoveValid(Direction.RIGHT)) {
-			return Direction.RIGHT;
-		}
-
-		if (valueChangeAfterDOWN == maxVal && engine.isMoveValid(Direction.DOWN)) {
-			return Direction.DOWN;
-		}
-
-		System.out.println("Shouldnt be here **************************");
-		
+		// Return the direction with the highest expected value:
+		i = 0;
+		for (Direction dir : Direction.values()) {
+			if (valueChanges[i] != null && valueChanges[i] == maxVal) {
+				return dir;
+			}
+			i++;
+		}		
 		
 		return null;
 	}
-	
-	
-	
+
 
 	/**
 	 * 
@@ -299,21 +256,7 @@ public class RecursiveStrategy extends BaseAIStrategy {
 		}
 		return c;
 	}
-	
-	
-	/**
-	 * Reset statistics (move-values) from previous moves
-	 */
-	
-	private void resetStats() {
 
-		valueChangeAfterUP =  -1000000;
-		valueChangeAfterDOWN =  -1000000;
-		valueChangeAfterLEFT =  -1000000;
-		valueChangeAfterRIGHT =  -1000000;
-
-	}
-	
 
 	/**
 	 * a board with Tile-Objects
@@ -327,12 +270,6 @@ public class RecursiveStrategy extends BaseAIStrategy {
 
 		Tile[][]testBoard = SerializationUtils.clone(gameBoard);
 		
-//		Tile[][] testBoard = new Tile[gameBoard.length][gameBoard.length];
-//		for (int i = 0; i < gameBoard.length; i++) {
-//			for (int j = 0; j < testBoard.length; j++) {
-//				testBoard[i][j] = SerializationUtils.clone(gameBoard[i][j]); ///// TODO Possibly whole arry can be cloned at once
-//			}
-//		}
 		return testBoard;
 	}
 }

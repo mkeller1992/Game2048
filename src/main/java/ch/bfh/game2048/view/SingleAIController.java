@@ -35,7 +35,7 @@ public class SingleAIController extends GamePaneController {
 	}
 
 	private void loadAIEngine() {
-		aiStrategy = Strategy.getAIStrategy(Strategy.findStateByDescription(conf.getPropertyAsString("strategy")));
+		aiStrategy = Strategy.getAIStrategy(Strategy.findStateByDescription(conf.getPropertyAsString("strategy")),conf.getPropertyAsInt("boardSize"));
 		aiStrategy.initializeAI();
 		
 		game = aiStrategy.getEngine();	

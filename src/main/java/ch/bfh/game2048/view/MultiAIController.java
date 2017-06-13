@@ -1,9 +1,7 @@
 package ch.bfh.game2048.view;
 
-import java.lang.reflect.Constructor;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
@@ -14,13 +12,10 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
 import ch.bfh.game2048.ai.AIGameEngine;
-import ch.bfh.game2048.ai.strategies.AIStrategyMatthias;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
-import ch.bfh.game2048.ai.strategies.SimpleUpLeftStrategy;
 import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.persistence.Config;
-import ch.bfh.game2048.view.model.Scene;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -67,6 +62,11 @@ public class MultiAIController implements Observer {
 	public MultiAIController() {
 		this.instance = this;
 	}
+	
+	/**
+	 * - sets the settings of the result-screen
+	 * - populates the choiceBoxes and adds an event-handler
+	 */
 
 	@FXML
 	public void initialize() {
@@ -74,6 +74,7 @@ public class MultiAIController implements Observer {
 
 		stopwatch = new StopWatch();
 
+		// Set display-font and set sceen to not-editable:
 		resultScreen.setFont(Font.font("Consolas", FontWeight.BOLD, 16));
 		resultScreen.setEditable(false);
 
@@ -87,6 +88,7 @@ public class MultiAIController implements Observer {
 			Config.getInstance().setProperty("selectedThreadAmount", selectedEntry);
 		});
 		
+		// Set Strategy-Selection ChoiceBox:
 		chbStrategy.setItems(FXCollections.observableArrayList(Strategy.values()));
 		chbStrategy.getSelectionModel().selectFirst();
 	}
@@ -95,11 +97,15 @@ public class MultiAIController implements Observer {
 	public void update(Observable observable, Object object) {
 		AIGameEngine engine = (AIGameEngine) observable;
 
-		Pair<String, Boolean> pair = (Pair) object;
-		System.out.println(String.format("Thread %d meldet %s: %s", engine.getAiNumber(), pair.getKey(), pair.getValue()));
-
-	}
-
+		Pair<String, Boolean> pair = (Pair<String, Boolean>) object;
+	}	
+	
+	
+	/**
+	 * Conducts the initializing up to completion of all threads which get assigned to play a game:
+	 */
+	
+	@FXML
 	public void start() {
 
 		buttonStart.setText(Config.getInstance().getPropertyAsString("restart.button"));
@@ -114,25 +120,26 @@ public class MultiAIController implements Observer {
 			@Override
 			public void run() {
 
-				System.out.println("let the fun begin...");
-
 				executor = Executors.newFixedThreadPool(100);
 
 				ArrayList<AiPlayer> players = new ArrayList<AiPlayer>();
 
 				int amountOfThreads = Config.getInstance().getPropertyAsInt("selectedThreadAmount");
 				
+				
+				// Initialize threads, give every thread an AI-Player (a runnable) with an AI-Strategy 				
 				for (int i = 0; i < amountOfThreads; i++) {
 					AIGameEngine engine = new AIGameEngine(4, 2048, i);
 										
-					BaseAIStrategy strategy = Strategy.getAIStrategy(chbStrategy.getSelectionModel().getSelectedItem());
+					BaseAIStrategy strategy = Strategy.getAIStrategy(chbStrategy.getSelectionModel().getSelectedItem(), 4);
 					
 					Runnable aiPlayer = new AiPlayer(strategy, instance, engine);
 					players.add((AiPlayer) aiPlayer);
 					executor.execute(aiPlayer);
 				}
 
-				executor.shutdown(); // ?
+				// Accept no more new threads but execute the current ones till completion:
+				executor.shutdown();
 
 				try {
 					Thread.sleep(100);
@@ -140,29 +147,31 @@ public class MultiAIController implements Observer {
 					e1.printStackTrace();
 				}
 
-				while (!executor.isTerminated()) {
-					// AI's am spilen warten auf punkte und infos und blah blah
-					System.out.println("waiting loop...");
+				// while game is playing, update statistics every 0.5 seconds:
+				
+				while (!executor.isTerminated()) {				
 					updateGameStatistic(players);
 					updateGUI(players);
-
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-				}
-
-				// sleep 100
-				
+				}			
 				// Responsible for displaying the stats of the longest game:
 				updateGameStatistic(players);
 				updateGUI(players);				
 			}
 		});
 		t.start();
-
 	}
+	
+	/**
+	 * - Retrieves the current score-line of each AI-Player (== of each Thread)
+	 * - Assembles overall live-statistics and saves it to Multi-AI Stats
+	 * 
+	 * @param players contains all active AI-Players (each includes a GameStatistics-Object)
+	 */
 
 	private void updateGameStatistic(ArrayList<AiPlayer> players) {
 		int amountOfGameOver = 0;
@@ -175,13 +184,17 @@ public class MultiAIController implements Observer {
 
 			totalPoints += p.game.getStats().getScore();
 
+			// Computes highest and lowest points of players who are still playing
 			if (p.game.isRunning() || executor.isTerminated()) {
 				maxPoints = Math.max(p.game.getStats().getScore().intValue(), maxPoints);
 				minPoints = Math.min(p.game.getStats().getScore().intValue(), minPoints);
 			}
+			
+			// Computes number of games finished and...		
 			if (!p.game.isRunning()) {
 				amountOfGameOver++;
 				
+			// ...number of finished games won		
 				if (p.game.getStats().getHighestValue() >= 2048) {
 					amountOfWins++;
 				}				
@@ -194,6 +207,13 @@ public class MultiAIController implements Observer {
 		multiAiStats.setMinPoints(minPoints);
 		multiAiStats.setAveragePoints(totalPoints / players.size());
 	}
+	
+	/**
+	 * - Assembles the Statistics-String and displays it on the screen
+	 * - Receives ArrayList with AI-Players to check who is still playing
+	 * 
+	 * @param players contains all active AI-Players (each includes a GameStatistics-Object)
+	 */
 
 	private void updateGUI(ArrayList<AiPlayer> players) {
 
@@ -235,11 +255,17 @@ public class MultiAIController implements Observer {
 				if (executor.isTerminated()) {
 					stopwatch.stop();
 				}
-
 			}
 		});
-
 	}
+	
+	/**
+	 * Multi AI Statistics:
+	 * 
+	 * - Sort of a push-object which contains the summarized statistics of the current simulation.
+	 * - Is used by updateGUI-method to display new stats every 0.5 seconds 
+	 *
+	 */
 
 	public class MultiAIStats {
 
@@ -319,6 +345,13 @@ public class MultiAIController implements Observer {
 		}
 	}
 
+	/**
+	 * AI-Player Runnable
+	 * 
+	 * For each Thread which plays a game, such a runnable will be assigned
+	 *
+	 */
+	
 	public class AiPlayer implements Runnable {
 		BaseAIStrategy strategy;
 		AIGameEngine game;
@@ -329,7 +362,7 @@ public class MultiAIController implements Observer {
 			this.controller = controller;
 			this.game = game;
 		}
-
+		
 		@Override
 		public void run() {
 
@@ -338,21 +371,18 @@ public class MultiAIController implements Observer {
 
 			game.addObserver(controller);
 
+			// Plays the game while game-engine is running == while not game over
+			
 			while (game.isRunning()) {
 				Direction dir = strategy.getMove(game.getBoard());
 				game.move(dir);
 				try {
 					Thread.sleep(25);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 
 		}
 	}
-	
-	
-
-
 }
