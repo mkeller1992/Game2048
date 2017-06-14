@@ -52,7 +52,7 @@ public class ScoreHandler {
 			m.marshal(highscore, System.out);
 
 			// Write to File
-			m.marshal(highscore, new File(this.getClass().getResource("/highscore/" + xmlFile).toURI()));
+			m.marshal(highscore, new File(this.getClass().getClassLoader().getResource("/highscore/" + xmlFile).toURI()));
 		} catch (Exception e) {
 			System.out.println("Could not save Highscores...");
 			e.printStackTrace();
@@ -82,7 +82,7 @@ public class ScoreHandler {
 			// System.out.println("Output from our XML File: ");
 			Unmarshaller um = context.createUnmarshaller();
 
-			InputStreamReader in = new InputStreamReader(this.getClass().getResourceAsStream("/highscore/" + xmlFile));
+			InputStreamReader in = new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("/highscore/" + xmlFile));
 			highscore = (Highscore) um.unmarshal(in);
 
 			// for (GameStatistics g : highscores.getHighscore()) {
@@ -95,11 +95,17 @@ public class ScoreHandler {
 
 	}
 
+	/**
+	 * Returns the Highscore List converted to a HighscoreEntry-List so that the JavaFX Table can handle it.
+	 * Sorts the list, and adds a rank...
+	 * @return
+	 */
 	public List<HighscoreEntry> getHighscoreEntryList() {
 		List<HighscoreEntry> hsList = new ArrayList<HighscoreEntry>();
 
 		int i = 1;
-		for (GameStatistics stats :  highscore.getHighscoreList().stream().sorted((h1,h2) -> h2.compareTo(h1)).collect(Collectors.toList())) {
+		List<GameStatistics> sortedList = highscore.getHighscoreList().stream().sorted((h1,h2) -> h2.compareTo(h1)).collect(Collectors.toList());
+		for (GameStatistics stats :  sortedList) {
 			HighscoreEntry highscoreEntry = new HighscoreEntry(stats);
 			highscoreEntry.setRank(i);
 			i++;

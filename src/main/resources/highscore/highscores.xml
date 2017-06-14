@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <HighscoreList>
     <Highscores>
-     
+        <PlayerScore>
+            <playerName>Jürgenadsf</playerName>
+            <score>472</score>
+            <amountOfMoves>60</amountOfMoves>
+            <highestValue>64</highestValue>
+            <startTimestamp>1497380277668</startTimestamp>
+            <duration>6144</duration>
+            <boardSize>3</boardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <playerName>Jürgen</playerName>
+            <score>232</score>
+            <amountOfMoves>37</amountOfMoves>
+            <highestValue>32</highestValue>
+            <startTimestamp>1497380339882</startTimestamp>
+            <duration>5293</duration>
+            <boardSize>3</boardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <playerName>Jürgen</playerName>
+            <score>92</score>
+            <amountOfMoves>22</amountOfMoves>
+            <highestValue>16</highestValue>
+            <startTimestamp>1497380427297</startTimestamp>
+            <duration>2732</duration>
+            <boardSize>3</boardSize>
+        </PlayerScore>
+        <PlayerScore>
+            <playerName>Jürgen</playerName>
+            <score>156</score>
+            <amountOfMoves>27</amountOfMoves>
+            <highestValue>32</highestValue>
+            <startTimestamp>1497380501574</startTimestamp>
+            <duration>3467</duration>
+            <boardSize>3</boardSize>
+        </PlayerScore>
     </Highscores>
 </HighscoreList>

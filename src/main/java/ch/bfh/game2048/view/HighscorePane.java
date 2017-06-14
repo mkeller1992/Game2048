@@ -60,7 +60,6 @@ public class HighscorePane extends VBox {
 
 	ComboBox<BoardSizes> boardSizeList;
 	ObservableList<HighscoreEntry> masterList;
-	FilteredList<HighscoreEntry> filteredData;
 
 	/**
 	 * 
