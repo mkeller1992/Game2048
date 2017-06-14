@@ -26,7 +26,7 @@ import javafx.stage.Stage;
  *
  */
 
-public class GameOverDialog extends Dialog<String> implements InvalidationListener {
+public class GameOverDialog extends Dialog<ButtonType> implements InvalidationListener {
 
 	GridPane grid;
 	TextField nameField;

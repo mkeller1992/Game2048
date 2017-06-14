@@ -8,6 +8,7 @@ import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.model.Direction;
+import ch.bfh.game2048.persistence.Config;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +18,8 @@ public class SingleAIController extends GamePaneController {
 	BaseAIStrategy aiStrategy;
 	Thread aiPlayer;
 
+	private int aiSpeed;
+	
 	public SingleAIController() {
 
 	}
@@ -32,6 +35,8 @@ public class SingleAIController extends GamePaneController {
 
 		ignoreWinMessage = true;
 		btnHint.setVisible(false);
+				
+		
 	}
 
 	private void loadAIEngine() {
@@ -40,6 +45,12 @@ public class SingleAIController extends GamePaneController {
 		
 		game = aiStrategy.getEngine();	
 		game.addObserver(this);
+		
+		
+		aiSpeed = Config.getInstance().getPropertyAsInt("aiSpeed");
+		if(aiSpeed < 25 || aiSpeed > 500)
+			aiSpeed = 100;
+		
 	}
 
 	@FXML
@@ -79,7 +90,7 @@ public class SingleAIController extends GamePaneController {
 
 			while (isRunning && isActive) {
 				try {
-					Thread.sleep(100);
+					Thread.sleep(aiSpeed);
 
 					Direction dir = aiStrategy.getMove(game.getBoard());
 

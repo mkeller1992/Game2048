@@ -74,7 +74,7 @@ public class GamePaneController implements Observer {
 	@FXML
 	private Label labelHint;
 
-	private SuperLabel[][] labelList;
+	private GameTile[][] labelList;
 
 	GameEngine game;
 
@@ -306,13 +306,13 @@ public class GamePaneController implements Observer {
 	 */
 	protected void initializeBoard() {
 		gameBoard.getChildren().clear();
-		labelList = new SuperLabel[numbOfBoardColumns][numbOfBoardColumns];
+		labelList = new GameTile[numbOfBoardColumns][numbOfBoardColumns];
 		double boardLength = (gameBoard.getPrefWidth() * 1.0) / numbOfBoardColumns;
 
 		for (int i = 0; i < numbOfBoardColumns; i++) {
 			for (int j = 0; j < numbOfBoardColumns; j++) {
 
-				SuperLabel label = new SuperLabel(0, boardLength);
+				GameTile label = new GameTile(0, boardLength);
 				label.setPrefSize(boardLength, boardLength);
 				label.setAlignment(Pos.CENTER);
 				GridPane.setConstraints(label, j, i);
@@ -335,8 +335,8 @@ public class GamePaneController implements Observer {
 
 		int i = 0;
 		int j = 0;
-		for (SuperLabel[] row : labelList) {
-			for (SuperLabel label : row) {
+		for (GameTile[] row : labelList) {
+			for (GameTile label : row) {
 
 				label.setTileNumber(tileArray[i][j].getValue());
 
@@ -442,11 +442,13 @@ public class GamePaneController implements Observer {
 
 		// Display game-over alert:
 		GameOverDialog dialog = new GameOverDialog(conf.getPropertyAsString("gameOverDialog.title"), stats.getScore().intValue());
-		Optional<String> result = dialog.showAndWait();
+		Optional<ButtonType> result = dialog.showAndWait();
 
 		System.out.println(result);
 		
-        if(result.isPresent()){
+		// Check if string is containing the text from the OK-Button
+		// Dirty-hack because of javafxdialog return value
+        if(result.isPresent() && result.get().getText().equals("OK")){
 			stats.setPlayerName(dialog.getPlayerName());
 			ScoreHandler.getInstance().getHighscore().addHighscore(stats);			
 			ScoreHandler.getInstance().writeScores(Config.getInstance().getPropertyAsString("highscoreFileName"));

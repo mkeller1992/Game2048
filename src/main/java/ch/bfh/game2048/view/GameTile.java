@@ -7,11 +7,11 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 
 /**
- * SuperLabel depicts a tile on the game-board
+ * GameTile depicts a tile on the game-board
  *
  */
 
-public class SuperLabel extends Label {
+public class GameTile extends Label {
 
 	int tileValue;
 	double labelLength;
@@ -25,7 +25,7 @@ public class SuperLabel extends Label {
 	 *            side length of tile-label in pixel
 	 */
 
-	public SuperLabel(int tileValue, double labelLength) {
+	public GameTile(int tileValue, double labelLength) {
 
 		this.tileValue = tileValue;
 		this.labelLength = labelLength;

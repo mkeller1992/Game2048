@@ -33,7 +33,7 @@ public class Config {
 		return conf.getString(propertyKey);		
 	}
 
-	public int getPropertyAsInt(String propertyKey) {
+	public Integer getPropertyAsInt(String propertyKey) {
 		return conf.getInt(propertyKey);		
 	}
 

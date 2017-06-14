@@ -21,7 +21,7 @@ import ch.bfh.game2048.view.model.HighscoreEntry;
 public class ScoreHandler {
 	private static ScoreHandler instance = null;
 
-	private Highscore highscore = null;
+	private Highscore highscore = new Highscore();
 
 	/**
 	 * Marshaller:
@@ -52,7 +52,7 @@ public class ScoreHandler {
 			m.marshal(highscore, System.out);
 
 			// Write to File
-			m.marshal(highscore, new File(this.getClass().getClassLoader().getResource("/highscore/" + xmlFile).toURI()));
+			m.marshal(highscore, new File(this.getClass().getResource("/highscore/" + xmlFile).toURI()));
 		} catch (Exception e) {
 			System.out.println("Could not save Highscores...");
 			e.printStackTrace();
@@ -82,7 +82,7 @@ public class ScoreHandler {
 			// System.out.println("Output from our XML File: ");
 			Unmarshaller um = context.createUnmarshaller();
 
-			InputStreamReader in = new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("/highscore/" + xmlFile));
+			InputStreamReader in = new InputStreamReader(this.getClass().getResourceAsStream("/highscore/" + xmlFile));
 			highscore = (Highscore) um.unmarshal(in);
 
 			// for (GameStatistics g : highscores.getHighscore()) {

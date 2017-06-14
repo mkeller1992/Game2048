@@ -1,5 +1,9 @@
 package ch.bfh.game2048.view;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.persistence.Config;
 import ch.bfh.game2048.view.model.BoardSizes;
@@ -29,6 +33,9 @@ public class SettingsController {
 
 	@FXML
 	ChoiceBox<Strategy> chbHintStrategy;
+	
+	@FXML
+	ChoiceBox<Integer> chbAiSpeed;
 
 	@FXML
 	TextField txtPlayerName;
@@ -72,6 +79,15 @@ public class SettingsController {
 
 		    	conf.setProperty("playerName", newValue);
 		    }
+		});
+		
+		// AI-Player speed
+		int[] values = {25, 50, 75, 100, 150, 500};
+		chbAiSpeed.getItems().setAll(Arrays.stream(values).boxed().collect(Collectors.toList()));
+		chbAiSpeed.getSelectionModel().select(conf.getPropertyAsInt("aiSpeed"));
+		chbAiSpeed.setOnAction(ae -> {
+			Integer aiSpeed= chbAiSpeed.getSelectionModel().getSelectedItem();
+			conf.setProperty("aiSpeed", aiSpeed);
 		});
 
 	}

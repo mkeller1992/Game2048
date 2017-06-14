@@ -13,9 +13,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -59,8 +62,14 @@ public class HighscorePane extends VBox {
 	EventHandler<Event> btnSolHandler;
 
 	ComboBox<BoardSizes> boardSizeList;
+	
+	Button btnclearFilter;
+	
 	ObservableList<HighscoreEntry> masterList;
-
+	FilteredList<HighscoreEntry> filteredList;
+	
+	
+	
 	/**
 	 * 
 	 * @param highscores
@@ -72,6 +81,22 @@ public class HighscorePane extends VBox {
 	public HighscorePane(List<HighscoreEntry> highscores) {
 		conf = Config.getInstance();
 
+		masterList = FXCollections.observableList(highscores);
+		filteredList = new FilteredList<>(masterList);
+		
+		createTitlePane();
+		createTable();
+
+		/*
+		 * add all components to the main-pane
+		 */
+		this.getChildren().addAll(titlePane, table);
+		
+		
+
+	}
+
+	private void createTitlePane() {
 		/*
 		 * Create and style the top-pane
 		 */
@@ -88,25 +113,60 @@ public class HighscorePane extends VBox {
 		titleText.setFont(Font.font(null, FontWeight.BOLD, 20));
 		titleLabel.setGraphic(titleText);
 
+		
+	
 
 		/*
 		 * Include option "filter tableView by player-name"
 		 */
 		filterField = new TextField();
 		filterField.setPromptText(conf.getPropertyAsString("highscoreListFilterText"));
-
-
+		filterField.setOnKeyPressed(eh -> {
+			filteredList = new FilteredList<>(masterList, highscoreEntry -> highscoreEntry.getNickname().toUpperCase().contains(filterField.getText().toUpperCase()));
+			table.setItems(filteredList);
+			table.refresh();
+		});
+		
+		
+		
+		boardSizeList = new ComboBox<BoardSizes>();		
+		boardSizeList.setPromptText(conf.getPropertyAsString("boardSizeListFilterText"));
+		boardSizeList.getItems().addAll(BoardSizes.values());
+		boardSizeList.setOnAction(ae -> {					
+			BoardSizes size= boardSizeList.getSelectionModel().getSelectedItem();
+			filteredList = new FilteredList<>(masterList, highscoreEntry -> highscoreEntry.getBoardsize() == size.getBoardSize());
+			table.setItems(filteredList);
+			table.refresh();
+		});
+		
+		
+		btnclearFilter = new Button(conf.getPropertyAsString("clearfilter.dialog"));
+		btnclearFilter.setOnAction(ae -> {
+			filterField.setText("");
+			
+			EventHandler<ActionEvent> handler = boardSizeList.getOnAction();
+			boardSizeList.setOnAction(null);
+			boardSizeList.getSelectionModel().clearSelection();			
+			boardSizeList.setOnAction(handler);
+			
+			filteredList = new FilteredList<>(masterList);
+			table.setItems(filteredList);
+			table.refresh();
+		});
+		
 		/*
 		 * Add the components to the top-pane
 		 */
-		titlePane.getChildren().addAll(titleLabel, filterField);
+		titlePane.getChildren().addAll(titleLabel, filterField, boardSizeList, btnclearFilter);
+	}
 
+	private void createTable() {
 		/*
 		 * Create the tableView
 		 */
 		table = new TableView<>();
-		table.setPrefHeight(500);
-
+		table.setPrefHeight(450);
+		table.setMaxHeight(450);
 
 		/*
 		 * Specify the column-titles
@@ -156,10 +216,8 @@ public class HighscorePane extends VBox {
 		/*
 		 * Populate the tableView with the score-list entries
 		 */	
-	    table.setItems(FXCollections.observableList(highscores));
-	 
-		
-		
+	    table.setItems(filteredList);	    
+	 	
 		/*
 		 * Add all columns to the tableView
 		 */
@@ -180,11 +238,6 @@ public class HighscorePane extends VBox {
 		tblNumbOfMoves.setStyle("-fx-alignment: CENTER-RIGHT;");
 		tblDate.setPrefWidth(140);
 		tblDate.setStyle("-fx-alignment: CENTER;");
-
-		/*
-		 * add all components to the main-pane
-		 */
-		this.getChildren().addAll(titlePane, table);
 	}
 
 

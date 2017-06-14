@@ -36,7 +36,7 @@
 								<Font name="System Bold" size="25.0" />
 							</font>
 						</Label>
-						<Label fx:id="labelScoreNumber" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="251.0" text="0" GridPane.columnIndex="2">
+						<Label fx:id="labelScoreNumber" contentDisplay="CENTER" graphicTextGap="6.0" prefHeight="50" prefWidth="251.0" text="0 Pts" GridPane.columnIndex="2">
 							<font>
 								<Font name="System Bold" size="25.0" />
 							</font>
