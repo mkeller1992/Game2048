@@ -63,8 +63,10 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 		this.setGraphic(imageView);
 
 		// Set the button types.
-		ButtonType loginButtonType = new ButtonType(conf.getPropertyAsString("ok.button"), ButtonData.OK_DONE);
-		this.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+		ButtonType okayButtonType  = new ButtonType(conf.getPropertyAsString("ok.button"), ButtonData.OK_DONE);
+		ButtonType cancelButton = new ButtonType(conf.getPropertyAsString("cancel.button"), ButtonData.CANCEL_CLOSE);
+										
+		this.getDialogPane().getButtonTypes().addAll(okayButtonType, cancelButton);
 
 		// Create the pane, the labels and the fields.
 		grid = new GridPane();
@@ -80,7 +82,7 @@ public class GameOverDialog extends Dialog<String> implements InvalidationListen
 
 		// Enable/Disable OK button depending on whether a Channel Name / URL
 		// was entered.
-		okButton = this.getDialogPane().lookupButton(loginButtonType);
+		okButton = this.getDialogPane().lookupButton(okayButtonType);
 		okButton.setDisable(true);
 
 		// Add Listener which checks if input-text is valid

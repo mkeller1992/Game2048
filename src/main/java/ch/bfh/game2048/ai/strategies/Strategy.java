@@ -5,10 +5,16 @@ import java.lang.reflect.Constructor;
 import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.persistence.Config;
 
+/**
+ * 
+ * Enum which holds the AI-Strategy-Classes
+ *
+ */
+
 public enum Strategy {
 	SIMPLEUPLEFT("Simple UP/Left", SimpleUpLeftStrategy.class),
 	RANDOM("Random moves", RandomStrategy.class),
-	MATTHIASSUPERSTRAT("SUPER FANCY SHIT", AIStrategyMatthias.class);	
+	MATTHIASSUPERSTRAT("Advanced AI", AIStrategyMatthias.class);	
 	
 	private String description;
 	private Class<? extends BaseAIStrategy> strategy;

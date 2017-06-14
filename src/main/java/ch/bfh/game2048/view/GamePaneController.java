@@ -6,6 +6,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBException;
 
@@ -17,7 +18,6 @@ import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.GameStatistics;
-import ch.bfh.game2048.model.Highscore;
 import ch.bfh.game2048.model.Tile;
 import ch.bfh.game2048.persistence.Config;
 import ch.bfh.game2048.persistence.ScoreHandler;
@@ -32,6 +32,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -69,6 +70,9 @@ public class GamePaneController implements Observer {
 	@FXML
 	protected Label labelTimerTime; // where the time of the stop-watch gets
 									// displayed
+	
+	@FXML
+	private Label labelHint;
 
 	private SuperLabel[][] labelList;
 
@@ -111,6 +115,7 @@ public class GamePaneController implements Observer {
 		// prepare gui
 		initializeBoard();
 		pauseResumeButton.setVisible(false);
+		btnHint.setVisible(false);
 
 		timer = new Timeline(new KeyFrame(Duration.millis(50), ae -> updateGui()));
 		timer.setCycleCount(Animation.INDEFINITE);
@@ -149,6 +154,7 @@ public class GamePaneController implements Observer {
 
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));
+		btnHint.setVisible(true);
 		pauseResumeButton.setVisible(true);
 		pauseResumeButton.setText(conf.getPropertyAsString("pause.button"));
 		isActive = true;
@@ -261,6 +267,7 @@ public class GamePaneController implements Observer {
 					}
 
 					if (moved) {
+						labelHint.setText("");
 						updateLabelList(game.getBoard());
 						updateScoreLabel(game.getStats().getScore());
 					}
@@ -431,13 +438,16 @@ public class GamePaneController implements Observer {
 		isActive = false;
 		isRunning = false;
 		pauseResumeButton.setVisible(false);
+		btnHint.setVisible(false);
 
 		// Display game-over alert:
 		GameOverDialog dialog = new GameOverDialog(conf.getPropertyAsString("gameOverDialog.title"), stats.getScore().intValue());
+		Optional<String> result = dialog.showAndWait();
 
-		if (dialog.showAndWait().isPresent()) {
+		System.out.println(result);
+		
+        if(result.isPresent()){
 			stats.setPlayerName(dialog.getPlayerName());
-			
 			ScoreHandler.getInstance().getHighscore().addHighscore(stats);			
 			ScoreHandler.getInstance().writeScores(Config.getInstance().getPropertyAsString("highscoreFileName"));
 			try {
@@ -508,13 +518,12 @@ public class GamePaneController implements Observer {
 					aiStrategy.initializeAI();
 					aiStrategy.getEngine().startGame();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 
 			Direction dirSuggestion = aiStrategy.getMove(game.getBoard());
-			System.out.println(dirSuggestion.toString());
+			labelHint.setText("> "+dirSuggestion.toString());
 
 		}
 	}

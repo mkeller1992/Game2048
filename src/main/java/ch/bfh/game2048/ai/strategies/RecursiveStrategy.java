@@ -1,12 +1,8 @@
 package ch.bfh.game2048.ai.strategies;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.apache.commons.lang3.SerializationUtils;
 
 import ch.bfh.game2048.ai.AIGameEngine;
-import ch.bfh.game2048.engine.GameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
 
@@ -14,37 +10,63 @@ public class RecursiveStrategy extends BaseAIStrategy {
 
 	private int finalDepth;
 	private int[][] weights;
-	
-	Double[] valueChanges;
+	private int[][] weights4x4;
+	private int[][] weightsDefault;
 
+	Double[] valueChanges;
 
 	public RecursiveStrategy(AIGameEngine engine) {
 		super(engine);
-
 	}
 
 	@Override
 	public boolean initializeAI() {
 
 		finalDepth = 2;
-
-		// the weights to compute the value of a certain board-constellation:
-		weights = new int[][] { new int[] { 21, 20, 19, 15 }, new int[] { 18, 17, 15, 14 }, new int[] { 13, 12, 10, 9 }, new int[] { 9, 8, 6, 5 } };
+		set4x4Weights();
+		setDefaultWeights();
 		return true;
 
+	}
+
+	private void set4x4Weights() {
+
+		// Set the weights for board-size 4x4
+		weights4x4 = new int[][] { new int[] { 21, 20, 19, 15 }, new int[] { 18, 17, 15, 14 }, new int[] { 13, 12, 10, 9 }, new int[] { 9, 8, 6, 5 } };
+
+	}
+
+	private void setDefaultWeights() {
+
+		// Set the weights for board-sizes != 4x4
+		weightsDefault = new int[8][8];
+		int c = 1;
+		for (int i = 7; i >= 0; i--) {
+			for (int j = 7; j >= 0; j--) {
+				weightsDefault[i][j] = c;
+				c++;
+			}
+		}
 	}
 
 	@Override
 	public Direction getMove(Tile[][] board) {
 
 		engine.setGameBoard(board);
-		
+
+		// Choose relevant tile-weights based on the size of the active board:
+		if (board.length == 4) {
+			weights = weights4x4;
+		} else {
+			weights = weightsDefault;
+		}
+
 		// Reset values from previous move
-		valueChanges = new Double[board.length];		
-		
+		valueChanges = new Double[4];
+
 		// Get the direction with the highest expected increase of board-value
-		double maxVal = -1000000;		
-		
+		double maxVal = -1000000;
+
 		// Check if move is valid and set the corresponding board-value-change:
 		int i = 0;
 		for (Direction dir : Direction.values()) {
@@ -55,7 +77,6 @@ public class RecursiveStrategy extends BaseAIStrategy {
 			i++;
 		}
 
-		
 		// Return the direction with the highest expected value:
 		i = 0;
 		for (Direction dir : Direction.values()) {
@@ -63,11 +84,9 @@ public class RecursiveStrategy extends BaseAIStrategy {
 				return dir;
 			}
 			i++;
-		}		
-		
+		}
 		return null;
 	}
-
 
 	/**
 	 * 
@@ -130,9 +149,9 @@ public class RecursiveStrategy extends BaseAIStrategy {
 		// for each empty tile on current board compute the case that:
 		// - a 4 will be spawned
 		// - a 2 will be spawned
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < board.length; i++) {
 
-			for (int j = 0; j < 4; j++) {
+			for (int j = 0; j < board.length; j++) {
 
 				if (board[i][j].getValue() == 0) {
 
@@ -151,12 +170,12 @@ public class RecursiveStrategy extends BaseAIStrategy {
 					double weightOfMoveAfter4 = (weight / (numbOfZeros)) * 0.1;
 					double weightOfMoveAfter2 = (weight / (numbOfZeros)) * 0.9;
 
-					ArrayList<Double> scoresAfter4Spawned = new ArrayList<>();
-					ArrayList<Double> scoresAfter2Spawned = new ArrayList<>();
-
 					// Simulate a move to all 4 directions
 					// once with a 2 spawned on the empty tile, once with a 4 spawned
 					// Finally only the best out of 4 directions will be counted
+
+					double maxBoardValueChangeAfter4Spawned = -1000000;
+					double maxBoardValueChangeAfter2Spawned = -1000000;
 
 					for (Direction dir : Direction.values()) {
 						// Compute expected sum of board-value-change...
@@ -164,24 +183,23 @@ public class RecursiveStrategy extends BaseAIStrategy {
 						double scoreFromMoveAfter4 = calculateExpectedValue((reachedDepth + 1), cloneBoard(boardWith4), dir, weightOfMoveAfter4, tempScore);
 						double scoreFromMoveAfter2 = calculateExpectedValue((reachedDepth + 1), cloneBoard(boardWith2), dir, weightOfMoveAfter2, tempScore);
 
-						// add the scores for cases that a 4 resp. a 2 was spawned to a list...
-						// ... so that the max. score out of these four values can be computed
-						scoresAfter4Spawned.add(scoreFromMoveAfter4);
-						scoresAfter2Spawned.add(scoreFromMoveAfter2);
+						// get the max. board-value-change out of all 4 move-directions...
+						// ... for the case that a 4 was spawned resp. a 2 was spawned:
+						maxBoardValueChangeAfter4Spawned = Math.max(scoreFromMoveAfter4, maxBoardValueChangeAfter4Spawned);
+						maxBoardValueChangeAfter2Spawned = Math.max(scoreFromMoveAfter2, maxBoardValueChangeAfter2Spawned);
 					}
 
 					/*
 					 * For each possible board-situation count only the
 					 * expected "score" of the best out of the 4 possible moves.
-					 * "Score" = the sum of the expected weighted board-value changes				
+					 * "Score" = the sum of the expected weighted board-value changes
 					 */
 
 					// count the best score for the case "a 4 was spawned"
-					totalScore += Collections.max(scoresAfter4Spawned);
+					totalScore += maxBoardValueChangeAfter4Spawned;
 
 					// count the best score for the case "a 2 was spawned"
-					totalScore += Collections.max(scoresAfter2Spawned);
-
+					totalScore += maxBoardValueChangeAfter2Spawned;
 				}
 			}
 		}
@@ -209,7 +227,7 @@ public class RecursiveStrategy extends BaseAIStrategy {
 
 		retVal = engine.getBoard();
 
-		 engine.revertMove();
+		engine.revertMove();
 		engine.setGameBoard(tmpBoard);
 
 		return retVal;
@@ -229,9 +247,9 @@ public class RecursiveStrategy extends BaseAIStrategy {
 
 		double total = 0;
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < gameBoard.length; i++) {
 
-			for (int j = 0; j < 4; j++) {
+			for (int j = 0; j < gameBoard.length; j++) {
 				total += (weights[i][j] * gameBoard[i][j].getValue());
 			}
 		}
@@ -257,7 +275,6 @@ public class RecursiveStrategy extends BaseAIStrategy {
 		return c;
 	}
 
-
 	/**
 	 * a board with Tile-Objects
 	 * 
@@ -268,8 +285,8 @@ public class RecursiveStrategy extends BaseAIStrategy {
 
 	private Tile[][] cloneBoard(Tile[][] gameBoard) {
 
-		Tile[][]testBoard = SerializationUtils.clone(gameBoard);
-		
+		Tile[][] testBoard = SerializationUtils.clone(gameBoard);
+
 		return testBoard;
 	}
 }

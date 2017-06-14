@@ -6,6 +6,16 @@ import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
 
+/**
+ *
+ * Advanced strategy:
+ * 
+ * - computes 2 moves ahead
+ * - is based on board-value-change and its probability
+ * - each tile-position has a different weight
+ *
+ */
+
 public class AIStrategyMatthias extends BaseAIStrategy {
 
 	private int[][] weights;
@@ -17,17 +27,31 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 
 	public AIStrategyMatthias(AIGameEngine engine) {
 		super(engine);
-
 	}
 
+	/**
+	 * Initialize weight-arrays:
+	 * - for 4x4 board
+	 * - for remaining board-sizes
+	 */
+	
 	@Override
 	public boolean initializeAI() {
+		set4x4Weights();
+		setDefaultWeights();
+		return true;
+	}
+	
+	// Sets the weights for board-size 4x4
+	private void set4x4Weights() {
 
 		weights4x4 = new int[][] { new int[] { 21, 20, 19, 15 }, new int[] { 18, 17, 15, 14 }, new int[] { 13, 12, 10, 9 }, new int[] { 9, 8, 6, 5 } };
+	}
+
+	// Sets the weights for board-sizes != 4x4
+	private void setDefaultWeights() {
 
 		weightsDefault = new int[8][8];
-		
-		
 		int c = 1;
 		for (int i = 7; i >= 0; i--) {
 			for (int j = 7; j >= 0; j--) {
@@ -35,24 +59,20 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 				c++;
 			}
 		}
-		
-
-
-		return true;
 	}
 
 	@Override
 	public Direction getMove(Tile[][] board) {
 
-		// Choose relevant tile-weights based on board-size
-		if(board.length == 4){
+		engine.setGameBoard(board);
+		
+		// Choose relevant tile-weights based on the size of the active board:
+		if (board.length == 4) {
 			weights = weights4x4;
 		} else {
 			weights = weightsDefault;
-		}	
+		}
 		
-		engine.setGameBoard(board);
-
 		// Reset values from previous move
 		valueChanges = new Double[4];
 
@@ -66,7 +86,7 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		}
 
 		// Check if in case of moving up there is the risk of being forced to move "down" subsequently
-		// if risk exists --> set board-value-change of "up-move" to a very low number
+		// if risk exists --> set board-value-change of "up-move" to a very low number (only for 4x4 boards)
 		if (board.length == 4 &&valueChanges[0] != null) {
 			Tile[][] boardAfterUp = getBoardAfterSimulatedMove(engine.getBoard(), Direction.UP);
 
@@ -76,7 +96,6 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		}
 
 		// Set max. expected board-change out of all directions
-
 		double maxVal = -1000000;
 		for (Double v : valueChanges) {
 			if (v != null && v > maxVal) {
@@ -98,10 +117,11 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	/**
 	 * 
 	 * Computes the average expected board-value-change of the next 2 moves
-	 * That means the total score consists of:
+	 * That means the method returns a "total-score" consisting of
 	 * 
-	 * ... more to come soon... TODO
-	 * 
+	 * - the board-value-change induced by @param direction PLUS...
+	 * - ...for each possible scenario of tile spawned...
+	 * ... the board-value-change of the best follow-up-move, multiplied with the scenario's probability 
 	 * 
 	 * @param clonedGameBoard
 	 *            a clone of the current board
@@ -208,7 +228,8 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		int emptyTilesInUpperRows = getAmountOfEmptyTiles(boardAfterMove, 0, indexOflastFullRow);
 		int emptyTilesInLowerRows = getAmountOfEmptyTiles(boardAfterMove, 1 + indexOflastFullRow, boardAfterMove.length - 1);
 
-		// counter horizontal:
+		// checks if there are two adjacent equal tiles horizontally:
+		// if so --> return false because there is no risk of deadlock
 
 		for (int i = 0; i < boardAfterMove.length; i++) {
 
@@ -220,7 +241,8 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 			}
 		}
 
-		// counter vertical
+		// checks if there are two adjacent equal tiles vertically:
+		// if so --> return false because there is no risk of deadlock
 
 		for (int i = 0; i < boardAfterMove.length; i++) {
 
@@ -233,7 +255,6 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		}
 
 		// returns true if there is only one empty tile in the upper rows and the lower rows are empty
-
 		if (emptyTilesInUpperRows == 1 && emptyTilesInLowerRows == (boardAfterMove.length - (indexOflastFullRow + 1)) * boardAfterMove[0].length) {
 			return true;
 		}

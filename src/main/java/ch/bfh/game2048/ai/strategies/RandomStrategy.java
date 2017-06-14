@@ -19,14 +19,19 @@ public class RandomStrategy extends BaseAIStrategy {
 		return true;
 	}
 
+	/**
+	 * Randomly shifts tiles up, down, left, right
+	 */
+	
+	
 	@Override
 	public Direction getMove(Tile[][] board) {
-		
+
 		engine.setGameBoard(board);
-		
+
 		Direction dir;
 		do {
-			dir = Direction.values()[rand.nextInt(3)];
+			dir = Direction.values()[rand.nextInt(4)];
 
 		} while (!engine.isMoveValid(dir));
 
