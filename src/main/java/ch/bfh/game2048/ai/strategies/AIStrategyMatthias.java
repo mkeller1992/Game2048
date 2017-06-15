@@ -188,15 +188,28 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 						Tile[][] boardAfterSpawning2AndMovingAgain = getBoardAfterSimulatedMove(cloneBoard(boardWith2), dir);
 						Tile[][] boardAfterSpawning4AndMovingAgain = getBoardAfterSimulatedMove(cloneBoard(boardWith4), dir);
 
-						// The board-value-change induced by the second move (in case a 2 resp. a 4 was spawned)
-						double boardValueChangeFromSecondMoveAfter2 = getBoardValue(boardAfterSpawning2AndMovingAgain) - boardValueAfterFirstMove;
-						double boardValueChangeFromSecondMoveAfter4 = getBoardValue(boardAfterSpawning4AndMovingAgain) - boardValueAfterFirstMove;
+						// if move after spawning 2 resp. 4 was invalid, board-value-change will be zero...	
+						double boardValueChangeFromSecondMoveAfter2 = 0;
+						double boardValueChangeFromSecondMoveAfter4 = 0;
+						
+						// if move was valid calculate "board-value after move" minus "board-value before move"
+						
+						if(boardAfterSpawning2AndMovingAgain != null){
+							// The board-value-change induced by the second move (in case a 2 was spawned)
+							boardValueChangeFromSecondMoveAfter2 = getBoardValue(boardAfterSpawning2AndMovingAgain) - boardValueAfterFirstMove;												
+						}	
+
+						if(boardAfterSpawning4AndMovingAgain != null){
+							// The board-value-change induced by the second move (in case a 4 was spawned)
+							 boardValueChangeFromSecondMoveAfter4 = getBoardValue(boardAfterSpawning4AndMovingAgain) - boardValueAfterFirstMove;
+						}
 
 						// Get only the highest board-value-change from all 4 directions
 						scoreFromBestOfAllDirectionsAfterSpawning2 = Math.max(boardValueChangeFromSecondMoveAfter2, scoreFromBestOfAllDirectionsAfterSpawning2);
 						scoreFromBestOfAllDirectionsAfterSpawning4 = Math.max(boardValueChangeFromSecondMoveAfter4, scoreFromBestOfAllDirectionsAfterSpawning4);
 					}
 
+					
 					// multiply the highest board-value change of all 4 directions with the probability of its occurrence
 					// and add it to the total score
 					totalScore += (probabilityOfSpawning2AtThisPosition * scoreFromBestOfAllDirectionsAfterSpawning2);
@@ -265,28 +278,30 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 
 	/**
 	 * - Simulates a move to a given direction
-	 * - Return the board-constellation after that move
+	 * - Return the board-constellation after that move or null if move was invalid
 	 * 
 	 * @param board
 	 *            an already cloned board
 	 * @param dir
 	 *            direction of the move to simulate
-	 * @return the board constellation after the move
+	 * @return the board constellation after the move or null if move was invalid
 	 */
 
 	private Tile[][] getBoardAfterSimulatedMove(Tile[][] board, Direction dir) {
+		
+		boolean moveValid = false;
 		Tile[][] tmpBoard = engine.getBoard();
 		Tile[][] retVal;
 
 		engine.setGameBoard(board);
-		engine.move(dir, true);
+		moveValid = engine.move(dir, true);
 
 		retVal = engine.getBoard();
 
 		engine.revertMove();
 		engine.setGameBoard(tmpBoard);
 
-		return retVal;
+		return moveValid ? retVal : null;
 	}
 
 	/**

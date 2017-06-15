@@ -21,7 +21,7 @@ public class GameEngine extends Observable {
 
 	private StopWatch timer;
 
-	private Tile[][] lastBoard;
+	private Tile[][] lastBoard;	
 
 	/**
 	 * Constructor 1 of the GameEngine, Initializes the board of a given size
@@ -30,7 +30,6 @@ public class GameEngine extends Observable {
 	 * @param boardSize
 	 *            size of the board
 	 */
-
 	public GameEngine(int boardSize, int tileValueToWin) {
 		this.boardSize = boardSize;
 		this.tileValueToWin = tileValueToWin;
@@ -154,10 +153,8 @@ public class GameEngine extends Observable {
 
 	}
 
-	public void revertMove() {
-		board = lastBoard; // TODO: richtige kopie
-
-		notifyObservers(new Pair<String, Long>("score", stats.getScore()));
+	protected void revertMove() {
+		board = lastBoard; 
 
 	}
 

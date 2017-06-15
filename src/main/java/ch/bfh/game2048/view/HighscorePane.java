@@ -186,7 +186,7 @@ public class HighscorePane extends VBox {
 		tblRank.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("Rank"));
 		tblName.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, String>("Nickname"));
 		tblScore.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("score"));
-		tblHighestTile.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("highestValue"));
+		tblHighestTile.setCellValueFactory(new PropertyValueFactory<HighscoreEntry, Integer>("maxTile"));
 		tblDuration.setCellValueFactory(cellData ->{
 			SimpleStringProperty property = new SimpleStringProperty();
 			long duration = cellData.getValue().getDuration();

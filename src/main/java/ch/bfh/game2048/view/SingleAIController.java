@@ -1,10 +1,10 @@
 package ch.bfh.game2048.view;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import javax.xml.bind.JAXBException;
 
-import ch.bfh.game2048.ai.AIGameEngine;
 import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.model.Direction;
@@ -19,6 +19,8 @@ public class SingleAIController extends GamePaneController {
 	Thread aiPlayer;
 
 	private int aiSpeed;
+	long millisTotal = 0;
+	long numberOfRound = 0;
 	
 	public SingleAIController() {
 
@@ -28,8 +30,6 @@ public class SingleAIController extends GamePaneController {
 	public void initialize() throws FileNotFoundException, JAXBException {
 		super.initialize();
 
-		game = new AIGameEngine(numbOfBoardColumns, conf.getPropertyAsInt("winningNumber"));
-		game.addObserver(this);
 
 		labelTimerName.setText("Moves: ");
 
@@ -58,10 +58,13 @@ public class SingleAIController extends GamePaneController {
 	protected void startGame(ActionEvent event) {
 
 		isRunning = false;
+		// gui initialize
 		updateBoardSize();
-		loadAIEngine();
-		updateLabelList(game.getBoard());
+				
+		loadAIEngine();		
 		game.startGame();
+		
+		updateLabelList(game.getBoard());
 
 		labelScoreNumber.setText(conf.getPropertyAsString("startScore"));
 		startButton.setText(conf.getPropertyAsString("restart.button"));
@@ -92,11 +95,25 @@ public class SingleAIController extends GamePaneController {
 				try {
 					Thread.sleep(aiSpeed);
 
+					
+					long millisbefore = System.currentTimeMillis();
+					
 					Direction dir = aiStrategy.getMove(game.getBoard());
+					
+					long milliafter = System.currentTimeMillis();
+					
+					long difference = milliafter-millisbefore;
+					
+					millisTotal += difference;
+					System.out.println("Difference: "+difference);
+					
+					numberOfRound ++;
+					System.out.println(millisTotal/numberOfRound);
 
 					System.out.println("doing move: " + dir);
+					
 					game.move(dir);
-
+					
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {

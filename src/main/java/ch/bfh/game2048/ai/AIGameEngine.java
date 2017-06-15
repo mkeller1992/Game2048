@@ -16,7 +16,10 @@ public class AIGameEngine extends GameEngine {
 		this.aiNumber = aiNumber;
 	}
 	
-	
+	public void setAiNumber(int aiNumber) {
+		this.aiNumber = aiNumber;
+	}
+
 	/**
 	 * checks if the move is valid without executing it
 	 * @param dir
@@ -62,4 +65,9 @@ public class AIGameEngine extends GameEngine {
 		return aiNumber;
 	}
 	
+	@Override
+	public void revertMove(){
+		super.revertMove();
+	}
+		
 }

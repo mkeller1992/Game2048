@@ -13,8 +13,9 @@ import ch.bfh.game2048.persistence.Config;
 
 public enum Strategy {
 	SIMPLEUPLEFT("Simple UP/Left", SimpleUpLeftStrategy.class),
+	UPUPLEFT("UP/LEFT/RIGHT", UpUpLeftStrategy.class),
 	RANDOM("Random moves", RandomStrategy.class),
-	MATTHIASSUPERSTRAT("Advanced AI", AIStrategyMatthias.class);	
+	MATTHIASSUPERSTRAT("Advanced AI", AIStrategyMatthias.class);
 	
 	private String description;
 	private Class<? extends BaseAIStrategy> strategy;
@@ -82,9 +83,8 @@ public enum Strategy {
 		try {
 			constructor = strategyClazz.getConstructor(AIGameEngine.class);
 
-			BaseAIStrategy aiStrategy = constructor.newInstance(new AIGameEngine(boardSize, Config.getInstance().getPropertyAsInt("winningNumber")));
-			aiStrategy.initializeAI();
-			aiStrategy.getEngine().startGame();
+			BaseAIStrategy aiStrategy = constructor.newInstance(new AIGameEngine(boardSize, Config.getInstance().getPropertyAsInt("winningNumber")));			
+			
 			return aiStrategy;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -127,13 +127,12 @@ public class MultiAIController implements Observer {
 				int amountOfThreads = Config.getInstance().getPropertyAsInt("selectedThreadAmount");
 
 				// Initialize threads, give every thread an AI-Player (a runnable) with an AI-Strategy
-				for (int i = 0; i < amountOfThreads; i++) {
-					AIGameEngine engine = new AIGameEngine(4, 2048, i);
-
+				for (int i = 0; i < amountOfThreads; i++) {					
 					// In multi-AI-mode games are always played on 4x4 boards:
 					BaseAIStrategy strategy = Strategy.getAIStrategy(chbStrategy.getSelectionModel().getSelectedItem(), 4);
 
-					Runnable aiPlayer = new AiPlayer(strategy, instance, engine);
+					Runnable aiPlayer = new AiPlayer(strategy, instance, strategy.getEngine());
+					strategy.getEngine().setAiNumber(i);
 					players.add((AiPlayer) aiPlayer);
 					executor.execute(aiPlayer);
 				}
