@@ -13,13 +13,14 @@ public class EngineTest extends TestCase {
 		game = new GameEngine(boardSize, 2048);
 		board = new Tile[boardSize][boardSize];
 		
+		game.startGame();
 		
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize; j++) {
 				board[i][j] = new Tile();
 			}
 		}
-		game.setBoard(board);
+
 				
 	}
 	
@@ -34,7 +35,7 @@ public class EngineTest extends TestCase {
 		board[0][0].setValue(4);
 		board[2][0].setValue(2);
 		board[2][1].setValue(2);		
-	
+		game.setBoard(board);
 		game.print();
 		game.move(Direction.RIGHT);
 		game.move(Direction.UP);		
@@ -65,7 +66,7 @@ public class EngineTest extends TestCase {
 		board[0][1].setValue(2);
 		board[0][2].setValue(2);
 		board[0][3].setValue(2);
-	
+		game.setBoard(board);
 		game.move(Direction.LEFT);		
 
 		/*
@@ -93,7 +94,7 @@ public class EngineTest extends TestCase {
 		board[0][1].setValue(2);
 		board[0][2].setValue(2);
 		board[0][3].setValue(2);
-	
+		game.setBoard(board);
 		game.move(Direction.RIGHT);		
 
 		/*
@@ -122,6 +123,7 @@ public class EngineTest extends TestCase {
 		board[2][0].setValue(2);
 		board[3][0].setValue(2);
 		board[0][1].setValue(4);	
+		game.setBoard(board);
 		game.print();
 		game.move(Direction.DOWN);		
 		game.print();
@@ -152,7 +154,7 @@ public class EngineTest extends TestCase {
 		board[2][0].setValue(2);
 		board[3][0].setValue(2);
 		board[0][1].setValue(4);	
-		
+		game.setBoard(board);		
 		game.move(Direction.DOWN);		
 		
 		/*

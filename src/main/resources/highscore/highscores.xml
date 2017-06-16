@@ -37,5 +37,41 @@
             <duration>3467</duration>
             <boardSize>3</boardSize>
         </PlayerScore>
+                <PlayerScore>
+            <playerName>Jürgen</playerName>
+            <score>156</score>
+            <amountOfMoves>27</amountOfMoves>
+            <highestValue>32</highestValue>
+            <startTimestamp>1497380501574</startTimestamp>
+            <duration>3467</duration>
+            <boardSize>3</boardSize>
+        </PlayerScore>
+                <PlayerScore>
+            <playerName>Matthias</playerName>
+            <score>34234</score>
+            <amountOfMoves>105</amountOfMoves>
+            <highestValue>2048</highestValue>
+            <startTimestamp>1497380501574</startTimestamp>
+            <duration>343467</duration>
+            <boardSize>4</boardSize>
+        </PlayerScore>
+                <PlayerScore>
+            <playerName>tinu</playerName>
+            <score>23423</score>
+            <amountOfMoves>432</amountOfMoves>
+            <highestValue>2048</highestValue>
+            <startTimestamp>1497380501574</startTimestamp>
+            <duration>346347</duration>
+            <boardSize>5</boardSize>
+        </PlayerScore>
+                <PlayerScore>
+            <playerName>Jürgen</playerName>
+            <score>156</score>
+            <amountOfMoves>27</amountOfMoves>
+            <highestValue>32</highestValue>
+            <startTimestamp>1497380501574</startTimestamp>
+            <duration>3467</duration>
+            <boardSize>3</boardSize>
+        </PlayerScore>
     </Highscores>
 </HighscoreList>

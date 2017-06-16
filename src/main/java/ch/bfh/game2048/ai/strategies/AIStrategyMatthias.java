@@ -95,7 +95,7 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 			}
 		}
 
-		// Set max. expected board-change out of all directions
+		// Get the highest expected board-value-change from all directions
 		double maxVal = -1000000;
 		for (Double v : valueChanges) {
 			if (v != null && v > maxVal) {
@@ -161,7 +161,7 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 
 				if (board[i][j].getValue() == 0) {
 
-					// a board and set a 4 resp. a 2 at the position of the empty tile
+					// clone the board and set a 4 resp. a 2 at the position of the empty tile
 
 					Tile[][] boardWith4 = cloneBoard(board);
 					boardWith4[i][j].setValue(4);
@@ -170,7 +170,7 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 					boardWith2[i][j].setValue(2);
 
 					// Given a 2 or a 4 was spawned on the empty tile:
-					// We assume that after the spawning the move with the highest board-value change will be conducted
+					// We assume that after the spawning of the tile the move with the highest board-value change will be executed
 					// Therefore the probability for a specific board-value change is:
 
 					double probabilityOfSpawning4AtThisPosition = (0.1 / (numbOfZeros));
