@@ -19,8 +19,7 @@ public class SingleAIController extends GamePaneController {
 	Thread aiPlayer;
 
 	private int aiSpeed;
-	long millisTotal = 0;
-	long numberOfRound = 0;
+
 	
 	public SingleAIController() {
 
@@ -94,21 +93,8 @@ public class SingleAIController extends GamePaneController {
 			while (isRunning && isActive) {
 				try {
 					Thread.sleep(aiSpeed);
-
-					
-					long millisbefore = System.currentTimeMillis();
 					
 					Direction dir = aiStrategy.getMove(game.getBoard());
-					
-					long milliafter = System.currentTimeMillis();
-					
-					long difference = milliafter-millisbefore;
-					
-					millisTotal += difference;
-					System.out.println("Difference: "+difference);
-					
-					numberOfRound ++;
-					System.out.println(millisTotal/numberOfRound);
 
 					System.out.println("doing move: " + dir);
 					

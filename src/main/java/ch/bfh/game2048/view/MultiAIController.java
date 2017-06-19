@@ -3,8 +3,6 @@ package ch.bfh.game2048.view;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,6 +14,7 @@ import ch.bfh.game2048.ai.strategies.BaseAIStrategy;
 import ch.bfh.game2048.ai.strategies.Strategy;
 import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.persistence.Config;
+import ch.bfh.game2048.view.model.BoardSizes;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -25,15 +24,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.util.Pair;
 
-public class MultiAIController implements Observer {
+public class MultiAIController {
 
 	@FXML
 	ChoiceBox<Strategy> chbStrategy;
 
 	@FXML
 	ChoiceBox<String> chbThreadAmount;
+	
+	@FXML
+	ChoiceBox<BoardSizes>chbBoardSize;
 
 	@FXML
 	Button buttonStart;
@@ -51,7 +52,8 @@ public class MultiAIController implements Observer {
 	Label labelNumbOfThreads;
 
 	@FXML
-	Label labelRunningTime;
+	Label labelRunningTime;	
+
 
 	MultiAIStats multiAiStats;
 	MultiAIController instance;
@@ -74,30 +76,43 @@ public class MultiAIController implements Observer {
 
 		stopwatch = new StopWatch();
 
-		// Set display-font and set sceen to not-editable:
+		// Set display-font and set screen to non-editable:
 		resultScreen.setFont(Font.font("Consolas", FontWeight.BOLD, 16));
 		resultScreen.setEditable(false);
+		
+		// Set Strategy-Selection ChoiceBox:
+		chbStrategy.getItems().setAll(Strategy.values());
+		Strategy strategy = Strategy.findStateByDescription(Config.getInstance().getPropertyAsString("multiAI.strategy"));
+		chbStrategy.getSelectionModel().select(strategy);
+		
+		// Add event-handler to Strategy-ChoiceBox to save selection to properties
+		chbStrategy.setOnAction((event) -> {
+			String strat = chbStrategy.getSelectionModel().getSelectedItem().getDescription();
+			Config.getInstance().setProperty("multiAI.strategy", strat);
+		});
 
 		// Populate Thread-Amount ChoiceBox:
 		chbThreadAmount.setItems(Config.getInstance().getPropertyAsObservableList("threadArray"));
 		chbThreadAmount.getSelectionModel().select(Config.getInstance().getPropertyAsString("selectedThreadAmount"));
 
-		// Add event-handler to Thread-Amount ChoiceBox:
+		// Add event-handler to Thread-Amount ChoiceBox to save selection to properties
 		chbThreadAmount.setOnAction((event) -> {
 			String selectedEntry = chbThreadAmount.getSelectionModel().getSelectedItem();
 			Config.getInstance().setProperty("selectedThreadAmount", selectedEntry);
 		});
-
-		// Set Strategy-Selection ChoiceBox:
-		chbStrategy.setItems(FXCollections.observableArrayList(Strategy.values()));
-		chbStrategy.getSelectionModel().selectFirst();
-	}
-
-	@Override
-	public void update(Observable observable, Object object) {
-		AIGameEngine engine = (AIGameEngine) observable;
-
-		Pair<String, Boolean> pair = (Pair<String, Boolean>) object;
+		
+		// Populate Board-Size ChoiceBox:
+		chbBoardSize.getItems().addAll(BoardSizes.values());
+		
+		// Get previously selected entry and select it
+		BoardSizes selectedSize = BoardSizes.findStateByBoardSize(Config.getInstance().getPropertyAsInt("multiAI.boardsize"));
+		chbBoardSize.getSelectionModel().select(selectedSize);
+		
+		// Add event-handler to Board-Size ChoiceBox to save selection to properties
+		chbBoardSize.setOnAction(ae -> {					
+			BoardSizes size= chbBoardSize.getSelectionModel().getSelectedItem();
+			Config.getInstance().setProperty("multiAI.boardsize", size.getBoardSize());
+		});
 	}
 
 	/**
@@ -125,14 +140,18 @@ public class MultiAIController implements Observer {
 				ArrayList<AiPlayer> players = new ArrayList<AiPlayer>();
 
 				int amountOfThreads = Config.getInstance().getPropertyAsInt("selectedThreadAmount");
+				
+				Integer boardSize = Config.getInstance().getPropertyAsInt("multiAI.boardsize");
+				Strategy selectedStrategy = chbStrategy.getSelectionModel().getSelectedItem();
 
 				// Initialize threads, give every thread an AI-Player (a runnable) with an AI-Strategy
 				for (int i = 0; i < amountOfThreads; i++) {					
 					// In multi-AI-mode games are always played on 4x4 boards:
-					BaseAIStrategy strategy = Strategy.getAIStrategy(chbStrategy.getSelectionModel().getSelectedItem(), 4);
-
-					Runnable aiPlayer = new AiPlayer(strategy, instance, strategy.getEngine());
+								
+					BaseAIStrategy strategy = Strategy.getAIStrategy(selectedStrategy, boardSize);
+					strategy.initializeAI();
 					strategy.getEngine().setAiNumber(i);
+					Runnable aiPlayer = new AiPlayer(strategy, instance, strategy.getEngine());					
 					players.add((AiPlayer) aiPlayer);
 					executor.execute(aiPlayer);
 				}
@@ -150,7 +169,6 @@ public class MultiAIController implements Observer {
 
 				
 				// while game is playing, update statistics every 0.5 seconds:
-
 				while (!executor.isTerminated()) {
 					
 					updateGameStatistic(players);
@@ -161,7 +179,6 @@ public class MultiAIController implements Observer {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-
 				}
 
 				// Responsible for displaying the stats of the longest game:
@@ -209,7 +226,6 @@ public class MultiAIController implements Observer {
 			if (p.game.getStats() != null && p.game.getStats().getHighestValue() >= 2048) {
 				amountOfWins++;
 			}
-
 		}
 
 		multiAiStats.setAmountOfGameOver(amountOfGameOver);
@@ -371,15 +387,14 @@ public class MultiAIController implements Observer {
 			this.strategy = strategy;
 			this.controller = controller;
 			this.game = game;
+			
+			
 		}
 
 		@Override
 		public void run() {
-
-			strategy.initializeAI();
+			
 			game.startGame();
-
-			game.addObserver(controller);
 
 			// Plays the game while game-engine is running == while not game over
 

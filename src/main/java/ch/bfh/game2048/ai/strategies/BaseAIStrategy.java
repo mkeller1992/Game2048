@@ -29,12 +29,5 @@ public abstract class BaseAIStrategy {
 
 	public AIGameEngine getEngine() {
 		return engine;
-	}
-
-
-	
-
-	
-
-	
+	}	
 }

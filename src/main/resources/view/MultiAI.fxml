@@ -29,6 +29,7 @@
             <RowConstraints maxHeight="204.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="192.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="136.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="136.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="89.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
@@ -40,17 +41,23 @@
                <font>
                   <Font size="18.0" />
                </font></Label>
-            <Label fx:id="labelRunningTime" text="Running Time:" GridPane.rowIndex="4">
+            <Label fx:id="labelRunningTime" text="Running Time:" GridPane.rowIndex="6">
                <font>
                   <Font size="18.0" />
                </font></Label>
-            <Label fx:id="labelTime" text="00:00:00" GridPane.rowIndex="5">
+            <Label fx:id="labelTime" text="00:00:00" GridPane.rowIndex="7">
                <font>
                   <Font size="18.0" />
                </font></Label>
-            <Button fx:id="buttonStart" mnemonicParsing="false" onAction="#start" text="Start" GridPane.rowIndex="6" />
+            <Button fx:id="buttonStart" mnemonicParsing="false" onAction="#start" text="Start" GridPane.rowIndex="8" />
             <ChoiceBox fx:id="chbStrategy" prefWidth="150.0" GridPane.rowIndex="1" />
             <ChoiceBox fx:id="chbThreadAmount" prefWidth="150.0" GridPane.rowIndex="3" />
+            <Label fx:id="labelNumbOfThreads1" layoutX="30.0" layoutY="104.0" text="Board-Size:" GridPane.rowIndex="4">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="chbBoardSize" layoutX="30.0" layoutY="141.0" prefWidth="150.0" GridPane.rowIndex="5" />
          </children>
          <padding>
             <Insets left="20.0" top="20.0" />

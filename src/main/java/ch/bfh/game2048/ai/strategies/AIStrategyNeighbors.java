@@ -7,27 +7,26 @@ import ch.bfh.game2048.model.Direction;
 import ch.bfh.game2048.model.Tile;
 
 /**
- *
- * Strategy for large boards (maximizing change of board-value):
- * 
- * - computes 2 moves ahead
- * - is based on board-value-change and its probability
- * - each tile-position has a different weight
- *
- */
+*
+* Strategy for 3x3 boards
+* 
+* - computes 2 moves ahead
+* - tries to minimize value-difference between adjacent tiles...
+* - ... while playing upwards
+*
+*/
 
-public class AIStrategyMatthias extends BaseAIStrategy {
+
+public class AIStrategyNeighbors extends BaseAIStrategy {
 
 	private int[][] weights;
 
-	private int[][] weights4x4HighLeft;
-	private int[][] weights4x4HighRight;
-	private int[][] weightsDefaultHighLeft;
-	private int[][] weightsDefaultHighRight;
+	private int[][] weightsHighLeft;
+	private int[][] weightsHighRight;
 
-	Double[] valueChanges;
+	Double[] neighborScoreChanges;
 
-	public AIStrategyMatthias(AIGameEngine engine) {
+	public AIStrategyNeighbors(AIGameEngine engine) {
 		super(engine);
 	}
 
@@ -42,88 +41,94 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	}
 
 	/**
-	 * - Generates different weight-patterns
-	 * - weight-pattern will be selected based on:
-	 *    > board-size
-	 *    > position of first row's highest tile
+	 * Initializes the weight-patterns:
 	 */
-
 	private void initializeWeights() {
 
-		// weight-pattern for 4x4-board in case highest tile in first row is on the LEFT side:
-		weights4x4HighLeft = new int[][] { { 30, 23, 23, 19 }, { 14, 15, 17, 18 }, { 9, 10, 11, 12 }, { 5, 6, 8, 9 } };
-
-		// weight-pattern for 4x4-board in case highest tile in first row is on the RIGHT side:
-		weights4x4HighRight = new int[][] { { 19, 23, 23, 30 }, { 18, 17, 15, 14 }, { 13, 12, 10, 9 }, { 9, 8, 6, 5 } };
-
-		// Weight-pattern for board-sizes != 4 in case highest tile in first row is on the LEFT side
-		weightsDefaultHighLeft = new int[8][8];
-		int c = 1;
-		for (int row = 7; row >= 0; row--) {
-			for (int column = 7; column >= 0; column--) {
-				weightsDefaultHighLeft[row][column] = c;
+		// Generate the weight-pattern for board-constellations where the highest tile is on the LEFT side:
+		// { 0,1,2,3 } { 4,5,6,7 } etc.
+		
+		weightsHighLeft = new int[8][8];
+		int c = 0;
+		for (int row = 0; row < 8; row++) {
+			for (int column = 0; column < 8; column++) {
+				weightsHighLeft[row][column] = c;
 				c++;
 			}
 		}
+
+		// Generate the weight-pattern for board-constellations where the highest tile is on the RIGHT side:
+		// { 3,2,1,0 } { 7,6,5,4 } etc.
 		
-		// Weight-pattern for board-sizes != 4 in case highest tile in first row is on the RIGHT side
-		weightsDefaultHighRight = new int[8][8];
-		c = 1;
-		for (int row = 7; row >= 0; row--) {
-			for (int column = 0; column < 8; column++) {
-				weightsDefaultHighRight[row][column] = c;
+		weightsHighRight = new int[8][8];
+		c = 0;
+		for (int row = 0; row < 8; row++) {
+			for (int column = 7; column >= 0; column--) {
+				weightsHighRight[row][column] = c;
 				c++;
 			}
-		}	
+		}
 	}
 
 	/**
-	 * Selects the move-direction with the highest expected board-value-improvement
-	 * All possible board-value-changes within the next two moves are computed
+	 * This strategy is based on "neighbor-scores" which depend on:
+	 * - value differences between adjacent tiles
+	 * - the position of the value-differences on the board
+	 * 
+	 * The strategy strives for:
+	 * - ...minimizing the absolute value differences between adjacent tiles
+	 * - ...keeping the highest tiles in the first row
+	 * 
+	 * - Weight-pattern get adjusted based on the position of the first row's highest tile
+	 * - Positions with lower weight == incentive to place high-value tiles there, since...
+	 * ... their *absolute* value-difference to the adjacent tiles is naturally large
+	 * 
+	 * Strategy picks the direction with the smallest expected neighbor-score increase
 	 * 
 	 */
+
 	@Override
 	public Direction getMove(Tile[][] board) {
 
 		engine.setGameBoard(board);
 
-		// Set weight-pattern based on the position of the highest tile
-		selectWeightPattern(board);
+		// Choose suitable weight-pattern based on board-size / board-constellation
+		selectWeightPattern(board);		
 
 		// Reset values from previous move
-		valueChanges = new Double[4];
+		neighborScoreChanges = new Double[4];
 
 		// Check if move is valid and set the corresponding board-value-change:
 		int i = 0;
 		for (Direction dir : Direction.values()) {
 			if (engine.isMoveValid(dir)) {
-				valueChanges[i] = calculateExpectedValue(engine.getBoard(), dir);
+				neighborScoreChanges[i] = calculateExpectedValue(engine.getBoard(), dir);
 			}
 			i++;
 		}
 
 		// Check if in case of moving up there is the risk of being forced to move "down" subsequently
-		// if risk exists --> set board-value-change of "up-move" to a very low number (only for 4x4 boards)
-		if (board.length == 4 && valueChanges[0] != null) {
+		// if risk exists --> set neighbor-score-change of "up-move" to a very high (unattractive) number (only for 4x4 boards)
+		if (board.length == 4 && neighborScoreChanges[0] != null) {
 			Tile[][] boardAfterUp = getBoardAfterSimulatedMove(engine.getBoard(), Direction.UP);
 
 			if (riskOfDeadLockAfterUP(boardAfterUp, 2) | riskOfDeadLockAfterUP(boardAfterUp, 1)) {
-				valueChanges[0] = -10000d;
+				neighborScoreChanges[0] = 10000d;
 			}
 		}
 
-		// Get the highest expected board-value-change from all directions
-		double maxVal = -1000000;
-		for (Double v : valueChanges) {
-			if (v != null && v > maxVal) {
-				maxVal = v;
+		// Get the lowest expected neighbor-score-increase from all directions
+		double minVal = 1000000;
+		for (Double v : neighborScoreChanges) {
+			if (v != null && v < minVal) {
+				minVal = v;
 			}
 		}
 
-		// Return the direction with the highest expected value:
+		// Return the direction with the lowest expected neighbor-score increase:
 		i = 0;
 		for (Direction dir : Direction.values()) {
-			if (valueChanges[i] != null && valueChanges[i] == maxVal) {
+			if (neighborScoreChanges[i] != null && neighborScoreChanges[i] == minVal) {
 				return dir;
 			}
 			i++;
@@ -132,18 +137,18 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	}
 
 	/**
-	 * Computes the average expected board-value-change of the next 2 moves
+	 * Computes the average expected neighbor-score-increase (or decrease) of the next 2 moves
 	 * That means the method returns a "total-score" consisting of
 	 * 
-	 * - the board-value-change induced by @param direction PLUS...
-	 * - ...for each possible scenario of tile spawned...
-	 * ... the board-value-change of the best follow-up-move, multiplied with the scenario's probability
+	 * - the increase of the weighted tile-value-differences (=neighbor-score-increase) induced by @param direction...
+	 * - ... PLUS for each possible scenario of tile spawned...
+	 * ... the neighbor-score-increase of the best follow-up-move, multiplied with the scenario's probability
 	 * 
 	 * @param clonedGameBoard
 	 *            a clone of the current board
 	 * @param direction
 	 *            initial direction to test
-	 * @return the average expected board-value-change induced by 2 moves ahead
+	 * @return the average expected neighbor-score increase induced by 2 moves ahead
 	 */
 
 	public double calculateExpectedValue(Tile[][] clonedGameBoard, Direction direction) {
@@ -151,16 +156,16 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		Tile[][] board = clonedGameBoard;
 		double totalScore = 0;
 
-		// Get get the current board's weighted value:
-		double boardValueBeforeFirstMove = getBoardValue(board);
+		// Get get the current board's weighted neighbor-score:
+		double boardValueBeforeFirstMove = getNeighborScore(board);
 
 		// Simulate the next move...
 		board = getBoardAfterSimulatedMove(board, direction);
 
-		// ...and get the board-value after the move:
-		double boardValueAfterFirstMove = getBoardValue(board);
+		// ...and get the neighbor-score after the move:
+		double boardValueAfterFirstMove = getNeighborScore(board);
 
-		// Get the increase / decrease of board-value following the simulated move
+		// Get the increase / decrease of neighbor-score following the simulated move
 		double boardValueChangeFromFirstMove = boardValueAfterFirstMove - boardValueBeforeFirstMove;
 
 		totalScore += boardValueChangeFromFirstMove;
@@ -186,8 +191,8 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 					boardWith2[i][j].setValue(2);
 
 					// Given a 2 or a 4 was spawned on the empty tile:
-					// We assume that after the spawning of the tile the move with the highest board-value change will be executed
-					// Therefore the probability for a specific board-value change is:
+					// We assume that after the spawning of the tile the move with the lowest neighbor-score-increase will be executed
+					// Therefore the probability for a specific neighbor-score-increase is:
 
 					double probabilityOfSpawning4AtThisPosition = (0.1 / (numbOfZeros));
 					double probabilityOfSpawning2AtThisPosition = (0.9 / (numbOfZeros));
@@ -196,46 +201,47 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 					// once with a 2 spawned on the empty tile, once with a 4 spawned
 					// Finally only the best out of 4 directions will be counted
 
-					double scoreFromBestOfAllDirectionsAfterSpawning2 = -10000000;
-					double scoreFromBestOfAllDirectionsAfterSpawning4 = -10000000;
+					double scoreFromBestOfAllDirectionsAfterSpawning2 = 10000000;
+					double scoreFromBestOfAllDirectionsAfterSpawning4 = 10000000;
 
 					for (Direction dir : Direction.values()) {
 
 						Tile[][] boardAfterSpawning2AndMovingAgain = getBoardAfterSimulatedMove(cloneBoard(boardWith2), dir);
 						Tile[][] boardAfterSpawning4AndMovingAgain = getBoardAfterSimulatedMove(cloneBoard(boardWith4), dir);
 
-						// if move after spawning 2 resp. 4 was invalid, board-value-change will be zero...
-						double boardValueChangeFromSecondMoveAfter2 = 0;
-						double boardValueChangeFromSecondMoveAfter4 = 0;
+						// if move after spawning 2 resp. 4 was invalid, neighbor-score will be 100000 (very unattractive)...
+						double boardValueChangeFromSecondMoveAfter2 = 100000;
+						double boardValueChangeFromSecondMoveAfter4 = 100000;
 
-						// if move was valid calculate "board-value after move" minus "board-value before move"
+						// if move was valid calculate "neighbor-score after move" minus "neighbor-score before move"
 
 						if (boardAfterSpawning2AndMovingAgain != null) {
-							// The board-value-change induced by the second move (in case a 2 was spawned)
-							boardValueChangeFromSecondMoveAfter2 = getBoardValue(boardAfterSpawning2AndMovingAgain) - boardValueAfterFirstMove;
+							// The neighbor-score-increase induced by the second move (in case a 2 was spawned)
+							boardValueChangeFromSecondMoveAfter2 = getNeighborScore(boardAfterSpawning2AndMovingAgain) - boardValueAfterFirstMove;
 						}
 
 						if (boardAfterSpawning4AndMovingAgain != null) {
-							// The board-value-change induced by the second move (in case a 4 was spawned)
-							boardValueChangeFromSecondMoveAfter4 = getBoardValue(boardAfterSpawning4AndMovingAgain) - boardValueAfterFirstMove;
+							// The neighbor-score-increase induced by the second move (in case a 4 was spawned)
+							boardValueChangeFromSecondMoveAfter4 = getNeighborScore(boardAfterSpawning4AndMovingAgain) - boardValueAfterFirstMove;
 						}
 
-						// Get only the highest board-value-change from all 4 directions
-						scoreFromBestOfAllDirectionsAfterSpawning2 = Math.max(boardValueChangeFromSecondMoveAfter2, scoreFromBestOfAllDirectionsAfterSpawning2);
-						scoreFromBestOfAllDirectionsAfterSpawning4 = Math.max(boardValueChangeFromSecondMoveAfter4, scoreFromBestOfAllDirectionsAfterSpawning4);
+						// Get only the lowest (=the best) neighbor-score-increase from all 4 directions
+						scoreFromBestOfAllDirectionsAfterSpawning2 = Math.min(boardValueChangeFromSecondMoveAfter2, scoreFromBestOfAllDirectionsAfterSpawning2);
+						scoreFromBestOfAllDirectionsAfterSpawning4 = Math.min(boardValueChangeFromSecondMoveAfter4, scoreFromBestOfAllDirectionsAfterSpawning4);
 					}
 
-					// multiply the highest board-value change of all 4 directions with the probability of its occurrence
+					// multiply the lowest neighbor-score-increase of all 4 directions with the probability of its occurrence
 					// and add it to the total score
 					totalScore += (probabilityOfSpawning2AtThisPosition * scoreFromBestOfAllDirectionsAfterSpawning2);
 					totalScore += (probabilityOfSpawning4AtThisPosition * scoreFromBestOfAllDirectionsAfterSpawning4);
 				}
 			}
 		}
-		// returns the average expected board-value-change induced by @param direction + the best follow-up move
+		// returns the average expected neighbor-score-increase induced by @param direction + the best follow-up move
 		return totalScore;
 	}
-
+	
+	
 	/**
 	 * Selects suitable weight-pattern...
 	 * ... based on the position of the first row's highest tile:
@@ -255,26 +261,55 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 		for (int column = 0; column < board.length; column++) {
 
 			if (column < (board.length / 2) && board[0][column].getValue() == max) {
-
-				if (board.length == 4) {
-					weights = weights4x4HighLeft;
-				} else {
-					weights = weightsDefaultHighLeft;
-				}
+					weights = weightsHighLeft;
 				return;
 			}
 			else if (column >= (board.length / 2) && board[0][column].getValue() == max) {
-				
-				if (board.length == 4) {
-					weights = weights4x4HighRight;
-				} else {
-					weights = weightsDefaultHighRight;
-				}
+					weights = weightsHighRight;
 				return;
 			}
 		}
 	}
+	
 
+	/**
+	 * 	- Multiplies the average weight of two adjacent tiles with their (positive) value-difference
+	 * - a tile's weight depends on its position within the board
+	 * - the weights are increasing towards the boards bottom
+	 * 
+	 * @param board
+	 * @return
+	 */
+	
+	public double getNeighborScore(Tile[][] board) {
+
+		double neighbourScore = 0;
+
+		// summarize weighted tile differences horizontally
+		for (int row = 0; row < board.length; row++) {
+			for (int column = 0; column < board.length - 1; column++) {
+
+				// if the tiles that are compared are not 2-0 and not 0-2 > compute neighbor-score
+				if (!(board[row][column].getValue() == 0 && board[row][column + 1].getValue() == 2) && !(board[row][column].getValue() == 2 && board[row][column + 1].getValue() == 0)) {
+					neighbourScore += ((weights[row][column] + weights[row][column + 1]) / 2)
+							* (Math.abs(board[row][column].getValue() - board[row][column + 1].getValue()));
+				}
+			}
+		}
+
+		// summarize weighted tile-differences vertically
+		for (int column = 0; column < board.length; column++) {
+			for (int row = 0; row < board.length - 1; row++) {
+
+				// if the tiles that are compared are not 2-0 and not 0-2 > compute neighbor-score
+				if (!(board[row][column].getValue() == 0 && board[row + 1][column].getValue() == 2) && !(board[row][column].getValue() == 2 && board[row + 1][column].getValue() == 0)) {
+					neighbourScore += ((weights[row][column] + weights[row + 1][column]) / 2)
+							* (Math.abs(board[row][column].getValue() - board[row + 1][column].getValue()));
+				}
+			}
+		}
+		return neighbourScore;
+	}
 
 	/**
 	 * - Checks if there is the risk of being forced to "move down" (= risk of deadlock)
@@ -360,29 +395,6 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 	}
 
 	/**
-	 * - Multiplies each board-tile's value with a weight and returns the sum:
-	 * - a tile's weight depends on its position within the board
-	 * - the weights are increasing from right to left / from down to up
-	 * 
-	 * @param gameBoard
-	 *            board which was cloned before
-	 * @return weighted board-value
-	 */
-
-	private double getBoardValue(Tile[][] gameBoard) {
-
-		double total = 0;
-
-		for (int i = 0; i < gameBoard.length; i++) {
-
-			for (int j = 0; j < gameBoard.length; j++) {
-				total += (weights[i][j] * gameBoard[i][j].getValue());
-			}
-		}
-		return total;
-	}
-
-	/**
 	 * A helper method counting the empty tiles on the board...
 	 * ...from indexOfFirstRow to indexOfEndRow (inclusive)
 	 * 
@@ -403,12 +415,12 @@ public class AIStrategyMatthias extends BaseAIStrategy {
 				}
 			}
 		}
-		
+
 		return c;
 	}
 
 	/**
-	 * Clone a board with Tile-Objects
+	 * Clones a board with Tile-Objects
 	 * 
 	 * @param gameBoard
 	 *            a tile-board

@@ -15,7 +15,8 @@ public enum Strategy {
 	SIMPLEUPLEFT("Simple UP/Left", SimpleUpLeftStrategy.class),
 	UPUPLEFT("UP/LEFT/RIGHT", UpUpLeftStrategy.class),
 	RANDOM("Random moves", RandomStrategy.class),
-	MATTHIASSUPERSTRAT("Advanced AI", AIStrategyMatthias.class);
+	MATTS_STRAT_FOR_4X4("Expert for large boards", AIStrategyMatthias.class),
+	MATTS_STRAT_FOR_3X3("Expert for small boards", AIStrategyNeighbors.class);
 	
 	private String description;
 	private Class<? extends BaseAIStrategy> strategy;
